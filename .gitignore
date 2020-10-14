@@ -1,0 +1,8 @@
+# ignore database
+/database
+# ignore tmp
+/tmp
+# ignore database
+/output
+# ignore any log files
+*.log
