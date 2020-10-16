@@ -7,7 +7,7 @@ if [ ! -d "./output" ]; then
 fi
 
 printf "Demo Queries for CSE 412 Midterm Report...\n"
-printf "See ./output"
+printf "See ./output\n"
 
 # 1. COUNT OPERATIONS
 printf "\nAlbum:\n" >./output/demo1_count.log

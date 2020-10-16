@@ -30,7 +30,7 @@ psql -d $USER -q -c "COPY contains FROM '$CWD/data/Contains.csv' DELIMITER ',' C
 psql -d $USER -q -c "COPY made FROM '$CWD/data/Made.csv' DELIMITER ',' CSV;"
 psql -d $USER -q -c "COPY musician FROM '$CWD/data/Musician.csv' DELIMITER ',' CSV;"
 psql -d $USER -q -c "COPY played FROM '$CWD/data/Played.csv' DELIMITER ',' CSV;"
-psql -d $USER -q -c "COPY recordLabel FROM '$CWD/data/recordLabel.csv' DELIMITER ',' CSV;"
+psql -d $USER -q -c "COPY recordLabel FROM '$CWD/data/RecordLabel.csv' DELIMITER ',' CSV;"
 psql -d $USER -q -c "COPY song FROM '$CWD/data/Song.csv' DELIMITER ',' CSV;"
 psql -d $USER -q -c "COPY rating FROM '$CWD/data/Rating.csv' DELIMITER ',' CSV;"
 psql -d $USER -q -c "COPY publishes FROM '$CWD/data/Publishes.csv' DELIMITER ',' CSV;"
