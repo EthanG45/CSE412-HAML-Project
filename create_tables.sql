@@ -12,14 +12,14 @@ CREATE TABLE publishes(
     recordLabelId smallint not null,
     PRIMARY KEY (albumId, recordLabelId)
 );
---4. artist
+--3. artist
 CREATE TABLE artist(
     artistId smallint not null,
     artistName text,
     age integer,
     PRIMARY KEY (artistId)
 );
---5. musician
+--4. musician
 CREATE TABLE musician(
     artistId smallint not null,
     musicianId smallint not null,
@@ -27,13 +27,13 @@ CREATE TABLE musician(
     band text,
     PRIMARY KEY (artistId, musicianId)
 );
---6. Played
+--5. Played
 CREATE TABLE played(
     albumId smallint not null,
     musicianId smallint not null,
     PRIMARY KEY (albumId, musicianId)
 );
---7. album
+--6. album
 CREATE TABLE album(
     albumDuration integer,
     albumId smallint not null,
@@ -41,7 +41,7 @@ CREATE TABLE album(
     coverArtURL text,
     PRIMARY KEY (albumId)
 );
---8. song
+--7. song
 CREATE TABLE song(
     title text,
     genre text,
@@ -51,13 +51,13 @@ CREATE TABLE song(
     releaseYear integer,
     PRIMARY KEY (songId)
 );
---9. Contains
+--8. Contains
 CREATE TABLE contains(
     albumId smallint not null,
     songId smallint not null,
     PRIMARY KEY (songId, albumId)
 );
---10. made
+--9. made
 CREATE TABLE made(
     knownFor text,
     albumId smallint not null,
@@ -66,7 +66,7 @@ CREATE TABLE made(
     FOREIGN KEY (albumId) REFERENCES album(albumId),
     FOREIGN KEY (artistId) REFERENCES artist(artistId)
 );
---3. Rating
+--10. Rating
 CREATE TABLE rating(
     numOfRating integer,
     averageRating decimal,

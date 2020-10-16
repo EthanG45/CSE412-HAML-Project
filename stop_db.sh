@@ -7,5 +7,5 @@ if [ ! pg_isready ]; then
     exit 1
 fi
 
-printf "\n------------------------------------------ Stop database:\n"
+printf "\n1. Stop database:\n"
 pg_ctl -D $DB -o '-k /tmp' stop # starts the server on the port YYYYY, using ./database as data folder
