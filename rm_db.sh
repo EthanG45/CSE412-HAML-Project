@@ -2,8 +2,10 @@
 
 DB="database"
 
-# if [ ! pg_isready ]; then
-#     printf "Error no database running!"
+out=$(pg_isready | grep 'no response' | cut -f1)
+
+# if [ -n out ]; then
+#     printf "Database is not running!\n"
 #     exit 1
 # fi
 
@@ -13,9 +15,9 @@ if [ ! -d "./database" ]; then
 fi
 
 printf "\n1. Removing table...\n"
-psql -d $USER -q -f drop_tables.sql
-
-printf "\n2. Removing database...\n"
-rm -rf ./database
+if psql -d $USER -q -f drop_tables.sql; then
+    printf "\n2. Removing database...\n"
+    rm -rf ./database
+fi
 
 printf "\ndone\n"
