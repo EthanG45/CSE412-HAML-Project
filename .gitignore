@@ -6,3 +6,8 @@
 /output
 # ignore any log files
 *.log
+# ignore files when building exe
+/build
+/dist
+*.spec
+/__pycache__
