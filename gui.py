@@ -1,7 +1,8 @@
 # HAML_GUI
 
 import PySimpleGUI as sg
-import sql
+# import sql as s1
+from sql import searchSong
 
 sg.theme('dark grey 9')
 # Define the window's contents
@@ -264,7 +265,7 @@ searchSongTab = sg.Tab(
     [[sg.Text("Search Song", size=(1270, 1))],
      [sg.Input(key='-INPUT-SEARCH-SONG-')],
      [sg.Button('search', key='-BUTTON-SEARCH-SONG-')],
-     [sg.Text(size=(10, 720), key='-OUTPUT-SEARCH-SONG-')]],
+     [sg.Text( size=(10, 720), key='-OUTPUT-SEARCH-SONG-')]],
     key='search_Song_tab'
 )  # end of tab search
 
@@ -275,7 +276,7 @@ searchArtistTab = sg.Tab(
     [[sg.Text("Search artist")],
      [sg.Input(key='-INPUT-SEARCH-ARTIST-')],
      [sg.Button('search', key='-BUTTON-SEARCH-ARTIST-')],
-     [sg.Text(size=(10, 40), key='-OUTPUT-SEARCH-ARTIST-')]],
+     [sg.Text( size=(10, 40), key='-OUTPUT-SEARCH-ARTIST-')]],
     key='search_Artist_tab'
 )  # end of tab search
 
@@ -359,16 +360,28 @@ window = sg.Window('H.A.M.L.', layout, font=(
 def checkButtonPress():
 
     if event == '-BUTTON-SEARCH-ARTIST-':
-        temp = sql.searchSong(values['-INPUT-SEARCH-ARTIST-'])
+        temp = searchSong(values['-INPUT-SEARCH-ARTIST-'])
         window['-OUTPUT-SEARCH-ARTIST-'].update(temp)
+
+        str1 = ""
+        
 
         if values['-INPUT-SEARCH-ARTIST-'] == "001":
             window['-OUTPUT-SEARCH-ARTIST-'].update("clean")
 
     elif event == '-BUTTON-SEARCH-SONG-':
-        temp = sql.searchSong(values['-INPUT-SEARCH-SONG-'])
+        temp = searchSong(values['-INPUT-SEARCH-SONG-'])
+        
+        str1 = ""
 
-        window['-OUTPUT-SEARCH-SONG-'].update(temp)
+        if temp == "file not found":
+            window['-OUTPUT-SEARCH-ARTIST-'].update(temp)
+        else:
+            for x in temp:
+                str1 += x + " "
+
+        window['-OUTPUT-SEARCH-SONG-'].update(str1)
+
         if values['-INPUT-SEARCH-SONG-'] == "001":
             window['-OUTPUT-SEARCH-SONG-'].update("clean")
 
@@ -394,6 +407,9 @@ while True:
 # close the program
 window.close()
 
+
+# print(searchSong("top that"))
+print(searchSong("top that"))
 
 """def menu():
     options = ('Enter 1 to \n'

@@ -3,12 +3,20 @@ import psycopg2
 from string import Template
 from psycopg2 import OperationalError
 
-userName = getpass.getuser()
 
-conn = psycopg2.connect(database=userName, user=userName,
+def connection():
+    userName = getpass.getuser()
+
+    conn = psycopg2.connect(database=userName, user=userName,
                         host='/tmp', port='8888')
-cur = conn.cursor()
+    cur = conn.cursor()
+    
+    return cur
 
+def closeConnection():
+    cur = connection()
+    cur.close()
+    conn.close()
 
 # works
 def getItems():
@@ -47,6 +55,7 @@ def getAllSongs():
 
 # works
 def searchSong(songName):
+    cur = connection()
     result = []
     try:
         cur.execute("SELECT * FROM song WHERE song.title = '%s'" % (songName))
@@ -103,7 +112,3 @@ def updateRate(rating,  songId):
 # todo list all songs/albums from an artist
 
 # todo search albums
-
-
-cur.close()
-conn.close()
