@@ -338,6 +338,53 @@ class Database:
              return self.getItems()
          except Exception as e:
              print(e)
+
+    #works
+    def findcompanyNameByAlbumName(self, albumName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'"% (albumName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+
+    #works
+    def findLocationByAlbumName(self, albumName):
+         try:
+             self.cur.execute("SELECT R.labelLocation FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'"% (albumName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+            
+    #works
+    def findRecLebDateByAlbumName(self, albumName):
+         try:
+             self.cur.execute("SELECT R.dateEstablished FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'"% (albumName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+
+    #works
+    def findcompanyNameBySongName(self, songName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM recordLabel R, publishes P, album A, Contains C, Song S WHERE S.songID = C.songID AND C.albumID = A.albumID AND A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND S.title = '%s'" % (songName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+
+    #works
+    def findcompanyNameByBandName(self, bandName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM musician M, played P1, publishes P2, recordLabel R WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND M.band = '%s'" % (bandName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+    #works
+    def findListOfCompanyNameByInstrument(self, instName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM musician M, played P1, publishes P2, recordLabel R WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND M.instrument = '%s'" % (instName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
        
 
 

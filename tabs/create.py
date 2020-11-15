@@ -151,4 +151,3 @@ class CreateTab:
 
         return createTab
 
-    #def addEvents
