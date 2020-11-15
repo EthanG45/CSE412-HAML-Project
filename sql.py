@@ -1,0 +1,297 @@
+from faker import Faker
+import getpass
+import psycopg2
+from string import Template
+from psycopg2 import OperationalError
+
+fake = Faker()
+
+#fake.image_url()
+# fake.domain_name()
+
+# Database
+class Database:
+    # init
+    def __init__(self):
+        self.userName = getpass.getuser()
+        self.conn = psycopg2.connect(database=self.userName, user=self.userName,
+                                     host='/tmp', port='8888')
+        self.conn.autocommit = True
+        self.cur = self.conn.cursor()
+
+    # exit
+    def closeConnection(self):
+        self.cur.close()
+        self.conn.close()
+
+    
+    def getItems(self):
+        result = []
+        for i in self.cur:
+            result.append(i)
+        return result
+
+    def selectQuery(self, table, args, ):
+        query = "SELECT * FROM "
+        query += table
+
+        if len(args) > 0:
+            query += " WHERE "
+            query += ' AND'.join(args)
+
+        query += ";"
+        self.cur.execute(query)
+
+        return self.getItems()
+
+    #works
+    def sqlTopTenSongs(self):
+        self.cur.execute(
+            "SELECT song.title, rating.averageRating FROM song JOIN rating ON rating.songId = song.songId ORDER BY rating.averageRating DESC LIMIT 10")
+        return self.getItems()
+    
+    #works
+    def sqlTopTenAlbums(self):
+        self.cur.execute(
+            "SELECT album.title, rating.averageRating FROM album JOIN rating ON rating.albumId = album.albumId ORDER BY rating.averageRating DESC LIMIT 10")
+        return self.getItems()
+
+    def joinTable(self):
+        self.cur.execute(
+            "SELECT * FROM song NATURAL JOIN rating AS table1")
+        return self.getItems()
+    
+    #DOES NOT WORK FIX IT
+    def changeSongUserRating(self, songName):
+        self.cur.execute(
+            #"UPDATE album SET title = '" + newTitle + "', albumDuration = '" + newDuration + "'WHERE title = '" + oldTitle + "'"
+            #"SELECT song.title, rating.averageRating FROM song JOIN rating ON rating.songId = song.songId ORDER BY rating.averageRating DESC LIMIT 10")
+             "UPDATE(SELECT * FROM song NATURAL JOIN rating WHERE songName = '" + songName + "') ")
+        return self.getItems()
+
+    #works
+    def updateSongSourceLink(self,title, genre, songId, newSourceLink, oldSourceLink, releaseYear, songDuration):
+        self.conn.set_session(autocommit=True)
+        try:
+            self.cur.execute("UPDATE song SET sourceLink= '" + newSourceLink + "'" + "WHERE song.title= '" + title + "'" + "AND songId= '"
+                        + str(songId) + "'" + "AND genre = '" + genre +
+                        "'" + "AND releaseYear= '" + str(releaseYear) + "'"
+                        + "AND songDuration= '" + str(songDuration) + "'" + "AND sourceLink= '" + oldSourceLink + "'")
+            print('Updated: Replaced ', oldSourceLink, ' with ', newSourceLink)
+        except Exception as e:
+            print(e)
+
+    #works
+    def searchSong(self, songName):
+        try:
+            self.cur.execute(
+                "SELECT * FROM song WHERE title = '%s'" % (songName))
+            return self.getItems()
+        except:
+            return "Song not found"
+
+   #works 
+    def searchAlbum(self, albumName):
+        try:
+            self.cur.execute(
+                "SELECT * FROM album WHERE title = '%s'" % (albumName))
+            return self.getItems()
+        except:
+            return "Song not found"
+
+    #works
+    def searchMusician(self, bandName):
+        try:
+            self.cur.execute(
+                "SELECT * FROM musician WHERE band = '%s'" % (bandName))
+            return self.getItems()
+        except:
+            return "Song not found"
+
+     #works
+    def searchArtist(self, artistName):
+        try:
+            self.cur.execute(
+                "SELECT * FROM artist WHERE artistName = '%s'" % (artistName))
+            return self.getItems()
+        except:
+            return "Song not found"
+    
+    #works
+    def searchRecordLabel(self, companyName):
+        try:
+            self.cur.execute(
+                "SELECT * FROM recordLabel WHERE companyName = '%s'" % (companyName))
+            return self.getItems()
+        except:
+            return "Song not found"
+
+    # works
+    def getAllSongs(self):
+        try:
+            self.cur.execute("SELECT * FROM song")
+            return self.getItems()
+        except:
+            return "Failed to fetch library"
+    #works
+    def sqlReadAny(self,query):
+        self.cur.execute(query)
+        return self.getItems()
+
+    #works
+    def getAllArtists(self):
+        result = []
+        self.cur.execute("SELECT * FROM artist")
+        return self.getItems()
+    
+    #works
+    def getAllAlbums(self):
+        result = []
+        self.cur.execute("SELECT * FROM album")
+        return self.getItems()
+
+    #works
+    def getAllMusicians(self):
+        result = []
+        self.cur.execute("SELECT * FROM musician")
+        return self.getItems()
+    
+    #works
+    def getAllRecordLabels(self):
+        result = []
+        self.cur.execute("SELECT * FROM recordLabel")
+        return self.getItems()
+    
+    #works
+    def getAllRatings(self):
+        result = []
+        self.cur.execute("SELECT * FROM rating")
+        return self.getItems()
+    
+    #works
+    def insertAlbum(self, albumDuration, albumId, title):
+        try:
+            self.cur.execute("INSERT INTO album(albumDuration, albumId, title, coverArtURL) VALUES( '" +
+                albumDuration + "', '" + albumId + "', '" + title + "', '" + fake.image_url() + "')")
+            #print("Album inserted")
+        except Exception as e:
+            print(e)
+    
+    #works
+    def deleteAlbum(self, title):
+        try:
+            self.cur.execute("DELETE FROM album WHERE title= '" + str(title) + "'")
+            print("Deleted Row with ", title)
+        except Exception as e:
+            print(e)
+
+    #works
+    def updateAlbum(self, newTitle, newDuration, oldTitle):
+        try:
+            self.cur.execute("UPDATE album SET title = '" + newTitle + "', albumDuration = '" + newDuration +
+            "'WHERE title = '" + oldTitle + "'")
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
+    #works
+    def insertSong(self, title, genre, songDuration, songId, releaseYear):
+        try:
+            self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES( '" +
+                title + "', '" + genre + "', '" + songDuration + "', '" + songId + "', '" + fake.domain_name() +  "', '" + releaseYear + "')")
+        except Exception as e:
+            print(e)
+
+    #works
+    def deleteSong(self, songName):
+        try:
+            self.cur.execute("DELETE FROM song WHERE title = '" + songName + "'")
+        except Exception as e:
+            print(e)
+
+    #works
+    def updateSong(self, newTitle, newGenre, newDuration, newYear, oldTitle):
+        try:
+            self.cur.execute("UPDATE song SET title = '" + newTitle + "', genre = '" + newGenre + "', songDuration = '" + newDuration + "', releaseYear = '" + newYear +
+            "'WHERE title = '" + oldTitle + "'")
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
+    #works
+    def insertRecordLabel(self, companyName, dateEstablished, labelLocation, recordLabelId):
+        try:
+            self.cur.execute("INSERT INTO recordLabel(companyName, dateEstablished, labelLocation, recordLabelId) VALUES( '" +
+                companyName + "', '" + dateEstablished + "', '" + labelLocation + "', '" + recordLabelId + "')")
+        except Exception as e:
+            print(e)
+
+    #works
+    def deleteRecordLabel(self, companyName):
+        try:
+            self.cur.execute("DELETE FROM recordLabel WHERE companyName = '" + companyName + "'")
+        except Exception as e:
+            print(e)
+    
+    #works
+    def updateRecordLabel(self, newCompanyName, newLabelLocation, oldCompanyName):
+        try:
+            self.cur.execute("UPDATE recordLabel SET companyName = '" + newCompanyName + "', dateEstablished = '" + fake.date() + "', labelLocation = '" + newLabelLocation +
+            "'WHERE companyName = '" + oldCompanyName + "'")
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
+    #works
+    def insertArtist(self, artistId, artistName, age):
+        try:
+            self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES( '" +
+                artistId + "', '" + artistName + "', '" + age + "')")
+        except Exception as e:
+            print(e)
+    
+     #works
+    def deleteArtist(self, artistName):
+        try:
+            self.cur.execute("DELETE FROM artist WHERE artistName = '" + artistName + "'")
+        except Exception as e:
+            print(e)
+    
+    #works updated age only
+    def updateArtist(self, newAge, artistName):
+        try:
+            self.cur.execute("UPDATE artist SET age = '" + newAge +
+            "'WHERE artistName = '" + artistName + "'")
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+    
+    #works
+    def insertMusician(self, artistId, musicianId, instrument, band):
+        try:
+            self.cur.execute("INSERT INTO musician(artistId, musicianId, instrument, band) VALUES( '" +
+                artistId + "', '" + musicianId + "', '" + instrument + "', '"+ band + "')")
+        except Exception as e:
+            print(e)
+    
+    #works
+    def deleteMusician(self, band):
+        try:
+            self.cur.execute("DELETE FROM musician WHERE band = '" + band + "'")
+        except Exception as e:
+            print(e)
+    
+    #works updated age only
+    def updateMusician(self, newInstrument, newBand, oldBand):
+        try:
+            self.cur.execute("UPDATE musician SET instrument = '" + newInstrument + "', band =  '" + newBand +
+            "'WHERE band = '" + oldBand + "'")
+            self.conn.commit()
+        except Exception as e:
+            print(e)
+
+# todo rate a song
+
+# todo list all songs/albums from an artist
+
+#
