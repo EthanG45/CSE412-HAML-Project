@@ -1,5 +1,5 @@
 #!/bin/bash
 
-./rm_exe.sh
+scripts/rm_exe.sh
 pyinstaller --windowed ./gui.py
-python TCLChanger.py
+python ./TCLChanger.py
