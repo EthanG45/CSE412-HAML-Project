@@ -5,9 +5,22 @@ import sql
 
 db = sql.Database()
 
-# works
+#print(db.getSongUserRating2('sister fund'))
+# print(db.getAllSongs())
 
+# print(db.sqlReadAny("SELECT A.artistName FROM Artist A, Contains C, Song S, Played P, Musician M WHERE S.title = 'not that' AND S.songId = C.songId AND C.albumId = P.albumId AND P.musicianId = M.musicianId AND M.artistId = A.artistId"))
+# print(db.findArtistBySongName('seven leader'))
+# print(db.sqlReadAny("SELECT * FROM artist"))
+# print(db.sqlTopTenSongs())
+# print(db.tenMusicWithWorstRating())
+# print(db.sqlReadAny("SELECT S.songID, R.userRating FROM Song S, Rating R where S.songID = R.songID and S.title = 'sister fund'"))
+# works
+# print(db.sqlReadAny("SELECT * FROM song"))
+# print(db.songNameWithYearByArtist('Kevin Miller', 2005))
+# print(db.changeSongAverageRating('sister fund', 1.000000))
+# print(db.getAllArtists())
 # all artists, albums, musician, recordlabel
+# print(db.changeSongUserRating('sister fund', 2.3))
 
 # works
 
