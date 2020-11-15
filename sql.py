@@ -61,13 +61,35 @@ class Database:
             "SELECT * FROM song NATURAL JOIN rating AS table1")
         return self.getItems()
     
-    #DOES NOT WORK FIX IT
-    def changeSongUserRating(self, songName):
-        self.cur.execute(
-            #"UPDATE album SET title = '" + newTitle + "', albumDuration = '" + newDuration + "'WHERE title = '" + oldTitle + "'"
-            #"SELECT song.title, rating.averageRating FROM song JOIN rating ON rating.songId = song.songId ORDER BY rating.averageRating DESC LIMIT 10")
-             "UPDATE(SELECT * FROM song NATURAL JOIN rating WHERE songName = '" + songName + "') ")
-        return self.getItems()
+    #works
+    def changeSongAverageRating(self, songName, rating):
+        self.conn.set_session(autocommit=True)
+        try:
+            self.cur.execute("SELECT S.songID FROM Song S, Rating R where S.songID = R.songID and S.title ='%s'" %(songName))
+            song_id = self.getItems()[0][0]
+            self.cur.execute("UPDATE Rating SET averageRating= %i WHERE songID = %i" %(rating, song_id))
+            print('Updated Average Rating with ', rating)
+        except Exception as e:
+	        print(e)
+    
+    #works
+    def changeSongUserRating(self, songName, rating):
+        self.conn.set_session(autocommit=True)
+        try:
+            self.cur.execute("SELECT S.songID FROM Song S, Rating R where S.songID = R.songID and S.title ='%s'" %(songName))
+            song_id = self.getItems()[0][0]
+            self.cur.execute("UPDATE Rating SET userRating= %i WHERE songID = %i" %(rating, song_id))
+            print('Updated User Rating with ', rating)
+        except Exception as e:
+	        print(e)
+
+    #works
+    def getSongUserRating2(self, songName):
+	    try:
+		    self.cur.execute("SELECT S.title, R.averageRating From song S, rating R WHERE S.title = '%s' and S.songID = R.SongID" % (songName))
+		    return self.getItems()
+	    except Exception as e:
+		    print(e)
 
     #works
     def updateSongSourceLink(self,title, genre, songId, newSourceLink, oldSourceLink, releaseYear, songDuration):
@@ -84,8 +106,10 @@ class Database:
     #works
     def searchSong(self, songName):
         try:
+            #self.cur.execute(
+            #    "SELECT * FROM song WHERE title = '%s'" % (songName))
             self.cur.execute(
-                "SELECT * FROM song WHERE title = '%s'" % (songName))
+                "SELECT title, genre, sourceLink, releaseYear FROM song WHERE title = '%s'" % (songName))
             return self.getItems()
         except:
             return "Song not found"
@@ -129,7 +153,7 @@ class Database:
     # works
     def getAllSongs(self):
         try:
-            self.cur.execute("SELECT * FROM song")
+            self.cur.execute("SELECT S.title, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating FROM song S, rating R WHERE S.songID = R.songID ORDER BY S.title")
             return self.getItems()
         except:
             return "Failed to fetch library"
@@ -141,13 +165,13 @@ class Database:
     #works
     def getAllArtists(self):
         result = []
-        self.cur.execute("SELECT * FROM artist")
+        self.cur.execute("SELECT A.artistName, A.age, M.knownFor FROM Artist A, Made M WHERE A.artistID = M.artistID ORDER BY A.artistName")
         return self.getItems()
     
     #works
     def getAllAlbums(self):
         result = []
-        self.cur.execute("SELECT * FROM album")
+        self.cur.execute("SELECT albumDuration, title, coverArtURL FROM album")
         return self.getItems()
 
     #works
@@ -159,7 +183,7 @@ class Database:
     #works
     def getAllRecordLabels(self):
         result = []
-        self.cur.execute("SELECT * FROM recordLabel")
+        self.cur.execute("SELECT companyName, dateEstablished, labelLocation FROM recordLabel")
         return self.getItems()
     
     #works
@@ -289,6 +313,80 @@ class Database:
             self.conn.commit()
         except Exception as e:
             print(e)
+
+    #works - Complex Queries Series
+    def findArtistBySongName(self, songName):
+        try:
+            self.cur.execute("SELECT A.artistName FROM Artist A, Contains C, Song S, Played P, Musician M WHERE S.title = '%s' AND S.songId = C.songId AND C.albumId = P.albumId AND P.musicianId = M.musicianId AND M.artistId = A.artistId" % (songName))
+            return self.getItems()
+        except Exception as e:
+            print(e)
+
+     #works - Complex Queries Series
+    def tenMusicWithWorstRating(self):
+        try:
+            self.cur.execute(
+                "SELECT song.title, rating.averageRating FROM song JOIN rating ON rating.songId = song.songId ORDER BY rating.averageRating ASC LIMIT 10")
+            return self.getItems()
+        except Exception as e:
+            print(e)
+
+    #works - Complex Queries Series
+    def songNameWithYearByArtist(self, artistName, releaseYear):
+         try:
+             self.cur.execute("SELECT S.title, S.releaseYear FROM Artist A, Contains C, Song S, Played P, Musician M WHERE S.releaseYear >= %i AND A.artistName = '%s' AND S.songId = C.songId AND C.albumId = P.albumId AND P.musicianId = M.musicianId AND M.artistId = A.artistId" % (releaseYear, artistName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+
+    #works
+    def findcompanyNameByAlbumName(self, albumName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'"% (albumName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+
+    #works
+    def findLocationByAlbumName(self, albumName):
+         try:
+             self.cur.execute("SELECT R.labelLocation FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'"% (albumName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+            
+    #works
+    def findRecLebDateByAlbumName(self, albumName):
+         try:
+             self.cur.execute("SELECT R.dateEstablished FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'"% (albumName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+
+    #works
+    def findcompanyNameBySongName(self, songName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM recordLabel R, publishes P, album A, Contains C, Song S WHERE S.songID = C.songID AND C.albumID = A.albumID AND A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND S.title = '%s'" % (songName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+
+    #works
+    def findcompanyNameByBandName(self, bandName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM musician M, played P1, publishes P2, recordLabel R WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND M.band = '%s'" % (bandName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+    #works
+    def findListOfCompanyNameByInstrument(self, instName):
+         try:
+             self.cur.execute("SELECT R.companyName FROM musician M, played P1, publishes P2, recordLabel R WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND M.instrument = '%s'" % (instName))
+             return self.getItems()
+         except Exception as e:
+             print(e)
+       
+
 
 # todo rate a song
 
