@@ -9,7 +9,7 @@ class SearchTab:
 
         if events == '-BUTTON-SEARCH-SONG-':
             value1 = searchTabGUI.values['-INPUT-SEARCH-SONG-']
-            window['-TABLE-SEARCH-SONG-'].Update(value1)
+        window['-TABLE-SEARCH-SONG-'].Update(value1)
     '''
 
     def searchTabGUI(self):
@@ -21,13 +21,14 @@ class SearchTab:
              [sg.Input(key='-INPUT-SEARCH-SONG-')],
              [sg.Button('search', key='-BUTTON-SEARCH-SONG-')],
              #[sg.Text(size=(100, 720), key='-OUTPUT-SEARCH-SONG-')]
-             [sg.Table(values=[['', '', '', '', '']], headings=[
-                     '  Title  ', '  Genre  ', ' Source Link ', ' releaseYear '], key='-TABLE-SEARCH-SONG-', enable_events=True, size=(1220, 20))]
+             [sg.Table(values=[['', '', '', '', '', '', '']], headings=[
+                     '  Title  ', '  Genre  ', '     Source Link     ', ' releaseYear ', ' Rating Count ', ' Average Rating '], key='-TABLE-SEARCH-SONG-', enable_events=True, size=(1220, 120))]
 
              ],
             key='search_Song_tab'
         )  # end of tab search
 
+        '''
         libraryTab = sg.Tab(
             'Library',
 
@@ -41,16 +42,54 @@ class SearchTab:
                 [sg.Text(size=(100, 720), key='-OUTPUT-UPDATE-SONG-LIB-')]],
             key='search_Song-lib_tab'
         )  # end of tab search
-
+        '''
         # search artist name tab
         searchArtistTab = sg.Tab(
             'Artists',
             [[sg.Text("Search artist")],
              [sg.Input(key='-INPUT-SEARCH-ARTIST-')],
              [sg.Button('search', key='-BUTTON-SEARCH-ARTIST-')],
-             [sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
+             #[sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
+             [sg.Table(values=[['', '', '']], headings=[
+                     '  Artist Name  ', '  age  ', '     Known For     '], key='-TABLE-SEARCH-ARTIST-', enable_events=True, size=(1220, 120))]
+            ],
             key='search_Artist_tab'
         )  # end of tab search
+
+        searchAlbumTab = sg.Tab(
+            'Album',
+            [[sg.Text("Search Album by Name")],
+             [sg.Input(key='-INPUT-SEARCH-ALBUM-')],
+             [sg.Button('search', key='-BUTTON-SEARCH-ALBUM-')],
+             #[sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
+             [sg.Table(values=[['', '', '']], headings=[
+                     '  Title  ', '  Album Duraction  ', '       Cover Art URL      '], key='-TABLE-SEARCH-ALBUM-', enable_events=True, size=(1220, 120))]
+            ],
+            key='search_Album_tab'
+        )  
+
+        
+        searchMusicianTab = sg.Tab(
+            'Musician',
+            [[sg.Text("Search Musician by Band Name")],
+             [sg.Input(key='-INPUT-SEARCH-MUSICIAN-')],
+             [sg.Button('search', key='-BUTTON-SEARCH-MUSICIAN-')],
+             [sg.Table(values=[['', '', '', '']], headings=[
+                     '      Name      ', ' Age ',   '   Instrument   ', '       Band      '], key='-TABLE-SEARCH-MUSICIAN-', enable_events=True, size=(1220, 120))]
+            ],
+            key='search_Musician_tab'
+        )  
+
+        searchRecordLabelTab = sg.Tab(
+            'Record',
+            [[sg.Text("Search Record by Name")],
+             [sg.Input(key='-INPUT-SEARCH-RECORD-')],
+             [sg.Button('search', key='-BUTTON-SEARCH-RECORD-')],
+             [sg.Table(values=[['', '', '']], headings=[
+                     '     Company Name     ', ' Date Established ',   '   Label Location   '], key='-TABLE-SEARCH-RECORD-', enable_events=True, size=(1220, 120))]
+            ],
+            key='search_Record_tab'
+        )  
 
         # the nested tab inside the Search tab
         searchTab = sg.Tab(
@@ -58,7 +97,10 @@ class SearchTab:
             [[sg.TabGroup(
                 [[
                     searchSongTab,
-                    searchArtistTab
+                    searchArtistTab,
+                    searchAlbumTab,
+                    searchMusicianTab,
+                    searchRecordLabelTab
                 ]],
                 key='tabgroupSearch',
                 enable_events=True
@@ -70,9 +112,15 @@ class SearchTab:
 
     def addEvents(self, events):
         eventList = [
-            ('-BUTTON-SEARCH-SONG-', self.db.searchSong,
-                '-INPUT-SEARCH-SONG-', '-TABLE-SEARCH-SONG-')
+            ['-BUTTON-SEARCH-SONG-', self.db.searchSong,
+                '-INPUT-SEARCH-SONG-', '-TABLE-SEARCH-SONG-']
+
         ]
 
+
+        #eventListButton = [()]
         for elem in eventList:
             events.append(elem)
+
+    
+
