@@ -19,7 +19,7 @@ st = SearchTab(db)
 events = []
 st.addEvents(events)
 
-sg.theme('Dark Purple 3')  # set window theme
+sg.theme('Dark Grey 9')  # set window theme
 
 # Define the window's contents
 
@@ -57,6 +57,23 @@ def main():
                 temp = elem[1](values[elem[2]])
                 # temp = db.searchSong(values['-INPUT-SEARCH-SONG-'])
                 window[elem[3]].update(values = temp)
+
+            if event == '-BUTTON-SEARCH-ARTIST-':
+                temp = db.searchArtist(values['-INPUT-SEARCH-ARTIST-'])
+                window['-TABLE-SEARCH-ARTIST-'].update(values = temp)
+
+            if event == '-BUTTON-SEARCH-ALBUM-':
+                temp = db.searchAlbum(values['-INPUT-SEARCH-ALBUM-'])
+                window['-TABLE-SEARCH-ALBUM-'].update(values = temp)
+            
+            if event == '-BUTTON-SEARCH-MUSICIAN-':
+                temp = db.searchMusician(values['-INPUT-SEARCH-MUSICIAN-'])
+                window['-TABLE-SEARCH-MUSICIAN-'].update(values = temp)
+            
+            if event == '-BUTTON-SEARCH-RECORD-':
+                temp = db.searchRecordLabel(values['-INPUT-SEARCH-RECORD-'])
+                window['-TABLE-SEARCH-RECORD-'].update(values = temp)
+
         # dt.check
         # ut.check
 

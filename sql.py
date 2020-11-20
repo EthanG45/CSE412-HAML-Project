@@ -103,54 +103,51 @@ class Database:
         except Exception as e:
             print(e)
 
-    #works
+    #works - works on GUI
     def searchSong(self, songName):
         try:
-            #self.cur.execute(
-            #    "SELECT * FROM song WHERE title = '%s'" % (songName))
-            self.cur.execute(
-                "SELECT title, genre, sourceLink, releaseYear FROM song WHERE title = '%s'" % (songName))
+            self.cur.execute("SELECT S.title, S.genre, S.sourceLink, S.releaseYear, R.numOfRating, R.averageRating FROM song S, rating R WHERE S.songID = R.songID AND title = '%s'" % (songName))
             return self.getItems()
         except:
             return "Song not found"
 
-   #works 
+   #works - works on GUI
     def searchAlbum(self, albumName):
         try:
             self.cur.execute(
-                "SELECT * FROM album WHERE title = '%s'" % (albumName))
+                "SELECT title, albumDuration, coverArtURL FROM album WHERE title = '%s'" % (albumName))
             return self.getItems()
         except:
-            return "Song not found"
+            return "Album not found"
 
-    #works
+    #works - works on GUI
     def searchMusician(self, bandName):
         try:
             self.cur.execute(
-                "SELECT * FROM musician WHERE band = '%s'" % (bandName))
+                "SELECT A.artistName, A.age, M.instrument, M.band FROM musician M, artist A WHERE M.artistId = A.artistId AND band = '%s'" % (bandName))
             return self.getItems()
         except:
-            return "Song not found"
+            return "Musician not found"
 
-     #works
+     #works - works on GUI 
     def searchArtist(self, artistName):
         try:
             self.cur.execute(
-                "SELECT * FROM artist WHERE artistName = '%s'" % (artistName))
+                "SELECT artistName, age, knownFor FROM Artist A, Made M WHERE A.artistID = M.artistID AND artistName = '%s'" % (artistName))
             return self.getItems()
         except:
-            return "Song not found"
+            return "Artist not found"
     
-    #works
+    #works - works on GUI
     def searchRecordLabel(self, companyName):
         try:
             self.cur.execute(
-                "SELECT * FROM recordLabel WHERE companyName = '%s'" % (companyName))
+                "SELECT companyName, dateEstablished, labelLocation FROM recordLabel WHERE companyName = '%s'" % (companyName))
             return self.getItems()
         except:
-            return "Song not found"
+            return "RecordLabel not found"
 
-    # works
+    # works - works on GUI
     def getAllSongs(self):
         try:
             self.cur.execute("SELECT S.title, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating FROM song S, rating R WHERE S.songID = R.songID ORDER BY S.title")
@@ -162,16 +159,16 @@ class Database:
         self.cur.execute(query)
         return self.getItems()
 
-    #works
+    #works - works on GUI
     def getAllArtists(self):
         result = []
-        self.cur.execute("SELECT A.artistName, A.age, M.knownFor FROM Artist A, Made M WHERE A.artistID = M.artistID ORDER BY A.artistName")
+        self.cur.execute("SELECT A.artistName, A.age, M.knownFor, M2.instrument, M2.band FROM Artist A, Made M, Musician M2 WHERE A.artistID = M.artistID AND A.artistID = M2.artistID ORDER BY A.artistName")
         return self.getItems()
     
-    #works
+    #works - works on GUI
     def getAllAlbums(self):
         result = []
-        self.cur.execute("SELECT albumDuration, title, coverArtURL FROM album")
+        self.cur.execute("SELECT title, albumDuration, coverArtURL FROM album")
         return self.getItems()
 
     #works
@@ -180,7 +177,7 @@ class Database:
         self.cur.execute("SELECT * FROM musician")
         return self.getItems()
     
-    #works
+    #works - works on GUI
     def getAllRecordLabels(self):
         result = []
         self.cur.execute("SELECT companyName, dateEstablished, labelLocation FROM recordLabel")

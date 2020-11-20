@@ -14,7 +14,7 @@ class LibraryTab:
 
             [[sg.Text("Records")],
             #  [sg.Table(testlistbox, key = '-RECORD-L01-', size=(1270, 1))]
-            [sg.Table(values = self.db.getAllRecordLabels(), headings=[' CompanyName ', ' Date Established ', ' Label Location '], key = '-TABLE-L01-', enable_events=True, size = (1220, 120))]
+            [sg.Table(values = self.db.getAllRecordLabels(), headings=[' CompanyName ', ' Date Established ', ' Label Location '], key = '-TABLE-L01-', enable_events=True, size = (1220, 220))]
             #  [sg.Table(values = db., headings= ['Title', 'Genre', 'Duration', 'Link', 'Release Year'], key = '-SONG-L05-', enable_events=True)]
             ],
             key='L01'
@@ -24,7 +24,7 @@ class LibraryTab:
             'Artist',
             [[sg.Text("Artists")],
                 #[sg.Listbox(testlistbox, key = '-ARTIST-L02-', size = libSize)]
-                [sg.Table(values = self.db.getAllArtists(), headings=[' Artist Name ', ' Age ', ' knownfor ' ], key = '-TABLE-L02-', enable_events=True, size = (1220, 120))]
+                [sg.Table(values = self.db.getAllArtists(), headings=[' Artist Name ', ' Age ', ' knownfor ', '  Instrument  ', '      Band      ' ], key = '-TABLE-L02-', enable_events=True, size = (1220, 220))]
             ],
             key='L02'
         )
@@ -33,7 +33,7 @@ class LibraryTab:
             'Album',
             [[sg.Text("Albums")],
                 #[sg.Listbox(testlistbox, key = '-ALBUM-L04-', size = libSize)]
-                [sg.Table(values = self.db.getAllAlbums(), headings=[' Album Duration ', ' Title ', ' Cover Art URL ' ], key = '-TABLE-L04-', enable_events=True, size = (1220, 120))]
+                [sg.Table(values = self.db.getAllAlbums(), headings=[ ' Title ', ' Album Duration ', '        Cover Art URL        ' ], key = '-TABLE-L04-', enable_events=True, size = (1220, 220))]
             ],
             key='L04'
         )
@@ -41,7 +41,7 @@ class LibraryTab:
         libTableSong = sg.Tab(
             'Song',
             [[sg.Text("Songs")],
-            [sg.Table(values = self.db.getAllSongs(), headings= ['Title', 'Genre', 'Duration', 'Link', 'Release Year', ' Rating '], key = '-TABLE-L05-', enable_events=True, size = (1220, 20))]
+            [sg.Table(values = self.db.getAllSongs(), headings= ['Title', 'Genre', 'Duration', 'Link', 'Release Year', ' Rating '], key = '-TABLE-L05-', enable_events=True, size = (1220, 220))]
             ],
             key='L05'
         )
