@@ -15,9 +15,9 @@ class CreateTab:
 
             [[sg.Text("Create a Record Label", size=(1270, 1))],
              [sg.Text("Company Name"), sg.Input(key='-companyName-C01-')],
+             [sg.Text("Label Location"), sg.Input(key='-labelLocation-C01-')],
              [sg.Text("Date Established"), sg.Input(key='-dateEstablished-C01-', size=(20,1)), 
                     sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-dateEstablished-C01-', no_titlebar=True, key = 'Calendar-C01' )],
-             [sg.Text("Label Location"), sg.Input(key='-labelLocation-C01-')],
              [sg.Button('CREATE', key='-BUTTON-C01-')],
             #[sg.Text(size=(100, 720), key='-OUTPUT-C01-')]],
 
@@ -30,16 +30,17 @@ class CreateTab:
              [sg.Text(size=(100, 720), key='-OUTPUT-C01-')]],
             key='C01'
         )  # end of tab Record
+
         createTableArtist = sg.Tab(
             'Artist',
 
-            [[sg.Text("Create an Artist")],
+            [[sg.Text("Create an Artist", size=(1270, 1))],
              [sg.Text("Artist Name"), sg.Input(key='-ARTIST-C02-')],
              [sg.Text("Age"), sg.Input(key='-AGE-C02-')],
 
              # Musician elements
              [sg.Text("Instrument"), sg.Input(key='-INSTRUMENT-C02-')],
-             [sg.Text("band"), sg.Input(key='-BAND-C02-')],
+             [sg.Text("Band Name"), sg.Input(key='-BAND-C02-')],
 
              [sg.Button('CREATE', key='-BUTTON-C02-')],
              [sg.Text(size=(100, 720), key='-OUTPUT-C02-')]],
@@ -89,9 +90,8 @@ class CreateTab:
 
         createTableMade = sg.Tab(
             'Made',
-            [[sg.Text("---------")],
-             [sg.Text("Known For?")],
-             [sg.Input(key='-KNOWN-FOR-C06-')],
+            [[sg.Text("-----")],
+             [sg.Text("Known For?"), sg.Input(key='-KNOWN-FOR-C06-')],
 
              [sg.Button('CREATE', key='-BUTTON-C06-')],
              [sg.Text(size=(100, 720), key='-OUTPUT-C06-')]

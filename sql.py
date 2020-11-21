@@ -160,16 +160,23 @@ class Database:
             return self.getItems()
         except:
             return "Failed to fetch library"
+
+    #works - works on GUI ARVINS CHANGE BACK PROBABLY
+    def getAllArtists(self):
+       result = []
+       self.cur.execute("SELECT A.artistName, A.age, M.knownFor, M2.instrument, M2.band FROM Artist A, Made M, Musician M2 WHERE A.artistID = M.artistID AND A.artistID = M2.artistID ORDER BY A.artistName")
+       return self.getItems()
+
     #works
     def sqlReadAny(self,query):
         self.cur.execute(query)
         return self.getItems()
 
     #works - works on GUI
-    def getAllArtists(self):
-        result = []
-        self.cur.execute("SELECT A.artistName, A.age, M.knownFor, M2.instrument, M2.band FROM Artist A, Made M, Musician M2 WHERE A.artistID = M.artistID AND A.artistID = M2.artistID ORDER BY A.artistName")
-        return self.getItems()
+    # def getAllArtists(self):
+    #     result = []
+    #     self.cur.execute("SELECT * FROM artist")
+    #     return self.getItems()
     
     #works - works on GUI
     def getAllAlbums(self):
@@ -273,12 +280,17 @@ class Database:
         except Exception as e:
             print(e)
 
-    #works
-    def insertArtist(self, artistName, age):
+    #Works
+    def insertArtist(self, artistName, age, instrument, band):
         artistId = int(round(time.time()))
+        musicianId = artistId
         try:
-            self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES( '" +
-                artistId + "', '" + artistName + "', '" + age + "')")
+            #
+            #self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES(%i, '%s', %i)" % (artistId, artistName, age))
+            self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES(%i, '%s', %i)" % (artistId, artistName ,age))
+            self.cur.execute("INSERT INTO musician(artistId, musicianId, instrument, band) VALUES(%i, %i, '%s', '%s')" % (artistId, musicianId ,instrument, band))
+               # artistId + "', '" + musicianId + "', '" + instrument + "', '"+ band + "')")
+            self.conn.commit()
         except Exception as e:
             print(e)
     

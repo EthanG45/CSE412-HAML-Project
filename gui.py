@@ -47,8 +47,14 @@ def main():
     window = sg.Window('H.A.M.L.', layout, font=(
         "Roboto", 12), size=(1280, 720), finalize=True)
 
+    def isValid(*args):
+        for elem in args:
+            if elem == '':
+                return False
+        return True;
+
     def checkButtonPress(event, values):
-        
+        print(event)
         # events is formatted as follows
         # ('event', 'function', 'input', 'output', 'type')
         for elem in events:
@@ -78,20 +84,47 @@ def main():
             companyName = values['-companyName-C01-']
             dateEstablished = values['-dateEstablished-C01-']
             labelLocation = values ['-labelLocation-C01-']
-            if companyName != '' and dateEstablished != '' and labelLocation != '':
-                values = db.insertRecordLabel(companyName, dateEstablished, labelLocation )
-                window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
-                #window[]
+            if isValid(companyName, dateEstablished, labelLocation):
+                db.insertRecordLabel(companyName, dateEstablished, labelLocation )
+                #window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
+                window.FindElement('-companyName-C01-').update('')
+                window.FindElement('-dateEstablished-C01-').update('')
+                window.FindElement('-labelLocation-C01-').update('')
 
             else:
                  window['-OUTPUT-C01-'].update("Failed to create Record!")
 
-            window.FindElement('-companyName-C01-').update('')
-            window.FindElement('-dateEstablished-C01-').update('')
-            window.FindElement('-labelLocation-C01-').update('')
+        
+        if event == '-BUTTON-C02-':
+            artistName = values['-ARTIST-C02-']
+            artistAge = values['-AGE-C02-']
+            artistInstrument = values['-INSTRUMENT-C02-']
+            artistBand = values['-BAND-C02-']
 
-        # dt.check
-        # ut.check
+            if isValid(artistName, artistAge, artistInstrument, artistBand):
+                db.insertArtist(artistName, artistAge, artistInstrument, artistBand )
+                #window['-TABLE-L02-'].update(values = db.getAllArtists())
+
+        '''
+        if event == 'L01':
+            window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
+        elif event == 'L02':
+            window['-TABLE-L02-'].update(values = db.getAllArtists())
+        elif event == 'L04':
+            window['-TABLE-L04-'].update(values = db.getAllAlbums())
+        elif event == 'L05':
+            window['-TABLE-L05-'].update(values = db.getAllSongs())
+        '''
+
+        window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
+        window['-TABLE-L02-'].update(values = db.getAllArtists())
+        window['-TABLE-L04-'].update(values = db.getAllAlbums())
+        window['-TABLE-L05-'].update(values = db.getAllSongs())
+
+
+
+
+
     while True:
 
         event, values = window.read()
