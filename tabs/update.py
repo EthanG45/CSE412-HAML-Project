@@ -14,14 +14,10 @@ class UpdateTab:
             'Record',
 
             [[sg.Text("Update A Table Record", size=(1270, 1))],
-             [sg.Text("Company Name")],
-             [sg.Input(key='-companyName-U01-')],
-             [sg.Text("Date Established")],
-             [sg.Input(key='-dateEstablished-U01-')],
-             [sg.Text("Label Location")],
-             [sg.Input(key='-labelLocation-U01-')],
-             [sg.Text("Record Label Id")],
-             [sg.Input(key='-recordLabelId-U01-')],
+             [sg.Text("Company Name"), sg.Input(key='-companyName-U01-')],
+             [sg.Text("Date Established"), sg.Input(key='-dateEstablished-U01-')],
+             [sg.Text("Label Location"), sg.Input(key='-labelLocation-U01-')],
+             [sg.Text("Record Label Id"), sg.Input(key='-recordLabelId-U01-')],
              [sg.Button('DELETE', key='-BUTTON-U01-')],
              [sg.Text(size=(100, 700), key='-OUTPUT-U01-')]],
             key='U01'
@@ -29,17 +25,14 @@ class UpdateTab:
 
         updateTableArtist = sg.Tab(
             'Artist',
-            [[sg.Text("Create a Artist")],
-             [sg.Text("Artist Name")],
-             [sg.Input(key='-ARTIST-NAME-U02-')],
-             [sg.Text("Age")],
-             [sg.Input(key='-AGE-U02-')],
-
+            [[sg.Text("Update an Artist")],
+             #Artist Elements
+             [sg.Text("Artist Name"), sg.Input(key='-ARTIST-NAME-U02-')],
+             [sg.Text("Age"), sg.Input(key='-AGE-U02-')],
+             
              # Musician elements
-             [sg.Text("Instrument")],
-             [sg.Input(key='-INSTRUMENT-U02-')],
-             [sg.Text("band")],
-             [sg.Input(key='-BAND-U02-')],
+             [sg.Text("Instrument"), sg.Input(key='-INSTRUMENT-U02-')],
+             [sg.Text("band"), sg.Input(key='-BAND-U02-')],
 
              [sg.Button('DELETE', key='-BUTTON-U02-')],
              [sg.Text(size=(100, 700), key='-OUTPUT-U02-')]],
@@ -49,15 +42,11 @@ class UpdateTab:
 
         updateTableAlbum = sg.Tab(
             'Album',
-            [[sg.Text("---------")],
-             [sg.Text("Album Duration")],
-             [sg.Input(key='-ALBUM-DURATION-U04-')],
-
-             [sg.Text("Title")],
-             [sg.Input(key='-TITLE-U04-')],
-
-             [sg.Text("Cover Art URL")],
-             [sg.Input(key='-COVER ART URL-U04-')],
+            [[sg.Text("Update an Album")],
+             
+             [sg.Text("Album Duration"),sg.Input(key='-ALBUM-DURATION-U04-')],
+             [sg.Text("Title"), sg.Input(key='-TITLE-U04-')],
+             [sg.Text("Cover Art URL"),sg.Input(key='-COVER ART URL-U04-')],
 
              [sg.Button('DELETE', key='-BUTTON-U04-')],
              [sg.Text(size=(100, 700), key='-OUTPUT-U04-')]

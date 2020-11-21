@@ -46,7 +46,7 @@ class SearchTab:
         # search artist name tab
         searchArtistTab = sg.Tab(
             'Artists',
-            [[sg.Text("Search artist")],
+            [[sg.Text("Search Artist by Name")],
              [sg.Input(key='-INPUT-SEARCH-ARTIST-')],
              [sg.Button('search', key='-BUTTON-SEARCH-ARTIST-')],
              #[sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
@@ -58,12 +58,12 @@ class SearchTab:
 
         searchAlbumTab = sg.Tab(
             'Album',
-            [[sg.Text("Search Album by Name")],
+            [[sg.Text("Search Album by Title")],
              [sg.Input(key='-INPUT-SEARCH-ALBUM-')],
              [sg.Button('search', key='-BUTTON-SEARCH-ALBUM-')],
              #[sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
-             [sg.Table(values=[['', '', '']], headings=[
-                     '  Title  ', '  Album Duraction  ', '       Cover Art URL      '], key='-TABLE-SEARCH-ALBUM-', enable_events=True, size=(1220, 120))]
+             [sg.Table(values=[['', '', '']], 
+                headings=['  Title  ', '  Album Duraction  ', '       Cover Art URL      '], key='-TABLE-SEARCH-ALBUM-', enable_events=True, size=(1220, 120))]
             ],
             key='search_Album_tab'
         )  

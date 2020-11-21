@@ -1,6 +1,8 @@
-from faker import Faker
 import getpass
+import time
+import re
 import psycopg2
+from faker import Faker
 from string import Template
 from psycopg2 import OperationalError
 
@@ -24,12 +26,16 @@ class Database:
         self.cur.close()
         self.conn.close()
 
-    
     def getItems(self):
         result = []
         for i in self.cur:
             result.append(i)
         return result
+
+    # works
+    def replaceApostrophe(self, myString):
+        myString = re.sub('(?<=[a-z])\'(?=[a-z])', '', myString)
+        return myString
 
     def selectQuery(self, table, args, ):
         query = "SELECT * FROM "
@@ -65,7 +71,7 @@ class Database:
     def changeSongAverageRating(self, songName, rating):
         self.conn.set_session(autocommit=True)
         try:
-            self.cur.execute("SELECT S.songID FROM Song S, Rating R where S.songID = R.songID and S.title ='%s'" %(songName))
+            self.cur.execute("SELECT S.songID FROM Song S, Rating R where S.songID = R.songID and LOWER(S.title) ='%s'" %(songName.lower()))
             song_id = self.getItems()[0][0]
             self.cur.execute("UPDATE Rating SET averageRating= %i WHERE songID = %i" %(rating, song_id))
             print('Updated Average Rating with ', rating)
@@ -76,7 +82,7 @@ class Database:
     def changeSongUserRating(self, songName, rating):
         self.conn.set_session(autocommit=True)
         try:
-            self.cur.execute("SELECT S.songID FROM Song S, Rating R where S.songID = R.songID and S.title ='%s'" %(songName))
+            self.cur.execute("SELECT S.songID FROM Song S, Rating R where S.songID = R.songID and LOWER(S.title) ='%s'" %(songName.lower()))
             song_id = self.getItems()[0][0]
             self.cur.execute("UPDATE Rating SET userRating= %i WHERE songID = %i" %(rating, song_id))
             print('Updated User Rating with ', rating)
@@ -86,27 +92,27 @@ class Database:
     #works
     def getSongUserRating2(self, songName):
 	    try:
-		    self.cur.execute("SELECT S.title, R.averageRating From song S, rating R WHERE S.title = '%s' and S.songID = R.SongID" % (songName))
+		    self.cur.execute("SELECT S.title, R.averageRating From song S, rating R WHERE LOWER(S.title) = '%s' and S.songID = R.SongID" % (songName.lower()))
 		    return self.getItems()
 	    except Exception as e:
 		    print(e)
 
-    #works
-    def updateSongSourceLink(self,title, genre, songId, newSourceLink, oldSourceLink, releaseYear, songDuration):
-        self.conn.set_session(autocommit=True)
-        try:
-            self.cur.execute("UPDATE song SET sourceLink= '" + newSourceLink + "'" + "WHERE song.title= '" + title + "'" + "AND songId= '"
-                        + str(songId) + "'" + "AND genre = '" + genre +
-                        "'" + "AND releaseYear= '" + str(releaseYear) + "'"
-                        + "AND songDuration= '" + str(songDuration) + "'" + "AND sourceLink= '" + oldSourceLink + "'")
-            print('Updated: Replaced ', oldSourceLink, ' with ', newSourceLink)
-        except Exception as e:
-            print(e)
+     #works
+    # def updateSongSourceLink(self,title, genre, songId, newSourceLink, oldSourceLink, releaseYear, songDuration):
+    #     self.conn.set_session(autocommit=True)
+    #     try:
+    #         self.cur.execute("UPDATE song SET sourceLink= '" + newSourceLink + "'" + "WHERE song.title= '" + title + "'" + "AND songId= '"
+    #                     + str(songId) + "'" + "AND genre = '" + genre +
+    #                     "'" + "AND releaseYear= '" + str(releaseYear) + "'"
+    #                     + "AND songDuration= '" + str(songDuration) + "'" + "AND sourceLink= '" + oldSourceLink + "'")
+    #         print('Updated: Replaced ', oldSourceLink, ' with ', newSourceLink)
+    #     except Exception as e:
+    #         print(e)
 
     #works - works on GUI
     def searchSong(self, songName):
         try:
-            self.cur.execute("SELECT S.title, S.genre, S.sourceLink, S.releaseYear, R.numOfRating, R.averageRating FROM song S, rating R WHERE S.songID = R.songID AND title = '%s'" % (songName))
+            self.cur.execute("SELECT S.title, S.genre, S.sourceLink, S.releaseYear, R.numOfRating, R.averageRating FROM song S, rating R WHERE S.songID = R.songID AND LOWER(title) = '%s'" % (songName.lower()))
             return self.getItems()
         except:
             return "Song not found"
@@ -115,7 +121,7 @@ class Database:
     def searchAlbum(self, albumName):
         try:
             self.cur.execute(
-                "SELECT title, albumDuration, coverArtURL FROM album WHERE title = '%s'" % (albumName))
+                "SELECT title, albumDuration, coverArtURL FROM album WHERE LOWER(title) = '%s'" % (albumName.lower()))
             return self.getItems()
         except:
             return "Album not found"
@@ -124,7 +130,7 @@ class Database:
     def searchMusician(self, bandName):
         try:
             self.cur.execute(
-                "SELECT A.artistName, A.age, M.instrument, M.band FROM musician M, artist A WHERE M.artistId = A.artistId AND band = '%s'" % (bandName))
+                "SELECT A.artistName, A.age, M.instrument, M.band FROM musician M, artist A WHERE M.artistId = A.artistId AND LOWER(band) = '%s'" % (bandName.lower()))
             return self.getItems()
         except:
             return "Musician not found"
@@ -133,7 +139,7 @@ class Database:
     def searchArtist(self, artistName):
         try:
             self.cur.execute(
-                "SELECT artistName, age, knownFor FROM Artist A, Made M WHERE A.artistID = M.artistID AND artistName = '%s'" % (artistName))
+                "SELECT artistName, age, knownFor FROM Artist A, Made M WHERE A.artistID = M.artistID AND LOWER(artistName) = '%s'" % (artistName.lower()))
             return self.getItems()
         except:
             return "Artist not found"
@@ -142,7 +148,7 @@ class Database:
     def searchRecordLabel(self, companyName):
         try:
             self.cur.execute(
-                "SELECT companyName, dateEstablished, labelLocation FROM recordLabel WHERE companyName = '%s'" % (companyName))
+                "SELECT companyName, dateEstablished, labelLocation FROM recordLabel WHERE LOWER(companyName) = '%s'" % (companyName.lower()))
             return self.getItems()
         except:
             return "RecordLabel not found"
@@ -190,7 +196,8 @@ class Database:
         return self.getItems()
     
     #works
-    def insertAlbum(self, albumDuration, albumId, title):
+    def insertAlbum(self, albumDuration, title):
+        albumId = int(round(time.time()))
         try:
             self.cur.execute("INSERT INTO album(albumDuration, albumId, title, coverArtURL) VALUES( '" +
                 albumDuration + "', '" + albumId + "', '" + title + "', '" + fake.image_url() + "')")
@@ -216,7 +223,8 @@ class Database:
             print(e)
 
     #works
-    def insertSong(self, title, genre, songDuration, songId, releaseYear):
+    def insertSong(self, title, genre, songDuration, releaseYear):
+        songId = int(round(time.time()))
         try:
             self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES( '" +
                 title + "', '" + genre + "', '" + songDuration + "', '" + songId + "', '" + fake.domain_name() +  "', '" + releaseYear + "')")
@@ -240,10 +248,12 @@ class Database:
             print(e)
 
     #works
-    def insertRecordLabel(self, companyName, dateEstablished, labelLocation, recordLabelId):
+    def insertRecordLabel(self, companyName, dateEstablished, labelLocation):
+        recordLabelId =  int(round(time.time()))
         try:
-            self.cur.execute("INSERT INTO recordLabel(companyName, dateEstablished, labelLocation, recordLabelId) VALUES( '" +
-                companyName + "', '" + dateEstablished + "', '" + labelLocation + "', '" + recordLabelId + "')")
+            self.cur.execute("INSERT INTO recordLabel(companyName, dateEstablished, labelLocation, recordLabelId) VALUES('%s', '%s', '%s', %i)" % (self.replaceApostrophe(companyName), dateEstablished ,self.replaceApostrophe(labelLocation), recordLabelId))
+
+            
         except Exception as e:
             print(e)
 
@@ -264,7 +274,8 @@ class Database:
             print(e)
 
     #works
-    def insertArtist(self, artistId, artistName, age):
+    def insertArtist(self, artistName, age):
+        artistId = int(round(time.time()))
         try:
             self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES( '" +
                 artistId + "', '" + artistName + "', '" + age + "')")
@@ -288,7 +299,9 @@ class Database:
             print(e)
     
     #works
-    def insertMusician(self, artistId, musicianId, instrument, band):
+    def insertMusician(self, instrument, band):
+        artistId = int(round(time.time()))
+        musicianId = artistId
         try:
             self.cur.execute("INSERT INTO musician(artistId, musicianId, instrument, band) VALUES( '" +
                 artistId + "', '" + musicianId + "', '" + instrument + "', '"+ band + "')")
