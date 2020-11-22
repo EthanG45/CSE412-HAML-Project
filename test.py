@@ -26,7 +26,13 @@ db = sql.Database()
 # print(db.findLocationByAlbumName('NO'))
 # db.deleteArtist('aatest')
 # print(db.sqlReadAny("SELECT * FROM recordLabel"))
-# print(db.sqlReadAny("SELECT companyName, dateEstablished, labelLocation FROM recordLabel WHERE companyName = 'NavajoWhite'")[0][2])
+print(db.sqlReadAny("SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId AND S.title LIKE '%AAARamon%'"))
+
+# Ethan=# SELECT * FROM song WHERE title = 'AAAA Ramon Song';
+#       title      |  genre  | songduration |   songid   |    sourcelink    | releaseyear 
+# -----------------+---------+--------------+------------+------------------+-------------
+#  AAAA Ramon Song | Country |          390 | 1606047302 | smith-daniel.com |        2018
+
 # print(db.getAllArtists())
 # print(db.getAllArtists())
 # CLEAR MY TERMINAL
@@ -38,3 +44,5 @@ db = sql.Database()
 #print(db.getAllRecordLabels())
 #db.deleteRecordLabel('AAlbert new cOmpany')
 # print(db.allAlbumName()[0][0])
+# db.createSongAndAlbum('zzzzalbum', 'please work', 'rock', 2009)
+#print(db.getAllSongs())

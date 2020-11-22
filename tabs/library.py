@@ -41,11 +41,12 @@ class LibraryTab:
             key='L02'
         )
 
+        # TODO: album is duplicated in table likely because it wasn't delete 
         libTableAlbum = sg.Tab(
             'Album',
             [[sg.Text("Albums")],
                 #[sg.Listbox(testlistbox, key = '-ALBUM-L03-', size = libSize)]
-                [sg.Table(values=self.db.getAllAlbums(), headings=[' Title ', 'Album Duration',
+                [sg.Table(values=self.db.getAllAlbums(), headings=['Title', 'Album Duration',
                                                                    'Cover Art URL', 'Averaqe Rating', 'Number of Listeners', 'User Rating'], key='-TABLE-L03-', enable_events=True, size=(1220, 35))],
                 #[sg.Table(values = [['','','']], headings=[ ' Title ', ' Album Duration ', '        Cover Art URL        ' ], key = '-TABLE-L03-', enable_events=True, size = (1220, 220))]
                 [
@@ -54,9 +55,9 @@ class LibraryTab:
                 #                               size=(25, 10),
                 #                               orientation='horizontal',
                 #                               font=('Helvetica', 12), key='-RATING-L03-'),
-                #  sg.Button('ADD RATING', key='-BUTTON-L03-'), 
-                 sg.Button('DELETE', key='-DELETE-BUTTON-L03-')]
-                 
+                #  sg.Button('ADD RATING', key='-BUTTON-L03-'),
+                sg.Button('DELETE', key='-DELETE-BUTTON-L03-')]
+
              ],
             key='L03'
         )
@@ -64,7 +65,8 @@ class LibraryTab:
         libTableSong = sg.Tab(
             'Song',
             [[sg.Text("Songs")],
-             [sg.Table(values=self.db.getAllSongs(), headings=['Song Title', 'Album Title', 'Genre', 'Duration', 'Link',
+
+             [sg.Table(values=self.db.getAllSongs(), headings=['Song', 'Album', 'Artist', 'Genre', 'Duration', 'Link',
                                                                'Release Year', 'Average Rating', 'Number of Listeners', 'Rating'], key='-TABLE-L04-', enable_events=True, size=(1220, 35))],
              #[sg.Table(values = [['','','','','','']], headings= ['Title', 'Genre', 'Duration', 'Link', 'Release Year', ' Rating '], key = '-TABLE-L04-', enable_events=True, size = (1220, 220))]
              [sg.Text("Rating"), sg.Slider(range=(0, 5),

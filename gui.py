@@ -9,6 +9,7 @@ from tabs.update import UpdateTab
 from tabs.library import LibraryTab
 from tabs.search import SearchTab
 from tabs.insights import InsightsTab
+from tabs.feelingLucky import FeelingLuckyTab
 
 db = sql.Database()  # import db
 ct = CreateTab(db)
@@ -17,6 +18,7 @@ ut = UpdateTab(db)
 lt = LibraryTab(db)
 st = SearchTab(db)
 it = InsightsTab(db)
+ft = FeelingLuckyTab(db)
 
 events = []
 st.addEvents(events)
@@ -54,7 +56,8 @@ def main():
                 dt.deleteTabGUI(),
                 st.searchTabGUI(),
                 lt.libraryTabGUI(),
-                it.insightsTabGUI()
+                it.insightsTabGUI(),
+                ft.feelingLuckyTabGUI()
             ]],
             key='tabgroup',
             enable_events=True
@@ -65,7 +68,7 @@ def main():
 
     # Create the window
     window = sg.Window('H.A.M.L.', layout, font=(
-        "Roboto", 12), size=(1280, 720), finalize=True)
+        "Roboto", 12), size=(1920, 1080), finalize=True)
 
     def isValid(*args):
         for elem in args:
@@ -87,6 +90,10 @@ def main():
         if event == '-BUTTON-SEARCH-ARTIST-':
             temp = db.searchArtist(values['-INPUT-SEARCH-ARTIST-'])
             window['-TABLE-SEARCH-ARTIST-'].update(values=temp)
+
+        if event == '-BUTTON-SEARCH-SONG-':
+            temp = db.searchSong(values['-INPUT-SEARCH-SONG-'])
+            window['-TABLE-SEARCH-SONG-'].update(values=temp)
 
         if event == '-BUTTON-SEARCH-ALBUM-':
             temp = db.searchAlbum(values['-INPUT-SEARCH-ALBUM-'])
@@ -111,16 +118,18 @@ def main():
                 titleName = values['-TITLE-C01-'][0]
 
                 if isValid(companyName, dateEstablished, labelLocation, titleName):
-                    db.insertRecordLabel(titleName, companyName, dateEstablished, labelLocation)
+                    db.insertRecordLabel(
+                        titleName, companyName, dateEstablished, labelLocation)
                     #window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
                     window.FindElement('-companyName-C01-').update('')
                     window.FindElement('-labelLocation-C01-').update('')
                     window.FindElement('-dateEstablished-C01-').update('')
                     window['-OUTPUT-C01-'].update("Record Label created")
                 else:
-                    window['-OUTPUT-C01-'].update("Failed to create Record Label!")
+                    window['-OUTPUT-C01-'].update(
+                        "Failed to create Record Label!")
             except:
-                    sg.popup('Select an album please')
+                sg.popup('Select an album please')
 
             # Force this window to have focus after window change (macos bug)
             window.TKroot.focus_force()
@@ -136,7 +145,7 @@ def main():
                 titleName = values['-TITLE-C02-'][0]
                 # recordLabelName = values['-RECORD-LABEL-NAME-C02-'][0]
                 # recordLabelCity = values['-RECORD-LABEL-CITY-C02-'][1]
-                
+
                 '''recordLabelName, recordLabelCity'''
 
                 if isValid(artistName, artistAge, artistInstrument, artistBand, titleName):
@@ -150,12 +159,12 @@ def main():
                 else:
                     window['-OUTPUT-C02-'].update("Failed to create Artist!")
             except:
-                    sg.popup('Select an album please')
+                sg.popup('Select an album please')
 
             updatelibtabs()
 
         ##########################
-        
+
         # # CREATE ALBUM OG
         # if event == '-BUTTON-SEARCH-SONG-C04-':
         #     gui.createAlbumSongSearch = db.searchSong(values['-INPUT-SEARCH-SONG-C04-'])
@@ -186,16 +195,18 @@ def main():
                 songTitle = values['-SONG-TITLE-C04-']
                 songGenre = values['-GENRE-C04-'][0]
                 songReleaseYear = values['-RELEASE-YEAR-C04-']
+                artist = values['-ARTIST-TITLE-C04-'][0]
 
-                if isValid(albumTitle, songTitle, songGenre, songReleaseYear):
-                    db.createSongAndAlbum(albumTitle, songTitle, songGenre, songReleaseYear)
+                if isValid(albumTitle, songTitle, songGenre, songReleaseYear, artist):
+                    db.createSongAndAlbum(
+                        artist, albumTitle, songTitle, songGenre, int(songReleaseYear))
                     window.FindElement('-ALBUM-TITLE-C04-').update('')
                     window.FindElement('-SONG-TITLE-C04-').update('')
-                    window.FindElement('-GENRE-C04-').update('')
                     window.FindElement('-RELEASE-YEAR-C04-').update('')
                     window['-OUTPUT-C04-'].update("Song and album created")
                 else:
-                    window['-OUTPUT-C04-'].update("Failed to create Album and Song!")
+                    window['-OUTPUT-C04-'].update(
+                        "Failed to create Album and Song!")
             except:
                 window['-OUTPUT-C04-'].update('')
                 sg.popup('Please select a genre and fill out other fields')
@@ -226,9 +237,9 @@ def main():
                 # print(genreSong)
 
                 if isValid(titleSong, genreSong, releaseYearsong, albumTitleName):
-                    db.insertSong(albumTitleName, titleSong, genreSong, releaseYearsong)
+                    db.insertSong(albumTitleName, titleSong,
+                                  genreSong, releaseYearsong)
                     window.FindElement('-TITLE-C05-').update('')
-                    window.FindElement('-GENRE-C05-').update('')
                     window.FindElement('-releaseYear-C05-').update('')
                     window['-OUTPUT-C05-'].update("Song created")
                 else:
@@ -243,7 +254,7 @@ def main():
         ### LIBRARY EVENTS ###
 
         if event == '-BUTTON-L03-':
-            albumIndex =  values['-TABLE-L03-'][0]
+            albumIndex = values['-TABLE-L03-'][0]
             albumToRating = gui.albumsTable[albumIndex][0]
 
             #db.changeWholeRating(albumToRating, values['-RATING-L03-'])
@@ -251,7 +262,7 @@ def main():
 
         # LIST SONGS - UPDATE RATING
         if event == '-BUTTON-L04-':
-            
+
             try:
                 ratingIndex = values['-TABLE-L04-'][0]
                 # if isValid(ratingIndex):
@@ -265,18 +276,19 @@ def main():
         # DELETE SECTION
 
         if event == '-DELETE-BUTTON-L01-':
-            
+
             try:
                 recordIndex = values['-TABLE-L01-'][0]
-                print(recordIndex)
+                # print(recordIndex)
                 recordToDelete = gui.recordTable[recordIndex][0]
-                recordDateToDelete = gui.recordTable[recordIndex][1]
-                recordLocationToDelete = gui.recordTable[recordIndex][2]
-                print(recordToDelete)
-                db.deleteRecordLabel(recordToDelete, recordDateToDelete, recordLocationToDelete)
+                recordDateToDelete = gui.recordTable[recordIndex][2]
+                recordLocationToDelete = gui.recordTable[recordIndex][3]
+                # print(recordToDelete)
+                db.deleteRecordLabel(
+                    recordToDelete, recordDateToDelete, recordLocationToDelete)
             except:
                 sg.popup('Please select a Record to delete')
-            
+
             updatelibtabs()
 
         # DELETE ARTIST
@@ -286,14 +298,15 @@ def main():
                 artistIndex = values['-TABLE-L02-'][0]
 
                 artistToDelete = gui.artistTable[artistIndex][0]
-                artistAge =  gui.artistTable[artistIndex][1]
+                artistAge = gui.artistTable[artistIndex][1]
                 #artistInstrument =  gui.artistTable[artistIndex][3]
                 #artistBand =  gui.artistTable[artistIndex][4]
 
-                db.deleteArtist(artistToDelete, artistAge)# , artistAge, artistInstrumentm, artistBand)
+                # , artistAge, artistInstrumentm, artistBand)
+                db.deleteArtist(artistToDelete, artistAge)
             except:
                 sg.popup('Please select an Artist to delete')
-            
+
             updatelibtabs()
 
         # DELETE ALBUM
@@ -304,7 +317,7 @@ def main():
                 albumToDelete = gui.albumsTable[albumIndex][0]
                 albumDuration = gui.albumsTable[albumIndex][1]
                 print(albumToDelete)
-                # TODO: ADD albumDuration to this so shit 
+                # TODO: ADD albumDuration to this so shit
                 # with the same name does noe fuck shit up
                 db.deleteAlbum(albumToDelete)
             except:
@@ -320,8 +333,24 @@ def main():
                 print(songToDelete)
                 db.deleteSong(songToDelete)
                 updatelibtabs()
-            except:                
+            except:
                 sg.popup('Please select a song to delete')
+
+        ### FEELING LUCKY EVENTS ###
+
+        if event == '-BUTTON-ARTIST-F01-':
+            temp = db.findArtistBySongName(values['-INPUT-ARTIST-F01-'])
+            window['-TABLE-ARTIST-F01-'].update(values=temp)
+
+        if event == '-BUTTON-SONG-F02-':
+            try:
+                year = values['-INPUT-YEAR-F02-']
+                artist = values['-INPUT-ARTIST-F02-'][0]
+
+                temp = db.findSongNameByYearAndArtist(artist, int(year))
+                window['-TABLE-SONG-F02-'].update(values=temp)
+            except:
+                sg.popup('Please select a artist')
 
     # updatelibtabs()
     while True:

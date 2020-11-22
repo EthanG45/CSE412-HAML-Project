@@ -146,7 +146,8 @@ class Database:
     def searchSong(self, songName):
         try:
             self.cur.execute(
-                "SELECT S.title, S.genre, S.sourceLink, S.releaseYear, R.numOfRating, R.averageRating FROM song S, rating R WHERE S.songID = R.songID AND LOWER(title) = '%s'" % (songName.lower()))
+                # "SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.numOfRating, R.averageRating FROM song S, rating R WHERE S.songID = R.songID AND LOWER(title) = '%s'" % (songName.lower()))
+                "SELECT S.title, A.title, A1.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId AND LOWER(S.title) = '%s' ORDER BY LOWER(S.title)" % (songName.lower()))
             return self.getItems()
         except:
             return "Song not found"
@@ -191,7 +192,7 @@ class Database:
     def getAllSongs(self):
         try:
             self.cur.execute(
-                "SELECT S.title, A.title, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID ORDER BY LOWER(S.title)")
+                "SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId ORDER BY LOWER(S.title)")
             return self.getItems()
         except:
             return "Failed to fetch library"
@@ -211,6 +212,11 @@ class Database:
     def allAlbumName(self):
         result = []
         self.cur.execute("SELECT title FROM album ORDER BY LOWER(title)")
+        return self.getSubscriptedItems()
+
+    def allArtistName(self):
+        result = []
+        self.cur.execute("SELECT artistName FROM artist ORDER BY LOWER(artistName)")
         return self.getSubscriptedItems()
 
     # works - works on GUI
@@ -271,8 +277,7 @@ class Database:
             self.cur.execute(
                 "SELECT albumId FROM album WHERE LOWER(title) = '%s'" % (title.lower()))
             universalID = self.getItems()[0][0]
-            self.cur.execute(
-                "DELETE FROM rating WHERE albumId = %i" % (universalID))
+            self.cur.execute("DELETE FROM rating WHERE albumId = %i" % (universalID))
             self.cur.execute(
                 "DELETE FROM made WHERE albumId = %i" % (universalID))
             self.cur.execute("DELETE FROM album WHERE LOWER(title) = '%s' AND albumId = %i" % (
@@ -293,21 +298,26 @@ class Database:
 
     # works
     def insertSong(self, albumName, title, genre, releaseYear):
+        knownFor = title
         songDuration = randint(30, 1000)
-        userRating = 0
         songId = int(round(time.time()))
         sourceLink = fake.domain_name()
         averageRating = randint(10, 50)/10
         numOfRating = int(randint(1, 100000))
+        userRating = 0
         try:
             self.cur.execute("SELECT albumId FROM album WHERE title = '%s'" % (albumName))
             albumId = self.getItems()[0][0]
+            # self.cur.execute("SELECT M.artistId FROM album A JOIN made M ON A.albumId = M.albumID WHERE title = '%s'" % (albumName))
+            # artistId = self.getItems()[0][0]
             self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES('%s', '%s', %i, %i,'%s', %i)" % (
                 title, genre, songDuration, songId, sourceLink, releaseYear))
             self.cur.execute(
                 "INSERT INTO contains(albumId, songId) VALUES( %i, %i)" % (albumId, songId))
             self.cur.execute("INSERT INTO rating(numOfRating, averageRating, userRating, albumId, songId ) VALUES( %i, %f, %i, %i, %i)" % (
                 numOfRating, averageRating, userRating, albumId, songId))
+            # self.cur.execute(
+            #     "INSERT INTO made(knownFor, albumId, artistId) VALUES( '%s', %i, %i)" % (knownFor, albumId, artistId))
         except Exception as e:
             print(e)
 
@@ -447,12 +457,41 @@ class Database:
     
     def topTenSongsByAverage(self):
         self.cur.execute(
-            "SELECT S.title, A.title, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID ORDER BY R.averageRating DESC LIMIT 10")
+            "SELECT S.title, A.title, A1.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId ORDER BY R.averageRating DESC LIMIT 10")
         return self.getItems()
     
     def topTenSongsByUser(self):
         self.cur.execute(
-            "SELECT S.title, A.title, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID ORDER BY R.userRating DESC LIMIT 10")
+            "SELECT S.title, A.title, A1.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumID = A.albumID AND M.artistId= A1.artistId ORDER BY R.userRating DESC LIMIT 10")
+        return self.getItems()
+
+# works - Complex Queries Series
+    def topTenSongsByAverageWorst(self):
+        try:
+            self.cur.execute(
+                "SELECT S.title, A.title, A1.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumID = A.albumID AND M.artistId = A1.artistId ORDER BY R.averageRating ASC LIMIT 10")
+            return self.getItems()
+        except Exception as e:
+            print(e)
+
+    def topTenSongsByUserWorst(self):
+        try:
+            self.cur.execute(
+                "SELECT S.title, A.title, A1.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumId AND M.artistId = A1.artistId ORDER BY R.userRating ASC LIMIT 10")
+            return self.getItems()
+        except Exception as e:
+            print(e)
+
+    # works
+    def topTenAlbumsByAverageWorst(self):
+        self.cur.execute(
+            "SELECT A.title, A.albumDuration, A.coverArtURL, R.averageRating, R.numOfRating, R.userRating FROM album A, rating R WHERE R.albumId = A.albumId ORDER BY R.averageRating ASC LIMIT 10")
+        return self.getItems()
+
+    # works
+    def topTenAlbumsByUserWorst(self):
+        self.cur.execute(
+            "SELECT A.title, A.albumDuration, A.coverArtURL, R.averageRating, R.numOfRating, R.userRating FROM album A, rating R WHERE R.albumId = A.albumId ORDER BY R.userRating ASC LIMIT 10")
         return self.getItems()
 
     # works
@@ -468,26 +507,18 @@ class Database:
         return self.getItems()
     
     # works - Complex Queries Series
-    def findArtistBySongName(self, songName):
+    def findArtistBySongName(self, songName):  
         try:
-            self.cur.execute("SELECT A.artistName FROM Artist A, Contains C, Song S, Played P, Musician M WHERE S.title = '%s' AND S.songId = C.songId AND C.albumId = P.albumId AND P.musicianId = M.musicianId AND M.artistId = A.artistId" % (songName))
-            return self.getItems()
-        except Exception as e:
-            print(e)
-
-     # works - Complex Queries Series
-    def tenMusicWithWorstRating(self):
-        try:
-            self.cur.execute(
-                "SELECT song.title, rating.averageRating FROM song JOIN rating ON rating.songId = song.songId ORDER BY rating.averageRating ASC LIMIT 10")
+            self.cur.execute("SELECT A.artistName, A.age, M2.knownFor FROM Artist A, Contains C, Song S, Played P, Musician M, Made M2 WHERE LOWER(S.title) = '%s' AND S.songId = C.songId AND C.albumId = P.albumId AND P.musicianId = M.musicianId AND M.artistId = A.artistId AND A.artistId = M2.artistId" % (songName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
 
     # works - Complex Queries Series
-    def findSongNameWithYearByArtist(self, artistName, releaseYear):
+    def findSongNameByYearAndArtist(self, artistName, releaseYear):
+        # SELECT S.title, A.title, A1.aristsName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID, M.albumId =  A.albumID AND M.artistId = A1.artistId ORDER BY LOWER(S.title)
         try:
-            self.cur.execute("SELECT S.title, S.releaseYear FROM Artist A, Contains C, Song S, Played P, Musician M WHERE S.releaseYear >= %i AND A.artistName = '%s' AND S.songId = C.songId AND C.albumId = P.albumId AND P.musicianId = M.musicianId AND M.artistId = A.artistId" % (releaseYear, artistName))
+            self.cur.execute("SELECT S.title, A1.title, A.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM Artist A, Contains C, Song S, Played P, Musician M, Made M2, album A1, Rating R WHERE S.releaseYear >= %i AND LOWER(A.artistName) = '%s' AND S.songId = C.songId AND C.albumId = P.albumId AND P.musicianId = M.musicianId AND M.artistId = A.artistId AND S.songID = R.songID AND M2.albumId =  A1.albumID AND M2.artistId = A.artistId" % (releaseYear, artistName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
@@ -496,7 +527,7 @@ class Database:
     def findcompanyNameByAlbumName(self, albumName):
         try:
             self.cur.execute(
-                "SELECT R.companyName FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'" % (albumName))
+                "SELECT R.companyName FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND LOWER(A.title) = '%s'" % (albumName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
@@ -505,7 +536,7 @@ class Database:
     def findLocationByAlbumName(self, albumName):
         try:
             self.cur.execute(
-                "SELECT R.labelLocation FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'" % (albumName))
+                "SELECT R.labelLocation FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND LOWER(A.title) = '%s'" % (albumName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
@@ -514,7 +545,7 @@ class Database:
     def findRecLebDateByAlbumName(self, albumName):
         try:
             self.cur.execute(
-                "SELECT R.dateEstablished FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND A.title = '%s'" % (albumName))
+                "SELECT R.dateEstablished FROM recordLabel R, publishes P, album A WHERE A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND LOWER(A.title) = '%s'" % (albumName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
@@ -522,7 +553,7 @@ class Database:
     # works
     def findcompanyNameBySongName(self, songName):
         try:
-            self.cur.execute("SELECT R.companyName FROM recordLabel R, publishes P, album A, Contains C, Song S WHERE S.songID = C.songID AND C.albumID = A.albumID AND A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND S.title = '%s'" % (songName))
+            self.cur.execute("SELECT R.companyName, A.title, R.dateEstablished, R.labelLocation FROM recordLabel R, publishes P, album A, Contains C, Song S WHERE S.songID = C.songID AND C.albumID = A.albumID AND A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND LOWER(S.title) = '%s'" % (songName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
@@ -530,7 +561,7 @@ class Database:
     # works
     def findcompanyNameByBandName(self, bandName):
         try:
-            self.cur.execute("SELECT R.companyName FROM musician M, played P1, publishes P2, recordLabel R WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND M.band = '%s'" % (bandName))
+            self.cur.execute("SELECT R.companyName, A.title, R.dateEstablished, R.labelLocation FROM musician M, played P1, publishes P2, recordLabel R, album A, Contains C WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND C.albumID = A.albumID AND A.albumID = P2.albumID AND LOWER(M.band) = '%s'" % (bandName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
@@ -538,11 +569,10 @@ class Database:
 
     def findListOfCompanyNameByInstrument(self, instName):
         try:
-            self.cur.execute("SELECT R.companyName FROM musician M, played P1, publishes P2, recordLabel R WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND M.instrument = '%s'" % (instName))
+            self.cur.execute("SELECT R.companyName, A.title, R.dateEstablished, R.labelLocation FROM musician M, played P1, publishes P2, recordLabel R, album A, Contains C WHERE M.musicianId = P1.musicianId AND P1.albumId = P2.albumId AND P2.recordLabelId = R.recordLabelId AND C.albumID = A.albumID AND A.albumID = P2.albumID AND LOWER(M.instrument) = '%s'" % (instName.lower()))
             return self.getItems()
         except Exception as e:
             print(e)
-
 
     def insertNewSongToExistingAlbumName(self, albumName, title, genre, releaseYear):
         songDuration = randint(30, 1000)
@@ -573,28 +603,32 @@ class Database:
             except Exception as e:
                 print(e)
     
-    def createSongAndAlbum(self, albumName, title, genre, releaseYear):
+    def createSongAndAlbum(self, artistName, albumName, title, genre, releaseYear):
         songDuration = randint(30, 1000)
         userRating = 0
         albumId = int(round(time.time()))
         songId = albumId
+        knownFor = title
         sourceLink = fake.domain_name()
         coverArtURL = fake.image_url()
         averageRating = randint(10, 50)/10
         numOfRating = int(randint(1, 100000))
         albumDuration = randint(100, 10000)
         try:
+            self.cur.execute("SELECT artistId FROM artist WHERE LOWER(artistName) = '%s'" % (artistName.lower()))
+            artistId = self.getItems()[0][0]
             self.cur.execute("INSERT INTO album(albumDuration, albumId, title, coverArtURL) VALUES(%i, %i,'%s','%s')" % (
                 albumDuration, albumId, albumName, coverArtURL))
             self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES('%s', '%s', %i, %i,'%s', %i)" % (
                 title, genre, songDuration, songId, sourceLink, releaseYear))
             self.cur.execute(
                 "INSERT INTO contains(albumId, songId) VALUES( %i, %i)" % (albumId, songId))
+            self.cur.execute(
+                "INSERT INTO made(knownFor, albumId, artistId) VALUES( '%s', %i, %i)" % (knownFor, albumId, artistId))
             self.cur.execute("INSERT INTO rating(numOfRating, averageRating, userRating, albumId, songId ) VALUES( %i, %f, %i, %i, %i)" % (
                 numOfRating, averageRating, userRating, albumId, songId))
         except Exception as e:
             print(e)
-
 # todo rate a song
 
 

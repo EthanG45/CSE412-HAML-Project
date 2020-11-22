@@ -9,11 +9,14 @@ class CreateTab:
     def __init__(self, db):
         self.db = db
         self.albumNameList = self.db.allAlbumName()
+        self.artistNameList = self.db.allArtistName()
         # print(self.albumNameList[0][0])
         # self.albumNameList = list(map(str, self.albumNameList))
 
     def updateLists(self):
+        # TODO THis doesnt auto update properly. just get it in gui.py and pass as an arg i think
         self.albumNameList = self.db.allAlbumName()
+        self.artistNameList = self.db.allArtistName()
         # self.recordLabelList = self.db.allRecordLabel()
         # self.albumNameList = list(map(str, self.albumNameList))
 
@@ -116,6 +119,9 @@ class CreateTab:
 
              [sg.Text("Release Year"), sg.Combo(
                  yearList, key='-RELEASE-YEAR-C04-')],
+
+             [sg.Text("Artist"), sg.Listbox(values=self.artistNameList,
+                                            key='-ARTIST-TITLE-C04-',  size=(50, 20))],
              # [sg.Text("Day", size=(daySize, 1)), sg.Text("Month", size=(monthSize, 1)), sg.Text("Year", size=(yearSize, 1))],
              # [sg.Input(key='-DAY-C05-', size=(daySize, 1)), sg.Input(key='-MONTH-C05-',  size=(monthSize, 1)), sg.Input(key='-YEAR-C05-', size=(yearSize, 1))],
 
@@ -145,7 +151,7 @@ class CreateTab:
              [sg.Text("Genre"), sg.Listbox(values=genre,
                                            key='-GENRE-C05-',  size=(10, 10))],
              [sg.Text("Album Title"), sg.Listbox(values=self.albumNameList,
-                                           key='-ALBUM-TITLE-C05-',  size=(50, 20))],
+                                                 key='-ALBUM-TITLE-C05-',  size=(50, 20))],
              #  layout = [[sg.Listbox(values=['Listbox 1', 'Listbox 2', 'Listbox 3'], size=(30, 6))]]
              # [sg.Text("Source Link"), sg.Input(key='-SOURCE-C05-')],
 
