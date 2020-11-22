@@ -48,12 +48,15 @@ class LibraryTab:
                 [sg.Table(values=self.db.getAllAlbums(), headings=[' Title ', 'Album Duration',
                                                                    'Cover Art URL', 'Averaqe Rating', 'Number of Listeners', 'User Rating'], key='-TABLE-L03-', enable_events=True, size=(1220, 35))],
                 #[sg.Table(values = [['','','']], headings=[ ' Title ', ' Album Duration ', '        Cover Art URL        ' ], key = '-TABLE-L03-', enable_events=True, size = (1220, 220))]
-                [sg.Text("Rating"), sg.Slider(range=(0, 5),
-                                              default_value=0,
-                                              size=(25, 10),
-                                              orientation='horizontal',
-                                              font=('Helvetica', 12), key='-RATING-L03-'),
-                 sg.Button('ADD RATING', key='-BUTTON-L03-'), sg.Button('DELETE', key='-DELETE-BUTTON-L03-')]
+                [
+                    # sg.Text("Rating"), sg.Slider(range=(0, 5),
+                #                               default_value=0,
+                #                               size=(25, 10),
+                #                               orientation='horizontal',
+                #                               font=('Helvetica', 12), key='-RATING-L03-'),
+                #  sg.Button('ADD RATING', key='-BUTTON-L03-'), 
+                 sg.Button('DELETE', key='-DELETE-BUTTON-L03-')]
+                 
              ],
             key='L03'
         )

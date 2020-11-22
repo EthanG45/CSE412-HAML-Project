@@ -201,9 +201,8 @@ def main():
             updatelibtabs()
 
         ### LIBRARY EVENTS ###
-        
-        if event == '-BUTTON-L03-':
 
+        if event == '-BUTTON-L03-':
             albumIndex =  values['-TABLE-L03-'][0]
             albumToRating = gui.albumsTable[albumIndex][0]
 
@@ -212,63 +211,77 @@ def main():
 
         # LIST SONGS - UPDATE RATING
         if event == '-BUTTON-L04-':
-
-            ratingIndex = values['-TABLE-L04-'][0]
-            if(ratingIndex != None):
+            
+            try:
+                ratingIndex = values['-TABLE-L04-'][0]
                 # if isValid(ratingIndex):
                 # print(songsTable)
                 songToRate = gui.songsTable[ratingIndex][0]
                 db.changeWholeRating(songToRate, values['-RATING-L04-'])
                 updatelibtabs()
+            except:
+                sg.popup('Please select a Song to rate')
 
         # DELETE SECTION
 
         if event == '-DELETE-BUTTON-L01-':
-
+            
             try:
                 recordIndex = values['-TABLE-L01-'][0]
                 print(recordIndex)
-
                 recordToDelete = gui.recordTable[recordIndex][0]
                 recordDateToDelete = gui.recordTable[recordIndex][1]
                 recordLocationToDelete = gui.recordTable[recordIndex][2]
                 print(recordToDelete)
                 db.deleteRecordLabel(recordToDelete, recordDateToDelete, recordLocationToDelete)
-                updatelibtabs()
             except:
-                print('select something')
+                sg.popup('Please select a Record to delete')
+            
+            updatelibtabs()
 
         # DELETE ARTIST
         if event == '-DELETE-BUTTON-L02-':
-            artistIndex = values['-TABLE-L02-'][0]
 
-            artistToDelete = gui.artistTable[artistIndex][0]
-            artistAge =  gui.artistTable[artistIndex][1]
-            #artistInstrument =  gui.artistTable[artistIndex][3]
-            #artistBand =  gui.artistTable[artistIndex][4]
+            try:
+                artistIndex = values['-TABLE-L02-'][0]
 
-            db.deleteArtist(artistToDelete)# , artistAge, artistInstrumentm, artistBand)
+                artistToDelete = gui.artistTable[artistIndex][0]
+                artistAge =  gui.artistTable[artistIndex][1]
+                #artistInstrument =  gui.artistTable[artistIndex][3]
+                #artistBand =  gui.artistTable[artistIndex][4]
+
+                db.deleteArtist(artistToDelete, artistAge)# , artistAge, artistInstrumentm, artistBand)
+            except:
+                sg.popup('Please select an Artist to delete')
+            
             updatelibtabs()
 
         # DELETE ALBUM
         if event == '-DELETE-BUTTON-L03-':
-            albumIndex = values['-TABLE-L03-'][0]
-            print(albumIndex)
+            try:
+                albumIndex = values['-TABLE-L03-'][0]
+                print(albumIndex)
+                albumToDelete = gui.albumsTable[albumIndex][0]
+                albumDuration = gui.albumsTable[albumIndex][1]
+                print(albumToDelete)
+                # TODO: ADD albumDuration to this so shit 
+                # with the same name does noe fuck shit up
+                db.deleteAlbum(albumToDelete)
+            except:
+                sg.popup('Please select an Album to delete')
 
-            albumToDelete = gui.albumTable[albumIndex][0]
-            print(albumToDelete)
-            db.deleteSong(albumToDelete)
             updatelibtabs()
 
         # DELETE SONG
         if event == '-DELETE-BUTTON-L04-':
-            songIndex = values['-TABLE-L04-'][0]
-            print(songIndex)
-
-            songToDelete = gui.songsTable[songIndex][0]
-            print(songToDelete)
-            db.deleteSong(songToDelete)
-            updatelibtabs()
+            try:
+                songIndex = values['-TABLE-L04-'][0]
+                songToDelete = gui.songsTable[songIndex][0]
+                print(songToDelete)
+                db.deleteSong(songToDelete)
+                updatelibtabs()
+            except:                
+                sg.popup('Please select a song to delete')
 
     # updatelibtabs()
     while True:
@@ -279,7 +292,7 @@ def main():
         if event == sg.WINDOW_CLOSED:
             break
 
-        # checkButtonPress(event, values)
+        checkButtonPress(event, values)
         # SearchTab.searchEvents(event, window)
 
     # close the program
