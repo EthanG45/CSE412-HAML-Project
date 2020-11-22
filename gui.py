@@ -8,6 +8,7 @@ from tabs.delete import DeleteTab
 from tabs.update import UpdateTab
 from tabs.library import LibraryTab
 from tabs.search import SearchTab
+from tabs.insights import InsightsTab
 
 db = sql.Database()  # import db
 ct = CreateTab(db)
@@ -15,6 +16,7 @@ dt = DeleteTab(db)
 ut = UpdateTab(db)
 lt = LibraryTab(db)
 st = SearchTab(db)
+it = InsightsTab(db)
 
 events = []
 st.addEvents(events)
@@ -51,7 +53,8 @@ def main():
                 ut.updateTabGUI(),
                 dt.deleteTabGUI(),
                 st.searchTabGUI(),
-                lt.libraryTabGUI()
+                lt.libraryTabGUI(),
+                it.insightsTabGUI()
             ]],
             key='tabgroup',
             enable_events=True
@@ -101,19 +104,23 @@ def main():
 
         # CREATE RECORD LABEL
         if event == '-BUTTON-C01-':
-            companyName = values['-companyName-C01-']
-            labelLocation = values['-labelLocation-C01-']
-            dateEstablished = values['-dateEstablished-C01-']
+            try:
+                companyName = values['-companyName-C01-']
+                labelLocation = values['-labelLocation-C01-']
+                dateEstablished = values['-dateEstablished-C01-']
+                titleName = values['-TITLE-C01-'][0]
 
-            if isValid(companyName, dateEstablished, labelLocation):
-                db.insertRecordLabel(
-                    companyName, dateEstablished, labelLocation)
-                #window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
-                window.FindElement('-companyName-C01-').update('')
-                window.FindElement('-labelLocation-C01-').update('')
-                window.FindElement('-dateEstablished-C01-').update('')
-            else:
-                window['-OUTPUT-C01-'].update("Failed to create Record Label!")
+                if isValid(companyName, dateEstablished, labelLocation, titleName):
+                    db.insertRecordLabel(titleName, companyName, dateEstablished, labelLocation)
+                    #window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
+                    window.FindElement('-companyName-C01-').update('')
+                    window.FindElement('-labelLocation-C01-').update('')
+                    window.FindElement('-dateEstablished-C01-').update('')
+                    window['-OUTPUT-C01-'].update("Record Label created")
+                else:
+                    window['-OUTPUT-C01-'].update("Failed to create Record Label!")
+            except:
+                    sg.popup('Select an album please')
 
             # Force this window to have focus after window change (macos bug)
             window.TKroot.focus_force()
@@ -121,80 +128,113 @@ def main():
 
         # CREATE ARTIST
         if event == '-BUTTON-C02-':
-            artistName = values['-ARTIST-C02-']
-            artistAge = int(values['-AGE-C02-'])
-            artistInstrument = values['-INSTRUMENT-C02-']
-            artistBand = values['-BAND-C02-']
-            titleName = values['-TITLE-C02-']
+            try:
+                artistName = values['-ARTIST-C02-']
+                artistAge = int(values['-AGE-C02-'])
+                artistInstrument = values['-INSTRUMENT-C02-']
+                artistBand = values['-BAND-C02-']
+                titleName = values['-TITLE-C02-'][0]
+                # recordLabelName = values['-RECORD-LABEL-NAME-C02-'][0]
+                # recordLabelCity = values['-RECORD-LABEL-CITY-C02-'][1]
+                
+                '''recordLabelName, recordLabelCity'''
 
-            if isValid(artistName, artistAge, artistInstrument, artistBand, titleName):
-                db.insertArtist(artistName, artistAge,
-                                artistInstrument, artistBand, titleName)
-                window.FindElement('-ARTIST-C02-').update('')
-                window.FindElement('-AGE-C02-').update('')
-                window.FindElement('-INSTRUMENT-C02-').update('')
-                window.FindElement('-BAND-C02-').update('')
-                window.FindElement('-TITLE-C02-').update('')
-                window['-OUTPUT-C02-'].update('')
-            else:
-                window['-OUTPUT-C02-'].update("Failed to create Artist!")
+                if isValid(artistName, artistAge, artistInstrument, artistBand, titleName):
+                    db.insertArtist(artistName, artistAge,
+                                    artistInstrument, artistBand, titleName)
+                    window.FindElement('-ARTIST-C02-').update('')
+                    window.FindElement('-AGE-C02-').update('')
+                    window.FindElement('-INSTRUMENT-C02-').update('')
+                    window.FindElement('-BAND-C02-').update('')
+                    window['-OUTPUT-C02-'].update("Artist created")
+                else:
+                    window['-OUTPUT-C02-'].update("Failed to create Artist!")
+            except:
+                    sg.popup('Select an album please')
 
             updatelibtabs()
 
         ##########################
-        if event == '-BUTTON-SEARCH-SONG-C04-':
-            gui.createAlbumSongSearch = db.searchSong(values['-INPUT-SEARCH-SONG-C04-'])
-            window['-TABLE-SEARCH-SONG-C04-'].update(values=  gui.createAlbumSongSearch)
+        
+        # # CREATE ALBUM OG
+        # if event == '-BUTTON-SEARCH-SONG-C04-':
+        #     gui.createAlbumSongSearch = db.searchSong(values['-INPUT-SEARCH-SONG-C04-'])
+        #     window['-TABLE-SEARCH-SONG-C04-'].update(values=  gui.createAlbumSongSearch)
 
-        if event == '-ADD-SONG-C04-':
-            #songName = values['-TABLE-SEARCH-SONG-C04-'][0]
-            ## SOLUTION:
-            try:
-                songIndex = values['-TABLE-SEARCH-SONG-C04-'][0]
-                print('song Index: ' + songIndex)
-            except:
-                print('select something')
-                # break
-            '''
-            songTitle =  gui.createAlbumSongSearch[songIndex][0]
-            songGenre =  gui.createAlbumSongSearch[songIndex][1]
-            songReleaseYear =  gui.createAlbumSongSearch[songIndex][3]
+        # if event == '-ADD-SONG-C04-':
+        #     #songName = values['-TABLE-SEARCH-SONG-C04-'][0]
+        #     ## SOLUTION:
+        #     try:
+        #         songIndex = values['-TABLE-SEARCH-SONG-C04-'][0]
+        #         print('song Index: ' + songIndex)
+        #     except:
+        #         print('select something')
+        #         # break
+        #     '''
+        #     songTitle =  gui.createAlbumSongSearch[songIndex][0]
+        #     songGenre =  gui.createAlbumSongSearch[songIndex][1]
+        #     songReleaseYear =  gui.createAlbumSongSearch[songIndex][3]
 
-            gui.songToLinkToAlbum.append([songTitle, songGenre, songReleaseYear])
-            '''
-            #db.insertSongWhileKnowingAlbumName( albumName, title, genre, releaseYear):
+        #     gui.songToLinkToAlbum.append([songTitle, songGenre, songReleaseYear])
+        #     '''
+        #     #db.insertSongWhileKnowingAlbumName( albumName, title, genre, releaseYear):
 
         # CREATE Album
         if event == '-BUTTON-C04-':
-            albumTitle = values['-TITLE-C04-']
+            try:
+                albumTitle = values['-ALBUM-TITLE-C04-']
+                songTitle = values['-SONG-TITLE-C04-']
+                songGenre = values['-GENRE-C04-'][0]
+                songReleaseYear = values['-RELEASE-YEAR-C04-']
 
-            print(gui.songToLinkToAlbum)
+                if isValid(albumTitle, songTitle, songGenre, songReleaseYear):
+                    db.createSongAndAlbum(albumTitle, songTitle, songGenre, songReleaseYear)
+                    window.FindElement('-ALBUM-TITLE-C04-').update('')
+                    window.FindElement('-SONG-TITLE-C04-').update('')
+                    window.FindElement('-GENRE-C04-').update('')
+                    window.FindElement('-RELEASE-YEAR-C04-').update('')
+                    window['-OUTPUT-C04-'].update("Song and album created")
+                else:
+                    window['-OUTPUT-C04-'].update("Failed to create Album and Song!")
+            except:
+                window['-OUTPUT-C04-'].update('')
+                sg.popup('Please select a genre and fill out other fields')
 
-            if isValid(albumTitle):
-                db.insertAlbum(0, albumTitle)
-                window.FindElement('-TITLE-C04-').update('')
+            # Force this window to have focus after window change (macos bug)
+            window.TKroot.focus_force()
+            updatelibtabs()
 
-                gui.createAlbumSongSearch = []
+            # print(gui.songToLinkToAlbum)
+
+            # if isValid(albumTitle):
+            #     db.insertAlbum(0, albumTitle)
+            #     window.FindElement('-TITLE-C04-').update('')
+
+            #     gui.createAlbumSongSearch = []
 
         #####################
 
         # CREATE SONG
         if event == '-BUTTON-C05-':
-            titleSong = values['-TITLE-C05-']
-            genreSong = values['-GENRE-C05-'][0]
-            #sourceLinksong = values['-SOURCE-C05-']
-            releaseYearsong = values['-releaseYear-C05-']
+            try:
+                titleSong = values['-TITLE-C05-']
+                genreSong = values['-GENRE-C05-'][0]
+                #sourceLinksong = values['-SOURCE-C05-']
+                releaseYearsong = values['-releaseYear-C05-']
+                albumTitleName = values['-ALBUM-TITLE-C05-'][0]
 
-            # print(genreSong)
+                # print(genreSong)
 
-            if isValid(titleSong, genreSong, releaseYearsong):
-                db.insertSong(titleSong, genreSong, releaseYearsong)
-                window.FindElement('-TITLE-C05-').update('')
-                window.FindElement('-GENRE-C05-').update('')
-                window.FindElement('-releaseYear-C05-').update('')
-                window['-OUTPUT-C05-'].update('')
-            else:
-                window['-OUTPUT-C05-'].update("Failed to create Song!")
+                if isValid(titleSong, genreSong, releaseYearsong, albumTitleName):
+                    db.insertSong(albumTitleName, titleSong, genreSong, releaseYearsong)
+                    window.FindElement('-TITLE-C05-').update('')
+                    window.FindElement('-GENRE-C05-').update('')
+                    window.FindElement('-releaseYear-C05-').update('')
+                    window['-OUTPUT-C05-'].update("Song created")
+                else:
+                    window['-OUTPUT-C05-'].update("Failed to create Song!")
+            except:
+                sg.popup('Please select a genre, album and fill out other fields')
 
             # Force this window to have focus after window change (macos bug)
             window.TKroot.focus_force()

@@ -15,8 +15,8 @@ class LibraryTab:
 
             [[sg.Text("Records")],
              #  [sg.Table(testlistbox, key = '-RECORD-L01-', size=(1270, 1))]
-             [sg.Table(values=self.db.getAllRecordLabels(), headings=[' CompanyName ', ' Date Established ',
-                                                                      ' Label Location '], key='-TABLE-L01-', enable_events=True, size=(1220, 35))],
+             [sg.Table(values=self.db.getAllRecordLabels(), headings=['CompanyName', 'Recent Album', 'Date Established',
+                                                                      'Label Location'], key='-TABLE-L01-', enable_events=True, size=(1220, 35))],
              #[sg.Table(values = [['','','']], headings=[' CompanyName ', ' Date Established ', ' Label Location '], key = '-TABLE-L01-', enable_events=True, size = (1220, 220))]
              [sg.Button('DELETE', key='-DELETE-BUTTON-L01-')]
              ],

@@ -36,6 +36,13 @@ class Database:
         for i in self.cur:
             result.append(i)
         return result
+    
+    def getSubscriptedItems(self):
+        result = []
+        for i in self.cur:
+            i = i[0]
+            result.append(i)
+        return result
 
     # works
     def replaceApostrophe(self, myString):
@@ -200,6 +207,12 @@ class Database:
         self.cur.execute(query)
         return self.getItems()
 
+    # testing
+    def allAlbumName(self):
+        result = []
+        self.cur.execute("SELECT title FROM album ORDER BY LOWER(title)")
+        return self.getSubscriptedItems()
+
     # works - works on GUI
     # def getAllArtists(self):
     #     result = []
@@ -223,7 +236,7 @@ class Database:
     def getAllRecordLabels(self):
         result = []
         self.cur.execute(
-            "SELECT companyName, dateEstablished, labelLocation FROM recordLabel ORDER BY LOWER(companyName)")
+            "SELECT R.companyName, A.title, R.dateEstablished, R.labelLocation FROM recordLabel R, publishes P, album A WHERE R.recordLabelId = P.recordLabelId AND P.albumId = A.albumId ORDER BY LOWER(companyName)")
         return self.getItems()
 
     # works
@@ -279,7 +292,7 @@ class Database:
             print(e)
 
     # works
-    def insertSong(self, title, genre, releaseYear):
+    def insertSong(self, albumName, title, genre, releaseYear):
         songDuration = randint(30, 1000)
         userRating = 0
         songId = int(round(time.time()))
@@ -287,13 +300,13 @@ class Database:
         averageRating = randint(10, 50)/10
         numOfRating = int(randint(1, 100000))
         try:
-            self.cur.execute("SELECT albumId FROM album ORDER BY RANDOM() LIMIT 1")
+            self.cur.execute("SELECT albumId FROM album WHERE title = '%s'" % (albumName))
             albumId = self.getItems()[0][0]
             self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES('%s', '%s', %i, %i,'%s', %i)" % (
                 title, genre, songDuration, songId, sourceLink, releaseYear))
             self.cur.execute(
                 "INSERT INTO contains(albumId, songId) VALUES( %i, %i)" % (albumId, songId))
-            self.cur.execute("INSERT INTO rating(numOfRating, averageRating, userRating, albumId, songId ) VALUES( %i, %i, %i, %i, %i)" % (
+            self.cur.execute("INSERT INTO rating(numOfRating, averageRating, userRating, albumId, songId ) VALUES( %i, %f, %i, %i, %i)" % (
                 numOfRating, averageRating, userRating, albumId, songId))
         except Exception as e:
             print(e)
@@ -323,10 +336,10 @@ class Database:
             print(e)
 
     # works
-    def insertRecordLabel(self, companyName, dateEstablished, labelLocation):
+    def insertRecordLabel(self, title, companyName, dateEstablished, labelLocation):
         recordLabelId = int(round(time.time()))
         try:
-            self.cur.execute("SELECT albumId FROM publishes ORDER BY RANDOM() LIMIT 1")
+            self.cur.execute("SELECT albumId FROM album WHERE title = '%s'" % (title))
             albumId = self.getItems()[0][0]
             self.cur.execute(
                 "DELETE FROM publishes WHERE albumId = %i" % (albumId))
@@ -366,22 +379,13 @@ class Database:
         albumDuration = randint(100, 10000)
         artistId = int(round(time.time()))
         musicianId = artistId
-        albumId = artistId
         try:
-            self.cur.execute("SELECT recordLabelId FROM recordLabel ORDER BY RANDOM() LIMIT 1 ")
-            labelID = self.getItems()[0][0]
-            self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES(%i, '%s', %i)" % (
-                artistId, artistName, age))
-            self.cur.execute("INSERT INTO musician(artistId, musicianId, instrument, band) VALUES(%i, %i, '%s', '%s')" % (
-                artistId, musicianId, instrument, band))
-            self.cur.execute("INSERT INTO album(albumDuration, albumId, title, coverArtURL) VALUES(%i, %i,'%s','%s')" % (
-                albumDuration, albumId, title, coverArtURL))
-            self.cur.execute("INSERT INTO made(knownFor, albumId, artistId) VALUES('%s', %i, %i)" % (
-                knownFor, artistId, musicianId))
-            self.cur.execute("INSERT INTO played(albumId, musicianId) VALUES( %i, %i)" % (
-                albumId, musicianId))
-            self.cur.execute(
-                "INSERT INTO publishes(albumId, recordLabelId) VALUES(%i, %i)" % (albumId, labelID))
+            self.cur.execute("SELECT albumId FROM album WHERE title = '%s'" % (title))
+            albumId = self.getItems()[0][0]
+            self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES(%i, '%s', %i)" % (artistId, artistName, age))
+            self.cur.execute("INSERT INTO musician(artistId, musicianId, instrument, band) VALUES(%i, %i, '%s', '%s')" % (artistId, musicianId, instrument, band))
+            self.cur.execute("INSERT INTO made(knownFor, albumId, artistId) VALUES('%s', %i, %i)" % (knownFor, albumId, artistId))
+            self.cur.execute("INSERT INTO played(albumId, musicianId) VALUES( %i, %i)" % (albumId, musicianId))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -441,17 +445,28 @@ class Database:
     
     ### Complex/Interesting Queries ###
     
-    def sqlTopTenSongs(self):
+    def topTenSongsByAverage(self):
         self.cur.execute(
-            "SELECT song.title, rating.averageRating FROM song JOIN rating ON rating.songId = song.songId ORDER BY rating.averageRating DESC LIMIT 10")
+            "SELECT S.title, A.title, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID ORDER BY R.averageRating DESC LIMIT 10")
+        return self.getItems()
+    
+    def topTenSongsByUser(self):
+        self.cur.execute(
+            "SELECT S.title, A.title, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID ORDER BY R.userRating DESC LIMIT 10")
         return self.getItems()
 
     # works
-    def sqlTopTenAlbums(self):
+    def topTenAlbumsByAverage(self):
         self.cur.execute(
-            "SELECT album.title, rating.averageRating FROM album JOIN rating ON rating.albumId = album.albumId ORDER BY rating.averageRating DESC LIMIT 10")
+            "SELECT A.title, A.albumDuration, A.coverArtURL, R.averageRating, R.numOfRating, R.userRating FROM album A, rating R WHERE R.albumId = A.albumId ORDER BY R.averageRating DESC LIMIT 10")
         return self.getItems()
 
+    # works
+    def topTenAlbumsByUser(self):
+        self.cur.execute(
+            "SELECT A.title, A.albumDuration, A.coverArtURL, R.averageRating, R.numOfRating, R.userRating FROM album A, rating R WHERE R.albumId = A.albumId ORDER BY R.userRating DESC LIMIT 10")
+        return self.getItems()
+    
     # works - Complex Queries Series
     def findArtistBySongName(self, songName):
         try:
@@ -529,7 +544,7 @@ class Database:
             print(e)
 
 
-    def insertNewSongToExistingsAlbumName(self, albumName, title, genre, releaseYear):
+    def insertNewSongToExistingAlbumName(self, albumName, title, genre, releaseYear):
         songDuration = randint(30, 1000)
         userRating = 0
         songId = int(round(time.time()))
@@ -557,7 +572,28 @@ class Database:
                 self.cur.execute("INSERT INTO contains(albumId, songId) VALUES( %i, %i)" % (albumId, songId))
             except Exception as e:
                 print(e)
-
+    
+    def createSongAndAlbum(self, albumName, title, genre, releaseYear):
+        songDuration = randint(30, 1000)
+        userRating = 0
+        albumId = int(round(time.time()))
+        songId = albumId
+        sourceLink = fake.domain_name()
+        coverArtURL = fake.image_url()
+        averageRating = randint(10, 50)/10
+        numOfRating = int(randint(1, 100000))
+        albumDuration = randint(100, 10000)
+        try:
+            self.cur.execute("INSERT INTO album(albumDuration, albumId, title, coverArtURL) VALUES(%i, %i,'%s','%s')" % (
+                albumDuration, albumId, albumName, coverArtURL))
+            self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES('%s', '%s', %i, %i,'%s', %i)" % (
+                title, genre, songDuration, songId, sourceLink, releaseYear))
+            self.cur.execute(
+                "INSERT INTO contains(albumId, songId) VALUES( %i, %i)" % (albumId, songId))
+            self.cur.execute("INSERT INTO rating(numOfRating, averageRating, userRating, albumId, songId ) VALUES( %i, %f, %i, %i, %i)" % (
+                numOfRating, averageRating, userRating, albumId, songId))
+        except Exception as e:
+            print(e)
 
 # todo rate a song
 
