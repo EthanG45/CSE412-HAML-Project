@@ -24,11 +24,24 @@ sg.theme('Dark Grey 9')  # set window theme
 # Define the window's contents
 
 
+class GUI:
+    def __init__(self):
+        self.recordTable = db.getAllRecordLabels()
+        self.artistTable = db.getAllArtists()
+        self.albumsTable = db.getAllAlbums()
+        self.songsTable = db.getAllSongs()
+        self.songToLinkToAlbum = []
+        self.createAlbumSongSearch = []
+
+    def updateTables(self):
+        self.recordTable = db.getAllRecordLabels()
+        self.artistTable = db.getAllArtists()
+        self.albumsTable = db.getAllAlbums()
+        self.songsTable = db.getAllSongs()
+
+
 def main():
-    recordTable = db.getAllRecordLabels()
-    artistTable = db.getAllArtists()
-    albumsTable = db.getAllAlbums()
-    songsTable = db.getAllSongs()
+    gui = GUI()
 
     # main layout this contains everything
     layout = [[
@@ -58,28 +71,15 @@ def main():
         return True
 
     def updatelibtabs():
-        recordTable = db.getAllRecordLabels()
-        artistTable = db.getAllArtists()
-        albumsTable = db.getAllAlbums()
-        songsTable = db.getAllSongs()
-        window['-TABLE-L01-'].update(values=recordTable)
-        window['-TABLE-L02-'].update(values=artistTable)
-        window['-TABLE-L04-'].update(values=albumsTable)
-        window['-TABLE-L05-'].update(values=songsTable)
+        gui.updateTables()
+        window['-TABLE-L01-'].update(values=gui.recordTable)
+        window['-TABLE-L02-'].update(values=gui.artistTable)
+        window['-TABLE-L03-'].update(values=gui.albumsTable)
+        window['-TABLE-L04-'].update(values=gui.songsTable)
 
     def checkButtonPress(event, values):
-        # events is formatted as follows
-        # ('event', 'function', 'input', 'output', 'type')
 
-        # window.Element('').focus=True
-        # window.Element('').SetFocus()
-
-        for elem in events:
-            if event == elem[0]:
-                # temp = elem[1](values[elem[2]])
-                temp = elem[1](values[elem[2]])
-                # temp = db.searchSong(values['-INPUT-SEARCH-SONG-'])
-                window[elem[3]].update(values=temp)
+        ### SEARCH EVENTS ###
 
         if event == '-BUTTON-SEARCH-ARTIST-':
             temp = db.searchArtist(values['-INPUT-SEARCH-ARTIST-'])
@@ -97,6 +97,9 @@ def main():
             temp = db.searchRecordLabel(values['-INPUT-SEARCH-RECORD-'])
             window['-TABLE-SEARCH-RECORD-'].update(values=temp)
 
+        ### CREATE EVENTS ###
+
+        # CREATE RECORD LABEL
         if event == '-BUTTON-C01-':
             companyName = values['-companyName-C01-']
             labelLocation = values['-labelLocation-C01-']
@@ -110,12 +113,13 @@ def main():
                 window.FindElement('-labelLocation-C01-').update('')
                 window.FindElement('-dateEstablished-C01-').update('')
             else:
-                window['-OUTPUT-C01-'].update("Failed to create Record!")
+                window['-OUTPUT-C01-'].update("Failed to create Record Label!")
 
             # Force this window to have focus after window change (macos bug)
             window.TKroot.focus_force()
             updatelibtabs()
 
+        # CREATE ARTIST
         if event == '-BUTTON-C02-':
             artistName = values['-ARTIST-C02-']
             artistAge = int(values['-AGE-C02-'])
@@ -137,7 +141,44 @@ def main():
 
             updatelibtabs()
 
-        # Create Song
+        ##########################
+        if event == '-BUTTON-SEARCH-SONG-C04-':
+            gui.createAlbumSongSearch = db.searchSong(values['-INPUT-SEARCH-SONG-C04-'])
+            window['-TABLE-SEARCH-SONG-C04-'].update(values=  gui.createAlbumSongSearch)
+
+        if event == '-ADD-SONG-C04-':
+            #songName = values['-TABLE-SEARCH-SONG-C04-'][0]
+            ## SOLUTION:
+            try:
+                songIndex = values['-TABLE-SEARCH-SONG-C04-'][0]
+                print('song Index: ' + songIndex)
+            except:
+                print('select something')
+                # break
+            '''
+            songTitle =  gui.createAlbumSongSearch[songIndex][0]
+            songGenre =  gui.createAlbumSongSearch[songIndex][1]
+            songReleaseYear =  gui.createAlbumSongSearch[songIndex][3]
+
+            gui.songToLinkToAlbum.append([songTitle, songGenre, songReleaseYear])
+            '''
+            #db.insertSongWhileKnowingAlbumName( albumName, title, genre, releaseYear):
+
+        # CREATE Album
+        if event == '-BUTTON-C04-':
+            albumTitle = values['-TITLE-C04-']
+
+            print(gui.songToLinkToAlbum)
+
+            if isValid(albumTitle):
+                db.insertAlbum(0, albumTitle)
+                window.FindElement('-TITLE-C04-').update('')
+
+                gui.createAlbumSongSearch = []
+
+        #####################
+
+        # CREATE SONG
         if event == '-BUTTON-C05-':
             titleSong = values['-TITLE-C05-']
             genreSong = values['-GENRE-C05-'][0]
@@ -159,18 +200,77 @@ def main():
             window.TKroot.focus_force()
             updatelibtabs()
 
-        if event == '-BUTTON-L05-':
-            ratingIndex = values['-TABLE-L05-'][0]
-            print(ratingIndex)
-            # if isValid(ratingIndex):
-            # print(songsTable)
-            # songsTable[ratingIndex][4]
-            # [
-            #     ('AAlbert Song', 'Country', 977, 'stewart.com', 2014, Decimal('0')),
-            #     ('American family', 'Metal', 240, 'dickerson-williams.com', 2008, Decimal('1.700000'))
-            #     ]
+        ### LIBRARY EVENTS ###
+        
+        if event == '-BUTTON-L03-':
 
-    updatelibtabs()
+            albumIndex =  values['-TABLE-L03-'][0]
+            albumToRating = gui.albumsTable[albumIndex][0]
+
+            #db.changeWholeRating(albumToRating, values['-RATING-L03-'])
+            updatelibtabs()
+
+        # LIST SONGS - UPDATE RATING
+        if event == '-BUTTON-L04-':
+
+            ratingIndex = values['-TABLE-L04-'][0]
+            if(ratingIndex != None):
+                # if isValid(ratingIndex):
+                # print(songsTable)
+                songToRate = gui.songsTable[ratingIndex][0]
+                db.changeWholeRating(songToRate, values['-RATING-L04-'])
+                updatelibtabs()
+
+        # DELETE SECTION
+
+        if event == '-DELETE-BUTTON-L01-':
+
+            try:
+                recordIndex = values['-TABLE-L01-'][0]
+                print(recordIndex)
+
+                recordToDelete = gui.recordTable[recordIndex][0]
+                recordDateToDelete = gui.recordTable[recordIndex][1]
+                recordLocationToDelete = gui.recordTable[recordIndex][2]
+                print(recordToDelete)
+                db.deleteRecordLabel(recordToDelete, recordDateToDelete, recordLocationToDelete)
+                updatelibtabs()
+            except:
+                print('select something')
+
+        # DELETE ARTIST
+        if event == '-DELETE-BUTTON-L02-':
+            artistIndex = values['-TABLE-L02-'][0]
+
+            artistToDelete = gui.artistTable[artistIndex][0]
+            artistAge =  gui.artistTable[artistIndex][1]
+            #artistInstrument =  gui.artistTable[artistIndex][3]
+            #artistBand =  gui.artistTable[artistIndex][4]
+
+            db.deleteArtist(artistToDelete)# , artistAge, artistInstrumentm, artistBand)
+            updatelibtabs()
+
+        # DELETE ALBUM
+        if event == '-DELETE-BUTTON-L03-':
+            albumIndex = values['-TABLE-L03-'][0]
+            print(albumIndex)
+
+            albumToDelete = gui.albumTable[albumIndex][0]
+            print(albumToDelete)
+            db.deleteSong(albumToDelete)
+            updatelibtabs()
+
+        # DELETE SONG
+        if event == '-DELETE-BUTTON-L04-':
+            songIndex = values['-TABLE-L04-'][0]
+            print(songIndex)
+
+            songToDelete = gui.songsTable[songIndex][0]
+            print(songToDelete)
+            db.deleteSong(songToDelete)
+            updatelibtabs()
+
+    # updatelibtabs()
     while True:
 
         event, values = window.read()
@@ -179,7 +279,7 @@ def main():
         if event == sg.WINDOW_CLOSED:
             break
 
-        checkButtonPress(event, values)
+        # checkButtonPress(event, values)
         # SearchTab.searchEvents(event, window)
 
     # close the program

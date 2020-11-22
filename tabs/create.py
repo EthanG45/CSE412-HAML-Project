@@ -11,7 +11,7 @@ class CreateTab:
 
     def createTabGUI(self):
         createTableRecord = sg.Tab(
-            'Record',
+            'Record Label',
 
             [[sg.Text("Create a Record Label", size=(1270, 1))],
              [sg.Text("Company Name"), sg.Input(key='-companyName-C01-')],
@@ -21,7 +21,7 @@ class CreateTab:
              [sg.Button('CREATE', key='-BUTTON-C01-')],
              [sg.Text(size=(100, 720), key='-OUTPUT-C01-')]],
             key='C01'
-        )  # end of tab Record
+        )  # end of tab Record Label
 
         ageList = []
 
@@ -63,9 +63,25 @@ class CreateTab:
 
              [sg.Text("Title"), sg.Input(key='-TITLE-C04-')],
 
-             [sg.Button('CREATE', key='-BUTTON-C04-')],
+
+             [sg.Text("Search Song to add to album", size=(1220, 1))],
+             
+             [sg.Input(key='-INPUT-SEARCH-SONG-C04-'), 
+             sg.Button('search', key='-BUTTON-SEARCH-SONG-C04-')],
+
+             [sg.Table(values=[['', '', '', '', '', '']], headings=[
+                     '  Title  ', '  Genre  ', '     Source Link     ',
+                      ' releaseYear ', ' Rating Count ', ' Average Rating '], 
+                      key='-TABLE-SEARCH-SONG-C04-', enable_events=True, size=(1220, 20))],
+
+             [sg.Button('ADD SONG', key='-ADD-SONG-C04-'), sg.Button('CREATE', key='-BUTTON-C04-')],
              [sg.Text(size=(100, 720), key='-OUTPUT-C04-')]
              ],
+
+             
+                #[sg.Table
+
+             #],
 
             key='C04'
         )
@@ -112,32 +128,32 @@ class CreateTab:
             key='C05'
         )
 
-        createTableMade = sg.Tab(
-            'Made',
-            [[sg.Text("-----")],
-             [sg.Text("Known For?"), sg.Input(key='-KNOWN-FOR-C06-')],
+        # createTableMade = sg.Tab(
+        #     'Made',
+        #     [[sg.Text("-----")],
+        #      [sg.Text("Known For?"), sg.Input(key='-KNOWN-FOR-C06-')],
 
-             [sg.Button('CREATE', key='-BUTTON-C06-')],
-             [sg.Text(size=(100, 720), key='-OUTPUT-C06-')]
-             ],
-            key='C06'
-        )
+        #      [sg.Button('CREATE', key='-BUTTON-C06-')],
+        #      [sg.Text(size=(100, 720), key='-OUTPUT-C06-')]
+        #      ],
+        #     key='C06'
+        # )
 
-        createTableRating = sg.Tab(
-            'Rating',
-            [[sg.Text("create a rating")],
-             [sg.Text("Number Of Rating")],
-             [sg.Input(key='-NUM-OF-RATING-C07-')],
-             [sg.Text("Average Rating")],
-             [sg.Input(key='-AVERAGE-RATING-C07-')],
-             [sg.Text("User Rating")],
-             [sg.Input(key='-USER-RATING-C07-')],
+        # createTableRating = sg.Tab(
+        #     'Rating',
+        #     [[sg.Text("create a rating")],
+        #      [sg.Text("Number Of Rating")],
+        #      [sg.Input(key='-NUM-OF-RATING-C07-')],
+        #      [sg.Text("Average Rating")],
+        #      [sg.Input(key='-AVERAGE-RATING-C07-')],
+        #      [sg.Text("User Rating")],
+        #      [sg.Input(key='-USER-RATING-C07-')],
 
-             [sg.Button('CREATE', key='-BUTTON-C07-')],
-             [sg.Text(size=(100, 720), key='-OUTPUT-C07-')]
-             ],
-            key='C07'
-        )
+        #      [sg.Button('CREATE', key='-BUTTON-C07-')],
+        #      [sg.Text(size=(100, 720), key='-OUTPUT-C07-')]
+        #      ],
+        #     key='C07'
+        # )
 
         ### #### #### #### #### #### #### #### #### ###
         #          END OF CREATE TABLE TABS           #
@@ -149,15 +165,9 @@ class CreateTab:
             [[sg.TabGroup(
                 [[
                     createTableRecord,
-                    # createTablePublishes,  # ?
                     createTableArtist,
-                    # createTableMusician,
-                    # createTablePlayed,
                     createTableAlbum,
                     createTableSong,
-                    # createTableContains,  # ?
-                    createTableMade,
-                    createTableRating
                 ]],
                 key='tabgroupCreate',
                 enable_events=True

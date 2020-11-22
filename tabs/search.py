@@ -18,7 +18,7 @@ class SearchTab:
         searchSongTab = sg.Tab(
             'Songs',
             [[sg.Text("Search Song", size=(1270, 1))],
-             [sg.Input(key='-INPUT-SEARCH-SONG-')],
+             [sg.Input(key='-INPUT-SEARCH-SONG-')], 
              [sg.Button('search', key='-BUTTON-SEARCH-SONG-')],
              #[sg.Text(size=(100, 720), key='-OUTPUT-SEARCH-SONG-')]
              [sg.Table(values=[['', '', '', '', '', '', '']], headings=[
@@ -79,8 +79,8 @@ class SearchTab:
         )  
 
         searchRecordLabelTab = sg.Tab(
-            'Record',
-            [[sg.Text("Search Record by Name")],
+            'Record Label',
+            [[sg.Text("Search Record Label by Name")],
              [sg.Input(key='-INPUT-SEARCH-RECORD-')],
              [sg.Button('search', key='-BUTTON-SEARCH-RECORD-')],
              [sg.Table(values=[['', '', '']], headings=[

@@ -13,7 +13,7 @@ class DeleteTab:
         deleteTableRecord = sg.Tab(
             'Record',
 
-            [[sg.Text("Create A Table Record", size=(1270, 1))],
+            [[sg.Text("Create A Record Label", size=(1270, 1))],
              [sg.Text("Company Name")],
              [sg.Input(key='-companyName-D01-')],
              [sg.Text("Date Established")],
@@ -25,7 +25,7 @@ class DeleteTab:
              [sg.Button('DELETE', key='-BUTTON-D01-')],
              [sg.Text(size=(100, 700), key='-OUTPUT-D01-')]],
             key='D01'
-        )  # end of tab Record
+        )  # end of tab Record Label
 
         deleteTableArtist = sg.Tab(
             'Artist',
