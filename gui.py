@@ -636,59 +636,6 @@ def main():
             except:
                 sg.popup('Please select something to update')
 
-    '''def checkUpdateButtonPress(event, values):
-        if event == '-RECORD-LABEL-BUTTON-U01-':
-            companyName = values['-COMPANY-NAME-U01-']
-            labelLocation = values['-LABEL-LOCATION-U01-']
-            oldCompanyName = gui.updateItem[0]
-
-            db.updateRecordLabel(companyName, labelLocation, oldCompanyName)
-            updatelibtabs()
-            gui.updateWindow.close()
-            gui.updateWindow = None
-            window.TKroot.focus_force()
-
-        if event == '-ARTIST-BUTTON-U02-':
-            artistName = values['-ARTIST-U02-']
-            age = int(values['-AGE-U02-'])
-            instrument = values['-INSTRUMENT-U02-']
-            band = values['-BAND-U02-']
-            albumName = values['-TITLE-U02-']
-
-            oldArtistName = gui.updateItem[0]
-
-            db.updateArtist(artistName, age, instrument, band, oldArtistName, albumName)
-            gui.updateWindow.close()
-            gui.updateWindow.Refresh()
-            
-            window.TKroot.focus_force()
-            updatelibtabs()
-            window.Refresh()
-
-        if event == '-ALBUM-BUTTON-U03-':
-            title = values['-TITLE-U03-']
-            duration = int(values['-DURATION-U03-'])
-            oldTitle = gui.updateItem[0]
-
-            db.updateAlbum(title, duration, oldTitle)
-            updatelibtabs()
-            #gui.updateWindow.close()
-            #gui.updateWindow = None
-            window.TKroot.focus_force()
-
-        if event == '-SONG-BUTTON-U04-':
-            title = values['-TITLE-U04-']
-            genre = values['-GENRE-U04-']
-            duration = int(values['-DURATION-U04-'])
-            year = int(values['-YEAR-U04-'])
-            oldTitle = gui.updateItem[0]
-
-            db.updateSong(title, genre, duration, year, oldTitle)
-            updatelibtabs()
-            gui.updateWindow.close()
-            gui.updateWindow = None
-            window.TKroot.focus_force()'''
-
     # updatelibtabs()
 
     while True:
@@ -711,18 +658,10 @@ def main():
                 sg.popup('Please select a theme')
 
 
-        updateEvent = ''
-        updateValues = dict()
-        #if gui.updateWindow is not None:
-            #updateEvent, updateValues = gui.updateWindow.read()
-
-        # End progam when window is closed
         if event == sg.WINDOW_CLOSED:
             break
 
         checkButtonPress(event, values)
-        #checkUpdateButtonPress(updateEvent, updateValues)
-        # SearchTab.searchEvents(event, window)
 
     # close the program
     window.close()
