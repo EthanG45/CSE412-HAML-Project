@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import PySimpleGUIWeb as sg
 # s = 'smitty\'s house'
 # print(s)
 # s = re.sub('(?<=[a-z])\'(?=[a-z])', '', s)
@@ -31,26 +31,26 @@ import PySimpleGUI as sg
 
 # import PySimpleGUI as sg
 
-layout = [  [sg.Text('Click on field')],
-            [sg.Input(key='_INPUT1_')],
-            [sg.Input(key='_INPUT2_')],
-            [sg.T('', size=(40,1), key='_TEXT_')],
-            [sg.Button('Read')]]
+# layout = [  [sg.Text('Click on field')],
+#             [sg.Input(key='_INPUT1_')],
+#             [sg.Input(key='_INPUT2_')],
+#             [sg.T('', size=(40,1), key='_TEXT_')],
+#             [sg.Button('Read')]]
 
-window = sg.Window('Demonstration of focus', layout)
+# window = sg.Window('Demonstration of focus', layout)
 
-current_focus = None
-while True:             # Event Loop
-    event, values = window.Read(timeout=500)
-    if event is None:
-        break
-    element = window.FindElementWithFocus()
-    if element is not None and element != current_focus:
-        window.Element('_TEXT_').Update(f'Focus changed....Element with focus = {element.Key}')
-        current_focus = element
-        if element.Key == '_INPUT2_':
-            sg.Popup('You clicked in the input field',
-                     'that will open your newly designed date chooser window(s)')
+# current_focus = None
+# while True:             # Event Loop
+#     event, values = window.Read(timeout=500)
+#     if event is None:
+#         break
+#     element = window.FindElementWithFocus()
+#     if element is not None and element != current_focus:
+#         window.Element('_TEXT_').Update(f'Focus changed....Element with focus = {element.Key}')
+#         current_focus = element
+#         if element.Key == '_INPUT2_':
+#             sg.Popup('You clicked in the input field',
+#                      'that will open your newly designed date chooser window(s)')
 
 
 # layout = [[sg.Text('Enter Value:')],
@@ -100,3 +100,59 @@ while True:             # Event Loop
 #         print('Button 2 clicked')
 #     elif event == '_3_':
 #         print('Button 3 clicked')
+
+
+# Main program
+
+
+while True:
+    m_Fld1_txt = ''
+    m_Fld2_txt = ''
+    m_Fld3_txt = ''
+
+    layout = [[sg.Text('Text Field1:'),
+               sg.Input(default_text=m_Fld1_txt,
+                        size=(10, 1),
+                        key='Fld1')],
+              [sg.Text('Text Field2:'),
+               sg.Input(default_text=m_Fld2_txt,
+                        size=(10, 1),
+                        key='Fld2')],
+              [sg.Text('Text Field3:'),
+               sg.Input(default_text=m_Fld3_txt,
+                        size=(10, 1),
+                        key='Fld3')],
+              [sg.Text("Date Established"), sg.Input(key='-dateEstablished-C01-', size=(20, 1)),
+               sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-dateEstablished-C01-', no_titlebar=True, key='Calendar-C01')],
+              [sg.Text('Press F01 to Proceed, Esc to Exit.')],
+              [sg.Button('ESC'),
+               sg.Button('F01')]]
+
+    window = sg.Window('Test Form',
+                       layout,
+                       size=(800, 360),
+                       disable_close=True,
+                       font='fixedsys',
+                       finalize=True)
+
+    window.TKroot.focus_force()         # Force this window to have focus
+
+#   window.Element('Fld1').SetFocus()
+#   window.Element('Fld2').SetFocus()
+    window.Element('Fld3').SetFocus()   # Force this field to have focus
+
+    m_Event, m_Values = window.Read()
+    window.Close()
+
+    if m_Event == 'ESC':
+        break
+    else:
+        pass
+
+    m_Fld1_txt = m_Values['Fld1']
+    m_Fld2_txt = m_Values['Fld2']
+    m_Fld3_txt = m_Values['Fld3']
+
+#  Code to process m_Fld1_txt, m_Fld2_txt, m_Fld3_txt goes here.
+
+#  Ultimately, go around 'while' loop again, until 'ESC' button clicked.

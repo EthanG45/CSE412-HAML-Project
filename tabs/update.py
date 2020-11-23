@@ -11,9 +11,9 @@ class UpdateTab:
 
     def updateTabGUI(self):
         updateTableRecord = sg.Tab(
-            'Record',
+            'Record Label',
 
-            [[sg.Text("Update A Table Record", size=(1270, 1))],
+            [[sg.Text("Update A Table Record Label", size=(1270, 1))],
              [sg.Text("Company Name"), sg.Input(key='-companyName-U01-')],
              [sg.Text("Date Established"), sg.Input(key='-dateEstablished-U01-')],
              [sg.Text("Label Location"), sg.Input(key='-labelLocation-U01-')],
@@ -21,7 +21,7 @@ class UpdateTab:
              [sg.Button('DELETE', key='-BUTTON-U01-')],
              [sg.Text(size=(100, 700), key='-OUTPUT-U01-')]],
             key='U01'
-        )  # end of tab Record
+        )  # end of tab Record Label
 
         updateTableArtist = sg.Tab(
             'Artist',
