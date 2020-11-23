@@ -26,10 +26,10 @@ class UpdateTab:
         updateTableArtist = sg.Tab(
             'Artist',
             [[sg.Text("Update an Artist")],
-             #Artist Elements
+             # Artist Elements
              [sg.Text("Artist Name"), sg.Input(key='-ARTIST-NAME-U02-')],
              [sg.Text("Age"), sg.Input(key='-AGE-U02-')],
-             
+
              # Musician elements
              [sg.Text("Instrument"), sg.Input(key='-INSTRUMENT-U02-')],
              [sg.Text("band"), sg.Input(key='-BAND-U02-')],
@@ -43,10 +43,10 @@ class UpdateTab:
         updateTableAlbum = sg.Tab(
             'Album',
             [[sg.Text("Update an Album")],
-             
-             [sg.Text("Album Duration"),sg.Input(key='-ALBUM-DURATION-U04-')],
+
+             [sg.Text("Album Duration"), sg.Input(key='-ALBUM-DURATION-U04-')],
              [sg.Text("Title"), sg.Input(key='-TITLE-U04-')],
-             [sg.Text("Cover Art URL"),sg.Input(key='-COVER ART URL-U04-')],
+             [sg.Text("Cover Art URL"), sg.Input(key='-COVER ART URL-U04-')],
 
              [sg.Button('DELETE', key='-BUTTON-U04-')],
              [sg.Text(size=(100, 700), key='-OUTPUT-U04-')]
@@ -147,3 +147,44 @@ class UpdateTab:
         )
 
         return updateTab
+
+    def updateRecordLabelGUI(self):
+        layout = [[sg.Text('Company Name'),
+                   sg.Input(size=(10, 1), key='-COMPANY-NAME-U01-')],
+                  [sg.Text('Label Location'),
+                   sg.Input(size=(10, 1), key='-LABEL-LOCATION-U01-')],
+                  [sg.Button('UPDATE', key='-RECORD-LABEL-BUTTON-U01-')]
+                  ]
+
+        return layout
+
+    def updateArtistGUI(self):
+
+        layout = [[sg.Text('Age'),
+                   sg.Input(size=(10, 1), key='-AGE-U01-')],
+                  [sg.Button('UPDATE', key='-ARTIST-BUTTON-U01-')]
+                  ]
+
+        return layout
+
+    def updateAlbumGUI(self):
+
+        layout = [[sg.Text('Title'),
+                   sg.Input(size=(10, 1), key='-TITLE-U03-')],
+                  [sg.Text('Duration'),
+                   sg.Input(size=(10, 1), key='-DURATION-U03-')],
+                  [sg.Button('UPDATE', key='-ALBUM-BUTTON-U03-')]
+                  ]
+
+        return layout
+
+    def updateSongGUI(self):
+
+        layout = [[sg.Text('Title'),
+                   sg.Input(size=(10, 1), key='-TITLE-U04-')],
+                  [sg.Text('Duration'),
+                   sg.Input(size=(10, 1), key='-DURATION-U04-')],
+                  [sg.Button('UPDATE', key='-ALBUM-BUTTON-U01-')]
+                  ]
+
+        return layout

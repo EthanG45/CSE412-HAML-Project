@@ -1,11 +1,11 @@
 import PySimpleGUI as sg
 
 ### #### #### #### #### #### #### #### #### ###
-#            CREATE TABLE TABS                #
+#            ADD TABLE TABS                #
 ### #### #### #### #### #### #### #### #### ###
 
 
-class CreateTab:
+class AddTab:
     def __init__(self, db):
         self.db = db
         self.albumNameList = self.db.allAlbumName()
@@ -20,7 +20,7 @@ class CreateTab:
         # self.recordLabelList = self.db.allRecordLabel()
         # self.albumNameList = list(map(str, self.albumNameList))
 
-    def createTabGUI(self):
+    def addTabGUI(self):
         ageList = []
 
         for x in range(155):
@@ -36,10 +36,10 @@ class CreateTab:
         genre = ["Rap", "Rock", "Country", "Hip Hop",
                  "Soundtrack", "EDM", "Metal", "Heavy Metal", "Pop"]
 
-        createTableRecord = sg.Tab(
+        addTableRecord = sg.Tab(
             'Record Label',
 
-            [[sg.Text("Create a Record Label", size=(1270, 1))],
+            [[sg.Text("Add a Record Label", size=(1270, 1))],
              [sg.Text("Company Name"), sg.Input(key='-companyName-C01-')],
              [sg.Text("Label Location"), sg.Input(key='-labelLocation-C01-')],
              [sg.Text("What album did this record label publish?", size=(1270, 1))],
@@ -50,15 +50,15 @@ class CreateTab:
              [sg.Text("Date Established"), sg.Input(key='-dateEstablished-C01-', size=(20, 1)),
               sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-dateEstablished-C01-', no_titlebar=False, key='Calendar-C01')],
 
-             [sg.Button('CREATE', key='-BUTTON-C01-')],
+             [sg.Button('ADD', key='-BUTTON-C01-')],
              [sg.Text(size=(100, 720), key='-OUTPUT-C01-')]],
             key='C01'
         )  # end of tab Record Label
 
-        createTableArtist = sg.Tab(
+        addTableArtist = sg.Tab(
             'Artist',
 
-            [[sg.Text("Create an Artist", size=(1270, 1))],
+            [[sg.Text("Add an Artist", size=(1270, 1))],
 
              # Artist elements
              [sg.Text("Artist Name"), sg.Input(key='-ARTIST-C02-')],
@@ -85,15 +85,15 @@ class CreateTab:
              # [sg.Text("Title"), sg.Listbox(values=self.albumNameList,
              #                                key='-TITLE-C02-',  size=(50, 20))],
 
-             [sg.Button('CREATE', key='-BUTTON-C02-')],
+             [sg.Button('ADD', key='-BUTTON-C02-')],
              [sg.Text(size=(100, 720), key='-OUTPUT-C02-')]],
 
             key='C02'
         )
 
-        createTableAlbum = sg.Tab(
+        addTableAlbum = sg.Tab(
             'Album',
-            [[sg.Text("Create an Album")],
+            [[sg.Text("Add an Album")],
 
              [sg.Text("Title"), sg.Input(key='-ALBUM-TITLE-C04-')],
 
@@ -108,9 +108,9 @@ class CreateTab:
              #           key='-TABLE-SEARCH-SONG-C04-', enable_events=True, size=(1220, 20))],
 
              #  [sg.Button('ADD SONG', key='-ADD-SONG-C04-'),
-             #  sg.Button('CREATE', key='-BUTTON-C04-')],
+             #  sg.Button('ADD', key='-BUTTON-C04-')],
 
-             [sg.Text("Create the Album's first song")],
+             [sg.Text("Add the Album's first song")],
              [sg.Text("Title"), sg.Input(key='-SONG-TITLE-C04-')],
              [sg.Text("Genre"), sg.Listbox(values=genre,
                                            key='-GENRE-C04-',  size=(10, 5))],
@@ -130,7 +130,7 @@ class CreateTab:
              # sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-releaseYear-C05-', no_titlebar=False, key='Calendar-C05')],
 
              # [sg.Input(key='-RELEASE-YEAR-C07-')],
-             [sg.Button('CREATE', key='-BUTTON-C04-')],
+             [sg.Button('ADD', key='-BUTTON-C04-')],
 
              [sg.Text(size=(100, 720), key='-OUTPUT-C04-')]
 
@@ -144,9 +144,9 @@ class CreateTab:
             key='C04'
         )
 
-        createTableSong = sg.Tab(
+        addTableSong = sg.Tab(
             'Song',
-            [[sg.Text("Create a song")],
+            [[sg.Text("Add a song")],
              [sg.Text("Title"), sg.Input(key='-TITLE-C05-')],
              [sg.Text("Genre"), sg.Listbox(values=genre,
                                            key='-GENRE-C05-',  size=(10, 10))],
@@ -157,6 +157,8 @@ class CreateTab:
 
              [sg.Text("Release Year"), sg.Combo(
                  yearList, key='-releaseYear-C05-')],
+
+            
              # [sg.Text("Day", size=(daySize, 1)), sg.Text("Month", size=(monthSize, 1)), sg.Text("Year", size=(yearSize, 1))],
              # [sg.Input(key='-DAY-C05-', size=(daySize, 1)), sg.Input(key='-MONTH-C05-',  size=(monthSize, 1)), sg.Input(key='-YEAR-C05-', size=(yearSize, 1))],
 
@@ -165,7 +167,7 @@ class CreateTab:
              # sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-releaseYear-C05-', no_titlebar=False, key='Calendar-C05')],
 
              # [sg.Input(key='-RELEASE-YEAR-C07-')],
-             [sg.Button('CREATE', key='-BUTTON-C05-')],
+             [sg.Button('ADD', key='-BUTTON-C05-')],
 
              [sg.Text(size=(100, 720), key='-OUTPUT-C05-')]
 
@@ -173,20 +175,20 @@ class CreateTab:
             key='C05'
         )
 
-        # createTableMade = sg.Tab(
+        # addTableMade = sg.Tab(
         #     'Made',
         #     [[sg.Text("-----")],
         #      [sg.Text("Known For?"), sg.Input(key='-KNOWN-FOR-C06-')],
 
-        #      [sg.Button('CREATE', key='-BUTTON-C06-')],
+        #      [sg.Button('ADD', key='-BUTTON-C06-')],
         #      [sg.Text(size=(100, 720), key='-OUTPUT-C06-')]
         #      ],
         #     key='C06'
         # )
 
-        # createTableRating = sg.Tab(
+        # addTableRating = sg.Tab(
         #     'Rating',
-        #     [[sg.Text("create a rating")],
+        #     [[sg.Text("add a rating")],
         #      [sg.Text("Number Of Rating")],
         #      [sg.Input(key='-NUM-OF-RATING-C07-')],
         #      [sg.Text("Average Rating")],
@@ -194,34 +196,33 @@ class CreateTab:
         #      [sg.Text("User Rating")],
         #      [sg.Input(key='-USER-RATING-C07-')],
 
-        #      [sg.Button('CREATE', key='-BUTTON-C07-')],
+        #      [sg.Button('ADD', key='-BUTTON-C07-')],
         #      [sg.Text(size=(100, 720), key='-OUTPUT-C07-')]
         #      ],
         #     key='C07'
         # )
 
         ### #### #### #### #### #### #### #### #### ###
-        #          END OF CREATE TABLE TABS           #
+        #          END OF ADD TABLE TABS              #
         ### #### #### #### #### #### #### #### #### ###
 
         # to be replaced by a nested tab group
-        createTab = sg.Tab(
-            'Create',
+        addTab = sg.Tab(
+            'Add',
             [[sg.TabGroup(
                 [[
-                    createTableRecord,
-                    createTableArtist,
-                    createTableAlbum,
-                    createTableSong,
+                    addTableSong,
+                    addTableAlbum,
+                    addTableArtist,
+                    addTableRecord
                 ]],
-                key='tabgroupCreate',
+                key='tabgroupAdd',
                 enable_events=True
             )  # end of TabGroup
             ]],
 
-            key='create_tab'
+            key='add_tab'
 
-        )  # end of tab create
+        )  # end of tab add
 
-        self.updateLists()
-        return createTab
+        return addTab

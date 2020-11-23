@@ -26,7 +26,7 @@ db = sql.Database()
 # print(db.findLocationByAlbumName('NO'))
 # db.deleteArtist('aatest')
 # print(db.sqlReadAny("SELECT * FROM recordLabel"))
-print(db.sqlReadAny("SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId AND S.title LIKE '%AAARamon%'"))
+#print(db.sqlReadAny("SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId AND S.title LIKE '%AAARamon%'"))
 
 # Ethan=# SELECT * FROM song WHERE title = 'AAAA Ramon Song';
 #       title      |  genre  | songduration |   songid   |    sourcelink    | releaseyear 
@@ -46,3 +46,14 @@ print(db.sqlReadAny("SELECT S.title, A.title, A1.artistName, S.genre, S.songDura
 # print(db.allAlbumName()[0][0])
 # db.createSongAndAlbum('zzzzalbum', 'please work', 'rock', 2009)
 #print(db.getAllSongs())
+#db.updateAlbum('updated prepare', 100, 'value its prepare')
+# print(db.findLocationByAlbumName('value its prepare'))
+#print(db.getAllSongs())
+#db.updateSong('zAbg', 'country', 100, 2007, 'yourself media')
+#print(db.getAllRecordLabels())
+#db.updateRecordLabel('zman', 'Arizona', 'YellowGreen')
+#print(db.getAllArtists())
+#db.updateArtist(60, 'Zachary Nelson')
+# print(db.sqlReadAny("SELECT R.companyName, A.title, R.dateEstablished, R.labelLocation FROM recordLabel R, publishes P, album A, Contains C, Song S WHERE P.recordLabelID = R.recordLabelID AND S.songID = C.songID AND C.albumID = A.albumID AND A.albumID = P.albumID AND LOWER(S.title) = 'able seat' "))
+# print(db.sqlReadAny("SELECT R.companyName, A.title, R.dateEstablished, R.labelLocation FROM recordLabel R, publishes P, album A, Contains C, Song S WHERE S.songID = C.songID AND C.albumID = A.albumID AND A.albumID = P.albumID AND P.recordLabelID = R.recordLabelID AND LOWER(S.title) = 'able seat'"))
+# print(db.allInstName())

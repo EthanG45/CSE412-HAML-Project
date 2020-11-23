@@ -120,6 +120,23 @@ class Database:
             print('Updated User Rating with ', rating)
         except Exception as e:
             print(e)
+    
+    def changeWholeRatingId(self, songId, rating):
+        self.conn.set_session(autocommit=True)
+        averageRating = randint(10, 50)/10
+        try:
+            # self.cur.execute(
+            #     "SELECT S.title FROM Song S WHERE S.songID = '%i'" % (songId))
+            # songTitle = self.getItems()[0][0]
+            self.cur.execute(
+                "UPDATE Rating SET userRating = %i  WHERE songID = %i" % (rating, songId))
+            self.cur.execute(
+                "UPDATE Rating SET averageRating = %f WHERE songID = %i" % (averageRating, songId))
+            self.cur.execute(
+                "UPDATE Rating SET numOfRating = numOfRating + 1 WHERE songID = %i" % (songId))
+            print('Updated User Rating with ', rating, 'for', songId)
+        except Exception as e:
+            print(e)
 
     # works
     def getSongUserRating(self, songName):
@@ -147,46 +164,87 @@ class Database:
         try:
             self.cur.execute(
                 # "SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.numOfRating, R.averageRating FROM song S, rating R WHERE S.songID = R.songID AND LOWER(title) = '%s'" % (songName.lower()))
-                "SELECT S.title, A.title, A1.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId AND LOWER(S.title) = '%s' ORDER BY LOWER(S.title)" % (songName.lower()))
+                "SELECT S.title, A.title, A1.artistName, S.genre, S.songduration, S.sourcelink, S.releaseyear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId AND LOWER(S.title) = '%s' ORDER BY S.songId" % (songName.lower()))
             return self.getItems()
         except:
             return "Song not found"
+    
+    def searchSongId(self, songName):
+        try:
+            self.cur.execute(
+                # "SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.numOfRating, R.averageRating FROM song S, rating R WHERE S.songID = R.songID AND LOWER(title) = '%s'" % (songName.lower()))
+                "SELECT S.songId FROM song S WHERE LOWER(S.title) = '%s' ORDER BY S.songId" % (songName.lower()))
+            return self.getItems()
+        except:
+            return "Song ID not found"
 
    # works - works on GUI
     def searchAlbum(self, albumName):
         try:
             self.cur.execute(
-                "SELECT title, albumDuration, coverArtURL FROM album WHERE LOWER(title) = '%s'" % (albumName.lower()))
+                "SELECT title, albumDuration, coverArtURL FROM album WHERE LOWER(title) = '%s'  ORDER BY albumID" % (albumName.lower()))
             return self.getItems()
         except:
             return "Album not found"
+
+    def searchAlbumId(self, albumName):
+        try:
+            self.cur.execute(
+                "SELECT albumID FROM album WHERE LOWER(title) = '%s' ORDER BY albumID" % (albumName.lower()))
+            return self.getItems()
+        except:
+            return "Album ID not found"
 
     # works - works on GUI
     def searchMusician(self, bandName):
         try:
             self.cur.execute(
-                "SELECT A.artistName, A.age, M.instrument, M.band FROM musician M, artist A WHERE M.artistId = A.artistId AND LOWER(band) = '%s'" % (bandName.lower()))
+                "SELECT A.artistName, A.age, M.instrument, M.band FROM musician M, artist A WHERE M.artistId = A.artistId AND LOWER(band) = '%s' ORDER BY A.artistId" % (bandName.lower()))
             return self.getItems()
         except:
             return "Musician not found"
+    
+    def searchMusicianId(self, bandName):
+        try:
+            self.cur.execute(
+                "SELECT A.artistid FROM musician M, artist A WHERE M.artistId = A.artistId AND LOWER(band) = '%s' ORDER BY A.artistId" % (bandName.lower()))
+            return self.getItems()
+        except:
+            return "Musician ID not found"
 
      # works - works on GUI
     def searchArtist(self, artistName):
         try:
             self.cur.execute(
-                "SELECT artistName, age, knownFor FROM Artist A, Made M WHERE A.artistID = M.artistID AND LOWER(artistName) = '%s'" % (artistName.lower()))
+                "SELECT artistName, age, knownFor FROM Artist A, Made M WHERE A.artistID = M.artistID AND LOWER(artistName) = '%s' ORDER BY A.artistID" % (artistName.lower()))
             return self.getItems()
         except:
             return "Artist not found"
+
+    def searchArtistId(self, artistName):
+        try:
+            self.cur.execute(
+                "SELECT A.artistId FROM Artist A, Made M WHERE A.artistID = M.artistID AND LOWER(artistName) = '%s' ORDER BY artistID" % (artistName.lower()))
+            return self.getItems()
+        except:
+            return "Artist ID not found"
 
     # works - works on GUI
     def searchRecordLabel(self, companyName):
         try:
             self.cur.execute(
-                "SELECT companyName, dateEstablished, labelLocation FROM recordLabel WHERE LOWER(companyName) = '%s'" % (companyName.lower()))
+                "SELECT companyName, dateEstablished, labelLocation FROM recordLabel WHERE LOWER(companyName) = '%s' ORDER BY recordLabelId" % (companyName.lower()))
             return self.getItems()
         except:
             return "RecordLabel not found"
+
+    def searchRecordLabelId(self, companyName):
+        try:
+            self.cur.execute(
+                "SELECT recordLabelId FROM recordLabel WHERE LOWER(companyName) = '%s' ORDER BY recordLabelId" % (companyName.lower()))
+            return self.getItems()
+        except:
+            return "RecordLabel ID not found"
 
     # works - works on GUI
     def getAllSongs(self):
@@ -217,6 +275,21 @@ class Database:
     def allArtistName(self):
         result = []
         self.cur.execute("SELECT artistName FROM artist ORDER BY LOWER(artistName)")
+        return self.getSubscriptedItems()
+
+    def allSongName(self):
+        result = []
+        self.cur.execute("SELECT title FROM song ORDER BY LOWER(title)")
+        return self.getSubscriptedItems()
+
+    def allBandName(self):
+        result = []
+        self.cur.execute("SELECT band FROM musician ORDER BY LOWER(band)")
+        return self.getSubscriptedItems()
+
+    def allInstName(self):
+        result = []
+        self.cur.execute("SELECT DISTINCT instrument FROM musician GROUP BY instrument")
         return self.getSubscriptedItems()
 
     # works - works on GUI
@@ -286,12 +359,20 @@ class Database:
                 "DELETE FROM played WHERE albumId = %i" % (universalID))
         except Exception as e:
             print(e)
+        
+    def deleteAlbumByID(self, albumId):
+        try:
+            self.cur.execute("DELETE FROM rating WHERE albumId = %i" % (albumId))
+            self.cur.execute("DELETE FROM made WHERE albumId = %i" % (albumId))
+            self.cur.execute("DELETE FROM album WHERE albumId = %i" % (albumId))
+            self.cur.execute("DELETE FROM played WHERE albumId = %i" % (albumId))
+        except Exception as e:
+            print(e)
 
     # works
     def updateAlbum(self, newTitle, newDuration, oldTitle):
         try:
-            self.cur.execute("UPDATE album SET title = '" + newTitle + "', albumDuration = '" + newDuration +
-                             "'WHERE title = '" + oldTitle + "'")
+            self.cur.execute("UPDATE album SET title =  '%s', albumDuration = %i WHERE title = '%s'" % (newTitle, newDuration, oldTitle))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -335,12 +416,22 @@ class Database:
                 "DELETE FROM contains WHERE songId = %i" % (universalID))
         except Exception as e:
             print(e)
+    
+    def deleteSongId(self, songId):
+        try:
+            universalID = songId
+            self.cur.execute(
+                "DELETE FROM rating WHERE songId = %i" % (universalID))
+            self.cur.execute("DELETE FROM song WHERE songId = %i" % (universalID))
+            self.cur.execute(
+                "DELETE FROM contains WHERE songId = %i" % (universalID))
+        except Exception as e:
+            print(e)
 
     # works
     def updateSong(self, newTitle, newGenre, newDuration, newYear, oldTitle):
         try:
-            self.cur.execute("UPDATE song SET title = '" + newTitle + "', genre = '" + newGenre + "', songDuration = '" + newDuration + "', releaseYear = '" + newYear +
-                             "'WHERE title = '" + oldTitle + "'")
+            self.cur.execute("UPDATE song SET title = '%s', genre = '%s', songDuration = %i, releaseYear = %i WHERE title = '%s'" % (newTitle, newGenre, newDuration, newYear, oldTitle))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -374,10 +465,18 @@ class Database:
             print(e)
 
     # works
+    def deleteRecordLabelID(self, labelId):
+        try:
+            self.cur.execute(
+                "DELETE FROM publishes WHERE recordLabelId = %i" % (labelId))
+            self.cur.execute("DELETE FROM recordLabel WHERE recordLabelId = %i" % (labelId))
+        except Exception as e:
+            print(e)
+
+    # works
     def updateRecordLabel(self, newCompanyName, newLabelLocation, oldCompanyName):
         try:
-            self.cur.execute("UPDATE recordLabel SET companyName = '" + newCompanyName + "', dateEstablished = '" + fake.date() + "', labelLocation = '" + newLabelLocation +
-                             "'WHERE companyName = '" + oldCompanyName + "'")
+            self.cur.execute("UPDATE recordLabel SET companyName = '%s', dateEstablished = '%s' , labelLocation = '%s' WHERE companyName = '%s'" % (newCompanyName, fake.date(), newLabelLocation, oldCompanyName))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -417,12 +516,25 @@ class Database:
                 "DELETE FROM publishes WHERE albumId = %i" % (universalID))
         except Exception as e:
             print(e)
+    
+    def deleteArtistId(self, artistId):
+        try:
+            self.cur.execute(
+                "DELETE FROM made WHERE artistId = %i" % (artistId))
+            self.cur.execute("DELETE FROM artist WHERE artistId = %i" % (artistId))
+            self.cur.execute(
+                "DELETE FROM played WHERE musicianId = %i" % (artistId))
+            self.cur.execute(
+                "DELETE FROM musician WHERE musicianId = %i" % (artistId))
+            self.cur.execute(
+                "DELETE FROM publishes WHERE albumId = %i" % (artistId))
+        except Exception as e:
+            print(e)
 
     # works updated age only
     def updateArtist(self, newAge, artistName):
         try:
-            self.cur.execute("UPDATE artist SET age = '" + newAge +
-                             "'WHERE artistName = '" + artistName + "'")
+            self.cur.execute("UPDATE artist SET age = %i WHERE artistName = '%s'" % (newAge, artistName))
             self.conn.commit()
         except Exception as e:
             print(e)
