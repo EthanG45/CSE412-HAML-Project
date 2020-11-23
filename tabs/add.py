@@ -10,6 +10,8 @@ class AddTab:
         self.db = db
         self.albumNameList = self.db.allAlbumName()
         self.artistNameList = self.db.allArtistName()
+        self.recordLabelList = self.db.allCompanyName()
+        self.instrumentList = self.db.allInstName()
         # print(self.albumNameList[0][0])
         # self.albumNameList = list(map(str, self.albumNameList))
 
@@ -17,6 +19,8 @@ class AddTab:
         # TODO THis doesnt auto update properly. just get it in gui.py and pass as an arg i think
         self.albumNameList = self.db.allAlbumName()
         self.artistNameList = self.db.allArtistName()
+        self.recordLabelList = self.db.allCompanyName()
+        self.instrumentList = self.db.allInstName()
         # self.recordLabelList = self.db.allRecordLabel()
         # self.albumNameList = list(map(str, self.albumNameList))
 
@@ -33,8 +37,7 @@ class AddTab:
         for x in range(1000, 2021):
             releaseYear.insert(0, x)
 
-        genre = ["Rap", "Rock", "Country", "Hip Hop",
-                 "Soundtrack", "EDM", "Metal", "Heavy Metal", "Pop"]
+        genre = ["Rap", "Rock", "Country", "Hip Hop", "Soundtrack", "EDM", "Metal", "Heavy Metal", "Pop"]
 
         addTableRecord = sg.Tab(
             'Record Label',
@@ -46,7 +49,7 @@ class AddTab:
              # Album elements
              #  [sg.Text("Title"), sg.Input(key='-TITLE-C02-')],
              [sg.Text("Title"), sg.Listbox(values=self.albumNameList,
-                                           key='-TITLE-C01-',  size=(50, 20))],
+                                           key='-TITLE-C01-', size=(50, 20))],
              [sg.Text("Date Established"), sg.Input(key='-dateEstablished-C01-', size=(20, 1)),
               sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-dateEstablished-C01-', no_titlebar=False, key='Calendar-C01')],
 
@@ -62,31 +65,38 @@ class AddTab:
 
              # Artist elements
              [sg.Text("Artist Name"), sg.Input(key='-ARTIST-C02-')],
-             # [sg.Text("Age"), sg.Input(key='-AGE-C02-')],
-
              [sg.Text("Age"), sg.Slider(range=(1, 155),
                                         default_value=42,
                                         size=(40, 15),
                                         orientation='horizontal',
                                         font=('Helvetica', 12), key='-AGE-C02-')],
-
-                # Musician elements
-             [sg.Text("Instrument"), sg.Input(key='-INSTRUMENT-C02-')],
+             # Musician elements
+             [sg.Text("Instrument"), sg.Listbox(values=self.instrumentList, key='-INSTRUMENT-C02-', size=(10, 5))],
              [sg.Text("Band Name"), sg.Input(key='-BAND-C02-')],
 
+             # Album Elements
              [sg.Text("What album did this artist make?", size=(1270, 1))],
-             # Album elements
-             #  [sg.Text("Title"), sg.Input(key='-TITLE-C02-')],
-             [sg.Text("Title"), sg.Listbox(values=self.albumNameList,
-                                           key='-TITLE-C02-',  size=(50, 20))],
 
-             # [sg.Text("What record label publishes this artist's work?", size=(1270, 1))],
+             [sg.Text("Add an Album")],
 
-             # [sg.Text("Title"), sg.Listbox(values=self.albumNameList,
-             #                                key='-TITLE-C02-',  size=(50, 20))],
+             [sg.Text("Title"), sg.Input(key='-ALBUM-TITLE-C02-')],
+
+             [sg.Text("Add the Album's first song")],
+             [sg.Text("Title"), sg.Input(key='-SONG-TITLE-C02-')],
+             [sg.Text("Genre"), sg.Listbox(values=genre, key='-GENRE-C02-', size=(10, 5))],
+
+             [sg.Text("Release Year"), sg.Combo(yearList, key='-RELEASE-YEAR-C02-')],
+
+             [sg.Text("Record Label"), sg.Listbox(values=self.recordLabelList, key='-RECORD-TITLE-C02-', size=(50, 20))],
 
              [sg.Button('ADD', key='-BUTTON-C02-')],
-             [sg.Text(size=(100, 720), key='-OUTPUT-C02-')]],
+
+             [sg.Text(size=(100, 720), key='-OUTPUT-C02-')]
+
+
+
+
+             ],
 
             key='C02'
         )
@@ -113,7 +123,7 @@ class AddTab:
              [sg.Text("Add the Album's first song")],
              [sg.Text("Title"), sg.Input(key='-SONG-TITLE-C04-')],
              [sg.Text("Genre"), sg.Listbox(values=genre,
-                                           key='-GENRE-C04-',  size=(10, 5))],
+                                           key='-GENRE-C04-', size=(10, 5))],
              #  layout = [[sg.Listbox(values=['Listbox 1', 'Listbox 2', 'Listbox 3'], size=(30, 6))]]
              # [sg.Text("Source Link"), sg.Input(key='-SOURCE-C05-')],
 
@@ -121,7 +131,7 @@ class AddTab:
                  yearList, key='-RELEASE-YEAR-C04-')],
 
              [sg.Text("Artist"), sg.Listbox(values=self.artistNameList,
-                                            key='-ARTIST-TITLE-C04-',  size=(50, 20))],
+                                            key='-ARTIST-TITLE-C04-', size=(50, 20))],
              # [sg.Text("Day", size=(daySize, 1)), sg.Text("Month", size=(monthSize, 1)), sg.Text("Year", size=(yearSize, 1))],
              # [sg.Input(key='-DAY-C05-', size=(daySize, 1)), sg.Input(key='-MONTH-C05-',  size=(monthSize, 1)), sg.Input(key='-YEAR-C05-', size=(yearSize, 1))],
 
@@ -149,16 +159,16 @@ class AddTab:
             [[sg.Text("Add a song")],
              [sg.Text("Title"), sg.Input(key='-TITLE-C05-')],
              [sg.Text("Genre"), sg.Listbox(values=genre,
-                                           key='-GENRE-C05-',  size=(10, 10))],
+                                           key='-GENRE-C05-', size=(10, 10))],
              [sg.Text("Album Title"), sg.Listbox(values=self.albumNameList,
-                                                 key='-ALBUM-TITLE-C05-',  size=(50, 20))],
+                                                 key='-ALBUM-TITLE-C05-', size=(50, 20))],
              #  layout = [[sg.Listbox(values=['Listbox 1', 'Listbox 2', 'Listbox 3'], size=(30, 6))]]
              # [sg.Text("Source Link"), sg.Input(key='-SOURCE-C05-')],
 
              [sg.Text("Release Year"), sg.Combo(
                  yearList, key='-releaseYear-C05-')],
 
-            
+
              # [sg.Text("Day", size=(daySize, 1)), sg.Text("Month", size=(monthSize, 1)), sg.Text("Year", size=(yearSize, 1))],
              # [sg.Input(key='-DAY-C05-', size=(daySize, 1)), sg.Input(key='-MONTH-C05-',  size=(monthSize, 1)), sg.Input(key='-YEAR-C05-', size=(yearSize, 1))],
 

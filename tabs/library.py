@@ -78,7 +78,7 @@ class LibraryTab:
                                            orientation='horizontal',
                                            font=('Helvetica', 12), key='-RATING-L04-'),
               sg.Button('ADD RATING', key='-BUTTON-L04-'), sg.Button('DELETE', key='-DELETE-BUTTON-L04-'),
-                sg.Button('UPDATE', key='-UPDATE-BUTTON-L03-')]
+                sg.Button('UPDATE', key='-UPDATE-BUTTON-L04-')]
              ],
             key='L04'
         )

@@ -287,6 +287,11 @@ class Database:
         self.cur.execute("SELECT band FROM musician ORDER BY LOWER(band)")
         return self.getSubscriptedItems()
 
+    def allCompanyName(self):
+        result = []
+        self.cur.execute("SELECT companyName FROM recordLabel ORDER BY LOWER(companyName)")
+        return self.getSubscriptedItems()
+
     def allInstName(self):
         result = []
         self.cur.execute("SELECT DISTINCT instrument FROM musician GROUP BY instrument")
@@ -532,9 +537,23 @@ class Database:
             print(e)
 
     # works updated age only
-    def updateArtist(self, newAge, artistName):
+    def updateArtist(self, newArtistName, newAge, newInstrument, newBand, oldArtistName, newAlbumName):
+        newCoverArtURL = fake.image_url()
+        newAlbumDuration = randint(100, 10000)
         try:
-            self.cur.execute("UPDATE artist SET age = %i WHERE artistName = '%s'" % (newAge, artistName))
+            self.cur.execute("SELECT artistId FROM artist WHERE LOWER(artistName) = '%s' " % (oldArtistName.lower())) 
+            # 'int' object has no attribute 'artistId'
+            artistId = self.getItems()[0][0]
+            self.cur.execute("SELECT musicianId FROM musician WHERE artistId = %i" % (artistId)) 
+            musicianId = self.getItems()[0][0]
+            self.cur.execute("UPDATE artist SET artistName = '%s', age = %i WHERE artistId = %i"  % (newArtistName, newAge, artistId))
+            self.cur.execute("UPDATE musician SET instrument = '%s', band = '%s' WHERE musicianId = %i "  % (newInstrument, newBand, musicianId))
+            self.cur.execute("SELECT M.musicianId FROM musician M, artist A WHERE M.artistId = A.artistId")
+            newMusicianId = self.getItems()[0][0]
+            self.cur.execute("SELECT P.albumId FROM played P, album A, musician M WHERE P.albumId = A.albumId AND M.musicianId = %i" % (newMusicianId))
+            albumId = self.getItems()[0][0]
+            self.cur.execute("UPDATE album SET albumDuration = %i, title = '%s', coverArtURL = '%s' WHERE albumId = %i" % (newAlbumDuration, newAlbumName, newCoverArtURL, albumId))
+            self.cur.execute("UPDATE made SET knownFor = '%s' WHERE albumId = %i AND artistId = %i" % (newAlbumName, albumId, artistId))
             self.conn.commit()
         except Exception as e:
             print(e)
@@ -741,9 +760,31 @@ class Database:
                 numOfRating, averageRating, userRating, albumId, songId))
         except Exception as e:
             print(e)
-# todo rate a song
 
-
-# todo list all songs/albums from an artist
-
-#
+    def createArtistAndSongAndAlbum(self, companyName, artistName, age, instrument, band, albumName, title, genre, releaseYear):
+            songDuration = randint(30, 1000)
+            userRating = 0
+            artistId = int(round(time.time()))
+            albumId = artistId
+            songId = albumId
+            musicianId = artistId
+            knownFor = title
+            sourceLink = fake.domain_name()
+            coverArtURL = fake.image_url()
+            averageRating = randint(10, 50)/10
+            numOfRating = int(randint(1, 100000))
+            albumDuration = randint(100, 10000)
+            try:
+                self.cur.execute("SELECT recordLabelId FROM recordLabel WHERE LOWER(companyName) = '%s'" % (companyName.lower()))
+                labelId = self.getItems()[0][0]
+                self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES(%i, '%s', %i)" % (artistId, artistName, age))
+                self.cur.execute("INSERT INTO publishes(albumId, recordLabelId) VALUES (%i, %i)" % (albumId, labelId))
+                self.cur.execute("INSERT INTO musician(artistId, musicianId, instrument, band) VALUES(%i, %i, '%s', '%s')" % (artistId, musicianId, instrument, band))
+                self.cur.execute("INSERT INTO made(knownFor, albumId, artistId) VALUES( '%s', %i, %i)" % (knownFor, albumId, artistId))
+                self.cur.execute("INSERT INTO played(albumId, musicianId) VALUES( %i, %i)" % (albumId, musicianId))
+                self.cur.execute("INSERT INTO album(albumDuration, albumId, title, coverArtURL) VALUES(%i, %i,'%s','%s')" % (albumDuration, albumId, albumName, coverArtURL))
+                self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES('%s', '%s', %i, %i,'%s', %i)" % (title, genre, songDuration, songId, sourceLink, releaseYear))
+                self.cur.execute("INSERT INTO contains(albumId, songId) VALUES( %i, %i)" % (albumId, songId))
+                self.cur.execute("INSERT INTO rating(numOfRating, averageRating, userRating, albumId, songId ) VALUES( %i, %f, %i, %i, %i)" % (numOfRating, averageRating, userRating, albumId, songId))
+            except Exception as e:
+                print(e)

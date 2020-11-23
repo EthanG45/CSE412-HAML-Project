@@ -8,6 +8,10 @@ import PySimpleGUI as sg
 class UpdateTab:
     def __init__(self, db):
         self.db = db
+        self.albumNameList = self.db.allAlbumName()
+
+    '''def updateLists(self):
+        self.albumNameList = self.db.allAlbumName()
 
     def updateTabGUI(self):
         updateTableRecord = sg.Tab(
@@ -118,35 +122,35 @@ class UpdateTab:
             key='U0i'
         )
 
-        ### #### #### #### #### #### #### #### #### ###
-        #           END OF UPDATE TABLE TABS          #
-        ### #### #### #### #### #### #### #### #### ###
+    ### #### #### #### #### #### #### #### #### ###
+    #           END OF UPDATE TABLE TABS          #
+    ### #### #### #### #### #### #### #### #### ###
 
-        updateTab = sg.Tab(
-            'Edit',
-            [[sg.TabGroup(
-                [[
-                    updateTableRecord,
-                    # updateTablePublishes,  # ?
-                    updateTableArtist,
-                    # updateTableMusician,
-                    # createTablePlayed,
-                    updateTableAlbum,
-                    updateTableSong,
-                    # createTableContains,  # ?
-                    updateTableMade,
-                    updateTableRating
-                ]],
-                key='tabgroupUpdate',
-                enable_events=True
-            )  # end of TabGroup
+    updateTab = sg.Tab(
+        'Edit',
+        [[sg.TabGroup(
+            [[
+                updateTableRecord,
+                # updateTablePublishes,  # ?
+                updateTableArtist,
+                # updateTableMusician,
+                # createTablePlayed,
+                updateTableAlbum,
+                updateTableSong,
+                # createTableContains,  # ?
+                updateTableMade,
+                updateTableRating
             ]],
+            key='tabgroupUpdate',
+            enable_events=True
+        )  # end of TabGroup
+        ]],
 
-            key='update_tab'
+        key='update_tab'
 
-        )
+    )
 
-        return updateTab
+    return updateTab'''
 
     def updateRecordLabelGUI(self):
         layout = [[sg.Text('Company Name'),
@@ -158,12 +162,38 @@ class UpdateTab:
 
         return layout
 
-    def updateArtistGUI(self):
+    def updateArtistGUI(self, albumNameList):
 
-        layout = [[sg.Text('Age'),
-                   sg.Input(size=(10, 1), key='-AGE-U01-')],
-                  [sg.Button('UPDATE', key='-ARTIST-BUTTON-U01-')]
-                  ]
+        layout = [
+            [sg.Button('UPDATE', key='-ARTIST-BUTTON-U02-')],
+
+            [sg.Text("Update an Artist", size=(1270, 1))],
+
+            # Artist elements
+            [sg.Text("Artist Name"), sg.Input(key='-ARTIST-U02-')],
+            # [sg.Text("Age"), sg.Input(key='-AGE-C02-')],
+
+            [sg.Text("Age"), sg.Slider(range=(1, 155),
+                                       default_value=42,
+                                       size=(40, 15),
+                                       orientation='horizontal',
+                                       font=('Helvetica', 12), key='-AGE-U02-')],
+            # Musician elements
+            [sg.Text("Instrument"), sg.Input(key='-INSTRUMENT-U02-')],
+            [sg.Text("Band Name"), sg.Input(key='-BAND-U02-')],
+
+            [sg.Text("Add album to artist?", size=(1270, 1))],
+            # Album elements
+            #  [sg.Text("Title"), sg.Input(key='-TITLE-C02-')],
+            [sg.Text("Title"), sg.Listbox(values=albumNameList,
+                                          key='-TITLE-U02-', size=(50, 20))],
+
+            # [sg.Text("What record label publishes this artist's work?", size=(1270, 1))],
+
+            # [sg.Text("Title"), sg.Listbox(values=self.albumNameList,
+            #                                key='-TITLE-C02-',  size=(50, 20))],
+
+        ]
 
         return layout
 
@@ -182,9 +212,13 @@ class UpdateTab:
 
         layout = [[sg.Text('Title'),
                    sg.Input(size=(10, 1), key='-TITLE-U04-')],
+                  [sg.Text('Genre'),
+                   sg.Input(size=(10, 1), key='-GENRE-U04-')],
                   [sg.Text('Duration'),
                    sg.Input(size=(10, 1), key='-DURATION-U04-')],
-                  [sg.Button('UPDATE', key='-ALBUM-BUTTON-U01-')]
+                  [sg.Text('Year'),
+                   sg.Input(size=(10, 1), key='-YEAR-U04-')],
+                  [sg.Button('UPDATE', key='-SONG-BUTTON-U04-')]
                   ]
 
         return layout

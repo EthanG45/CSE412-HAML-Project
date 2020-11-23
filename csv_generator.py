@@ -20,7 +20,7 @@ music = {}
 for i in range(0, 1000):
     num = i + 1
     music[i] = {}
-    music[i]['companyName'] = fake.color_name()
+    music[i]['companyName'] = fake.color_name() + " " + fake.word() + " " + fake.word()
     music[i]['dateEstablished'] = fake.date()
     music[i]['location'] = fake.city()
     music[i]['recordLabelId'] = num
@@ -36,8 +36,7 @@ for i in range(0, 1000):
     music[i]['instrument'] = random.choice(ins)
     music[i]['band'] = fake.color_name() + " " + fake.word()
     music[i]['albumDuration'] = randint(100, 10000)
-    music[i]['albumTitle'] = fake.word() + " " + fake.word() + \
-        " " + fake.word()
+    music[i]['albumTitle'] = fake.word() + " " + fake.word() + " " + fake.word()
     music[i]['coverURL'] = fake.image_url()
     music[i]['genre'] = random.choice(genre)
     music[i]['songDuration'] = randint(30, 1000)
