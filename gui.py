@@ -95,7 +95,7 @@ def draw_figure(canvas, figure):
 
 
 def create_window():
-
+    plt.close('all')
     # main layout this contains everything
     layout = [[
         sg.TabGroup(
@@ -122,14 +122,54 @@ def create_window():
         "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c',
         icon='image/HAML.png')
     
-    it.topTenAlbumsByUserPieFigure(window['-ALBUM-CANVAS-IO-?-'].TKCanvas, db)
-    it.topTenSongsByUserPieFigure(window['-SONG-CANVAS-IO-?-'].TKCanvas, db)
+    it.topTenSongsByUserPieFigure(window['-USR-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+    it.topTenSongsByAveragePieFigure(window['-AVG-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+    
+    it.topTenAlbumsByUserPieFigure(window['-USR-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+    it.topTenAlbumsByAveragePieFigure(window['-AVG-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+    
+    it.topTenSongsByUserWorstPieFigure(window['-USR-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+    it.topTenSongsByAverageWorstPieFigure(window['-AVG-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+    
+    it.topTenAlbumsByUserWorstPieFigure(window['-USR-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
+    it.topTenAlbumsByAverageWorstPieFigure(window['-AVG-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
     #fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     return window
 
+def create_window_no_graph_update():
+    plt.close('all')
+    # main layout this contains everything
+    layout = [[
+        sg.TabGroup(
+            [[
+                lt.libraryTabGUI(),
+                at.addTabGUI(),
+                st.searchTabGUI(),
+                # ut.updateTabGUI(),
+                it.insightsTabGUI(),
+                ft.feelingLuckyTabGUI(),
+                sg.Tab('Theme', [[sg.Listbox(values=sg.theme_list(), key='-THEME-LIST-', size=(20, 200), enable_events=True), sg.Button('SAVE NEW THEME', key='-THEME-BUTTON-')]], key='-THEME-TAB-'),
+            ]],
+            key='tabgroup',
+            enable_events=True
+        )  # end of TabGroup
+
+    ]
+    ]  # end of layout
+
+    # Create the window
+    # todo window size is still a little too big
+    # todo app icon?
+    window = sg.Window('H.A.M.L.', layout, font=(
+        "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c',
+        icon='image/HAML.png')
+    
+    return window
+
 
 def main():
+    plt.close('all')
     sg.theme('Dark Grey 9')  # set window theme
     gui = GUI()
 
@@ -144,6 +184,7 @@ def main():
         return True
 
     def updatelibtabs():
+        plt.close('all')
         gui.updateTables()
         window['-TABLE-L01-'].update(values=gui.recordTable)
         window['-TABLE-L02-'].update(values=gui.artistTable)
@@ -152,7 +193,6 @@ def main():
 
         at.updateLists()
         window['-TITLE-C01-'].update(values=at.albumNameList)
-        # window['-TITLE-C02-'].update(values=at.albumNameList)
         window['-GENRE-C02-'].update(values=at.genreList)
         window['-INSTRUMENT-C02-'].update(values=at.instrumentList)
         window['-RECORD-TITLE-C02-'].update(values=at.recordLabelList)
@@ -177,10 +217,21 @@ def main():
         window['-USER-TABLE-I03-'].update(values=it.top10WorstSongByUser)
         window['-AVG-TABLE-I04-'].update(values=it.top10WorstAlbumByAverage)
         window['-USER-TABLE-I04-'].update(values=it.top10WorstAlbumByUser)
-
-        #it.drawFigure()
+        
+        '''it.topTenSongsByUserPieFigure(window['-USR-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+        it.topTenSongsByAveragePieFigure(window['-AVG-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+        
+        it.topTenAlbumsByUserPieFigure(window['-USR-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+        it.topTenAlbumsByAveragePieFigure(window['-AVG-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+        
+        it.topTenSongsByUserWorstPieFigure(window['-USR-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+        it.topTenSongsByAverageWorstPieFigure(window['-AVG-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+        
+        it.topTenAlbumsByUserWorstPieFigure(window['-USR-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
+        it.topTenAlbumsByAverageWorstPieFigure(window['-AVG-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)'''
 
     def updateSearchTabs(inputValues):
+        plt.close('all')
         gui.searchArtistTable = db.searchArtist(inputValues['-INPUT-SEARCH-ARTIST-'])
         gui.searchArtistTableId = db.searchArtistId(inputValues['-INPUT-SEARCH-ARTIST-'])
         window['-TABLE-SEARCH-ARTIST-'].update(values=gui.searchArtistTable)
@@ -901,6 +952,7 @@ def main():
         if event == '-THEME-BUTTON-':
             try:
                 sg.theme(values['-THEME-LIST-'][0])
+                plt.close('all')
                 window.close()
                 window = create_window()
             except:
