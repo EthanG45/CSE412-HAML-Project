@@ -60,7 +60,7 @@ class InsightsTab:
         top10SongsGraph = sg.Tab(
             'Top 10 Songs Graph',
             [
-                [sg.Text("Distribution of Genres for Top 10 Songs by User Rating")],
+                [sg.Text("Genres for Top 10 Songs")],
                 [sg.Canvas(key='-USR-SONG-CANVAS-IO1-G-')],
                 [sg.Canvas(key='-AVG-SONG-CANVAS-IO1-G-')],
             ],
@@ -81,9 +81,9 @@ class InsightsTab:
         )  # end of tab Record Label
 
         top10AlbumsGraph = sg.Tab(
-            'Top 10 Songs Graph',
+            'Top 10 Albums Graph',
             [
-                [sg.Text("Distribution of Genres for Top 10 Songs by User Rating")],
+                [sg.Text("Listeners for Top 10 Albums")],
                 [sg.Canvas(key='-USR-ALBUM-CANVAS-IO2-G-')],
                 [sg.Canvas(key='-AVG-ALBUM-CANVAS-IO2-G-')],
 
@@ -106,9 +106,9 @@ class InsightsTab:
         )  # end of tab Record Label
 
         top10WorstSongsGraph = sg.Tab(
-            'Top 10 Songs Graph',
+            'Top 10 Worst Songs Graph',
             [
-                [sg.Text("Distribution of Genres for Top 10 Songs by User Rating")],
+                [sg.Text("Genres for Top 10 Worst Songs")],
                 [sg.Canvas(key='-USR-SONG-CANVAS-IO3-G-')],
                 [sg.Canvas(key='-AVG-SONG-CANVAS-IO3-G-')],
             ],
@@ -129,9 +129,9 @@ class InsightsTab:
         )  # end of tab Record Label
 
         top10WorstAlbumsGraph = sg.Tab(
-            'Top 10 Songs Graph',
+            'Top 10 Worst Albums Graph',
             [
-                [sg.Text("Distribution of Genres for Top 10 Songs by User Rating")],
+                [sg.Text("Listeners for Top 10 Worst Albums")],
                 [sg.Canvas(key='-USR-ALBUM-CANVAS-IO4-G-')],
                 [sg.Canvas(key='-AVG-ALBUM-CANVAS-IO4-G-')],
             ],
