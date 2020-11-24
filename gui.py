@@ -1,5 +1,17 @@
 # HAML_GUI
 
+# stuff for matlib plot
+from matplotlib.ticker import NullFormatter  # useful for `logit` scale
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib.pyplot import figure
+
+
+
+
 import PySimpleGUI as sg
 import sql
 from tabs.add import AddTab
@@ -21,9 +33,13 @@ events = []
 st.addEvents(events)
 
 
-
 # Define the window's contents
 
+def popupGUI(message):
+    layout = [[sg.Text(message)],
+                [sg.Button('OK', bind_return_key=True)]]
+    window = sg.Window('WARNING', layout, font=("Roboto", 12), size=(450, 75), finalize=True)
+    return window
 
 class GUI:
     def __init__(self):
@@ -48,9 +64,11 @@ class GUI:
         self.searchRecordLabelTable = []
         self.searchRecordLabelTableId = []
 
+        self.TabKeys = ['tabgroupSearch', 'tabgroup']
+        self.textInputs = ['-INPUT-SEARCH-RECORD-', '-INPUT-SEARCH-BAND-','-INPUT-SEARCH-ALBUM-', '-INPUT-SEARCH-ARTIST-', '-INPUT-SEARCH-SONG-']
+        self.allSearchTables = ['-TABLE-SEARCH-SONG-','-TABLE-SEARCH-ARTIST-','-TABLE-SEARCH-ALBUM-', '-TABLE-SEARCH-BAND-', '-TABLE-SEARCH-RECORD-', '-TABLE-SEARCH-SONG-']
         self.updateWindow = None
         self.updateItem = ()
-
 
     def updateTables(self):
         self.recordTable = db.getAllRecordLabels()
@@ -58,9 +76,26 @@ class GUI:
         self.albumsTable = db.getAllAlbums()
         self.songsTable = db.getAllSongs()
 
-# settingsTab = sg.Tab('setting', [[sg.theme_previewer()]], 'theme_tab')
+
+# ------------------------------- PASTE YOUR MATPLOTLIB CODE HERE -------------------------------
+fig = plt.figure() # Basic steps are: 1. Create a Canvas Element, 2. Layout form, 3. Display form (NON BLOCKING), 4. Draw plots onto convas, 5. Display form (BLOCKING)
+ax = fig.add_subplot(1, 2, 2) # rows, columns, index
+fig.set_size_inches(3, 3) # w, h
+for i in range(10):
+     ax.barh(db.topTenSongsByUser()[i][3], db.topTenSongsByUser()[i][7])
+# ------------------------------- END OF YOUR MATPLOTLIB CODE -------------------------------
+
+# ------------------------------- Beginning of Matplotlib helper code -----------------------
+def draw_figure(canvas, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+# ------------------------------- Beginning of GUI CODE -------------------------------
+
+
 def create_window():
-        
+    plt.close('all')
     # main layout this contains everything
     layout = [[
         sg.TabGroup(
@@ -71,7 +106,7 @@ def create_window():
                 # ut.updateTabGUI(),
                 it.insightsTabGUI(),
                 ft.feelingLuckyTabGUI(),
-                sg.Tab('Theme', [[sg.Listbox(values = sg.theme_list(), key = '-THEME-LIST-', size = (20, 200), enable_events = True), sg.Button('SAVE NEW THEME', key = '-THEME-BUTTON-')]], key = '-THEME-TAB-'),
+                sg.Tab('Theme', [[sg.Listbox(values=sg.theme_list(), key='-THEME-LIST-', size=(20, 200), enable_events=True), sg.Button('SAVE NEW THEME', key='-THEME-BUTTON-')]], key='-THEME-TAB-'),
             ]],
             key='tabgroup',
             enable_events=True
@@ -80,22 +115,64 @@ def create_window():
     ]
     ]  # end of layout
 
+    # Create the window
+    # todo window size is still a little too big
+    # todo app icon?
+    window = sg.Window('H.A.M.L.', layout, font=(
+        "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c',
+        icon='image/HAML.png')
+    
+    it.topTenSongsByUserPieFigure(window['-USR-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+    it.topTenSongsByAveragePieFigure(window['-AVG-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+    
+    it.topTenAlbumsByUserPieFigure(window['-USR-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+    it.topTenAlbumsByAveragePieFigure(window['-AVG-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+    
+    it.topTenSongsByUserWorstPieFigure(window['-USR-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+    it.topTenSongsByAverageWorstPieFigure(window['-AVG-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+    
+    it.topTenAlbumsByUserWorstPieFigure(window['-USR-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
+    it.topTenAlbumsByAverageWorstPieFigure(window['-AVG-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
+    #fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
+    return window
+
+def create_window_no_graph_update():
+    plt.close('all')
+    # main layout this contains everything
+    layout = [[
+        sg.TabGroup(
+            [[
+                lt.libraryTabGUI(),
+                at.addTabGUI(),
+                st.searchTabGUI(),
+                # ut.updateTabGUI(),
+                it.insightsTabGUI(),
+                ft.feelingLuckyTabGUI(),
+                sg.Tab('Theme', [[sg.Listbox(values=sg.theme_list(), key='-THEME-LIST-', size=(20, 200), enable_events=True), sg.Button('SAVE NEW THEME', key='-THEME-BUTTON-')]], key='-THEME-TAB-'),
+            ]],
+            key='tabgroup',
+            enable_events=True
+        )  # end of TabGroup
+
+    ]
+    ]  # end of layout
 
     # Create the window
     # todo window size is still a little too big
     # todo app icon?
     window = sg.Window('H.A.M.L.', layout, font=(
-        "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c', 
-        icon = 'image/clyde.ico')
-        
-
+        "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c',
+        icon='image/HAML.png')
+    
     return window
 
+
 def main():
+    plt.close('all')
     sg.theme('Dark Grey 9')  # set window theme
     gui = GUI()
-    
+
     window = create_window()
     
     #window = create_window()
@@ -107,6 +184,7 @@ def main():
         return True
 
     def updatelibtabs():
+        plt.close('all')
         gui.updateTables()
         window['-TABLE-L01-'].update(values=gui.recordTable)
         window['-TABLE-L02-'].update(values=gui.artistTable)
@@ -115,7 +193,6 @@ def main():
 
         at.updateLists()
         window['-TITLE-C01-'].update(values=at.albumNameList)
-        # window['-TITLE-C02-'].update(values=at.albumNameList)
         window['-GENRE-C02-'].update(values=at.genreList)
         window['-INSTRUMENT-C02-'].update(values=at.instrumentList)
         window['-RECORD-TITLE-C02-'].update(values=at.recordLabelList)
@@ -140,18 +217,60 @@ def main():
         window['-USER-TABLE-I03-'].update(values=it.top10WorstSongByUser)
         window['-AVG-TABLE-I04-'].update(values=it.top10WorstAlbumByAverage)
         window['-USER-TABLE-I04-'].update(values=it.top10WorstAlbumByUser)
+        
+        '''it.topTenSongsByUserPieFigure(window['-USR-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+        it.topTenSongsByAveragePieFigure(window['-AVG-SONG-CANVAS-IO1-G-'].TKCanvas, db)
+        
+        it.topTenAlbumsByUserPieFigure(window['-USR-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+        it.topTenAlbumsByAveragePieFigure(window['-AVG-ALBUM-CANVAS-IO2-G-'].TKCanvas, db)
+        
+        it.topTenSongsByUserWorstPieFigure(window['-USR-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+        it.topTenSongsByAverageWorstPieFigure(window['-AVG-SONG-CANVAS-IO3-G-'].TKCanvas, db)
+        
+        it.topTenAlbumsByUserWorstPieFigure(window['-USR-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
+        it.topTenAlbumsByAverageWorstPieFigure(window['-AVG-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)'''
 
-    #def create_window():
+    def updateSearchTabs(inputValues):
+        plt.close('all')
+        gui.searchArtistTable = db.searchArtist(inputValues['-INPUT-SEARCH-ARTIST-'])
+        gui.searchArtistTableId = db.searchArtistId(inputValues['-INPUT-SEARCH-ARTIST-'])
+        window['-TABLE-SEARCH-ARTIST-'].update(values=gui.searchArtistTable)
+
+        gui.searchSongTable = db.searchSong(inputValues['-INPUT-SEARCH-SONG-'])
+        gui.searchSongTableId = db.searchSongId(inputValues['-INPUT-SEARCH-SONG-'])
+        window['-TABLE-SEARCH-SONG-'].update(values=gui.searchSongTable)
+
+        gui.searchAlbumTable = db.searchAlbum(inputValues['-INPUT-SEARCH-ALBUM-'])
+        gui.searchAlbumTableId = db.searchAlbumId(inputValues['-INPUT-SEARCH-ALBUM-'])
+        window['-TABLE-SEARCH-ALBUM-'].update(values=gui.searchAlbumTable)
+
+        gui.searchMusicianTable = db.searchMusician(inputValues['-INPUT-SEARCH-BAND-'])
+        gui.searchMusicianTableId = db.searchMusicianId(inputValues['-INPUT-SEARCH-BAND-'])
+        window['-TABLE-SEARCH-BAND-'].update(values=gui.searchMusicianTable)
+
+        gui.searchRecordLabelTable = db.searchRecordLabel(inputValues['-INPUT-SEARCH-RECORD-'])
+        gui.searchRecordLabelTableId = db.searchRecordLabelId(inputValues['-INPUT-SEARCH-RECORD-'])
+        window['-TABLE-SEARCH-RECORD-'].update(values=gui.searchRecordLabelTable)
+
+    # def create_window():
     #   window = sg.Window('H.A.M.L.', layout, font=(
     #       "Roboto", 12), size=(1920, 1080), finalize=True)
     #
     #
     #
     def checkButtonPress(event, values):
-
-
+        
+        ### CLEAR SEARCH INPUTS ###
+        # if event in gui.TabKeys:
+        #     try:
+        #         print(event)
+        #         for x in gui.textInputs:
+        #             window[x].update('')
+        #     except:
+        #         print('break')
+        #print(event)
         ### SEARCH EVENTS ###
-
+    
         if event == '-BUTTON-SEARCH-ARTIST-':
             gui.searchArtistTable = db.searchArtist(values['-INPUT-SEARCH-ARTIST-'])
             gui.searchArtistTableId = db.searchArtistId(values['-INPUT-SEARCH-ARTIST-'])
@@ -177,7 +296,6 @@ def main():
             gui.searchRecordLabelTableId = db.searchRecordLabelId(values['-INPUT-SEARCH-RECORD-'])
             window['-TABLE-SEARCH-RECORD-'].update(values=gui.searchRecordLabelTable)
 
-
         ### DELETE SELECTED SEARCH ###
 
         if event == '-BUTTON-RATING-S01-':
@@ -199,7 +317,9 @@ def main():
                 updatelibtabs()
 
             except:
-                sg.popup('Please select a song')
+                popup = popupGUI('Please select a song')
+                button, values = popup.read()
+                popup.close()
 
         # delete searched song
         if event == '-DELETE-BUTTON-S01-':
@@ -215,7 +335,9 @@ def main():
                 window['-TABLE-SEARCH-SONG-'].update(values=gui.searchSongTable)
                 updatelibtabs()
             except:
-                sg.popup('Please select a song')
+                popup = popupGUI('Please select a song')
+                button, values = popup.read()
+                popup.close()
 
         # delete searched artist
         if event == '-DELETE-BUTTON-S02-':
@@ -231,7 +353,9 @@ def main():
                 window['-TABLE-SEARCH-ARTIST-'].update(values=gui.searchArtistTable)
                 updatelibtabs()
             except:
-                sg.popup('Please select a Artist')
+                popup = popupGUI('Please select a Artist')
+                button, values = popup.read()
+                popup.close()
 
         # delete searched album
         if event == '-DELETE-BUTTON-S03-':
@@ -247,7 +371,9 @@ def main():
                 window['-TABLE-SEARCH-ALBUM-'].update(values=gui.searchAlbumTable)
                 updatelibtabs()
             except:
-                sg.popup('Please select a Album')
+                popup = popupGUI('Please select a Album')
+                button, values = popup.read()
+                popup.close()
 
         # delete searched musician
         if event == '-DELETE-BUTTON-S04-':
@@ -264,7 +390,9 @@ def main():
                 window['-TABLE-SEARCH-BAND-'].update(values=gui.searchMusicianTable)
                 updatelibtabs()
             except:
-                sg.popup('Please select a Band')
+                popup = popupGUI('Please select a Band')
+                button, values = popup.read()
+                popup.close()
 
         # delete searched RecordLabel
         if event == '-DELETE-BUTTON-S05-':
@@ -280,7 +408,9 @@ def main():
                 window['-TABLE-SEARCH-RECORD-'].update(values=gui.searchRecordLabelTable)
                 updatelibtabs()
             except:
-                sg.popup('Please select a Record Label')
+                popup = popupGUI('Please select a Record Label')
+                button, values = popup.read()
+                popup.close()
 
         ### ADD EVENTS ###
 
@@ -304,7 +434,9 @@ def main():
                     window['-OUTPUT-C01-'].update(
                         "Failed to add Record Label!")
             except:
-                sg.popup('Select an album please')
+                popup = popupGUI('Select an album please')
+                button, values = popup.read()
+                popup.close()
 
             # Force this window to have focus after window change (macos bug)
             window.TKroot.focus_force()
@@ -334,7 +466,9 @@ def main():
                 else:
                     window['-OUTPUT-C02-'].update("Failed to add Artist!")
             except:
-                sg.popup('Select instrument, genre, and record label please')
+                popup = popupGUI('Select instrument, genre, and record label please')
+                button, values = popup.read()
+                popup.close()
 
             updatelibtabs()
 
@@ -384,7 +518,9 @@ def main():
                         "Failed to add Album and Song!")
             except:
                 window['-OUTPUT-C04-'].update('')
-                sg.popup('Please select a genre and fill out other fields')
+                popup = popupGUI('Please select a genre and fill out other fields')
+                button, values = popup.read()
+                popup.close()
 
             # Force this window to have focus after window change (macos bug)
             window.TKroot.focus_force()
@@ -420,7 +556,9 @@ def main():
                 else:
                     window['-OUTPUT-C05-'].update("Failed to add Song!")
             except:
-                sg.popup('Please select a genre, album and fill out other fields')
+                popup = popupGUI('Please select a genre, album and fill out other fields')
+                button, values = popup.read()
+                popup.close()
 
             # Force this window to have focus after window change (macos bug)
             window.TKroot.focus_force()
@@ -446,10 +584,13 @@ def main():
                 db.changeWholeRating(songToRate, values['-RATING-L04-'])
                 updatelibtabs()
             except:
-                sg.popup('Please select a Song to rate')
+                popup = popupGUI('Please select a Song to rate')
+                button, values = popup.read()
+                popup.close()
 
         # DELETE SECTION
 
+        # DELETE RECORD LABEL
         if event == '-DELETE-BUTTON-L01-':
 
             try:
@@ -461,8 +602,12 @@ def main():
                 # print(recordToDelete)
                 db.deleteRecordLabel(
                     recordToDelete, recordDateToDelete, recordLocationToDelete)
+
+                updateSearchTabs(values)
             except:
-                sg.popup('Please select a Record to delete')
+                popup = popupGUI('Please select a Record to delete')
+                button, values = popup.read()
+                popup.close()
 
             updatelibtabs()
 
@@ -479,8 +624,12 @@ def main():
 
                 # , artistAge, artistInstrumentm, artistBand)
                 db.deleteArtist(artistToDelete, artistAge)
+                updateSearchTabs(values)
+                
             except:
-                sg.popup('Please select an Artist to delete')
+                popup = popupGUI('Please select an Artist to delete')
+                button, values = popup.read()
+                popup.close()
 
             updatelibtabs()
 
@@ -495,8 +644,11 @@ def main():
                 # TODO: ADD albumDuration to this so shit
                 # with the same name does noe fuck shit up
                 db.deleteAlbum(albumToDelete)
+                updateSearchTabs(values)
             except:
-                sg.popup('Please select an Album to delete')
+                popup = popupGUI('Please select an Album to delete')
+                button, values = popup.read()
+                popup.close()
 
             updatelibtabs()
 
@@ -508,8 +660,11 @@ def main():
                 print(songToDelete)
                 db.deleteSong(songToDelete)
                 updatelibtabs()
+                updateSearchTabs(values)
             except:
-                sg.popup('Please select a song to delete')
+                popup = popupGUI('Please select a song to delete')
+                button, values = popup.read()
+                popup.close()
 
         ### FEELING LUCKY EVENTS ###
 
@@ -525,7 +680,9 @@ def main():
                 temp = db.findSongNameByYearAndArtist(artist, int(year))
                 window['-TABLE-SONG-F02-'].update(values=temp)
             except:
-                sg.popup('Please select a artist')
+                popup = popupGUI('Please select an artist')
+                button, values = popup.read()
+                popup.close()
 
         if event == '-BUTTON-RECORD-LABEL-F03-':
             try:
@@ -538,30 +695,41 @@ def main():
                 temp = [(name, date, location)]
                 window['-TABLE-RECORD-LABEL-F03-'].update(values=temp)
             except:
-                sg.popup('Please select an album')
+                popup = popupGUI('Please select an album')
+                button, values = popup.read()
+                popup.close()
 
         if event == '-BUTTON-SONG-F04-':
             try:
                 window['-TABLE-RECORD-LABEL-F04-'].update(values=db.findcompanyNameBySongName(values['-INPUT-SONG-F04-'][0]))
             except:
-                sg.popup('Please select a song name')
+                popup = popupGUI('Please select a song name')
+                button, values = popup.read()
+                popup.close()
 
         if event == '-BUTTON-RECORD-LABEL-F05-':
             try:
                 window['-TABLE-RECORD-LABEL-F05-'].update(values=db.findcompanyNameByBandName(values['-INPUT-BAND-F05-'][0]))
             except:
-                sg.popup('Please select a band name')
+                popup = popupGUI('Please select a band name')
+                button, values = popup.read()
+                popup.close()
 
         if event == '-BUTTON-RECORD-LABEL-F06-':
             try:
                 window['-TABLE-RECORD-LABEL-F06-'].update(values=db.findListOfCompanyNameByInstrument(values['-INPUT-INSTRUMENT-F06-'][0]))
             except:
-                sg.popup('Please select an instrument')
+                popup = popupGUI('Please select an instrument')
+                button, values = popup.read()
+                popup.close()
 
         #### UPDATE EVENTS ####
+
+        # UPDATE RECORD LABEL - LIBRARY TAB
         if event == '-UPDATE-BUTTON-L01-':
             try:
                 gui.updateItem = gui.recordTable[values['-TABLE-L01-'][0]]
+
                 gui.updateWindow = sg.Window('Update Record Label', ut.updateRecordLabelGUI(), font=("Roboto", 12), size=(1000, 500), finalize=True)
 
                 button, updateValues = gui.updateWindow.read()
@@ -571,23 +739,53 @@ def main():
                     oldCompanyName = gui.updateItem[0]
 
                     db.updateRecordLabel(companyName, labelLocation, oldCompanyName)
+
                     updatelibtabs()
+                    updateSearchTabs(values)
 
                 gui.updateWindow.close()
 
             except:
-                sg.popup('Please select something to update')
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
 
+        # UPDATE RECORD LABEL - SEARCH TAB
+        if event == '-UPDATE-BUTTON-S05-':
+            gui.updateItem = gui.recordTable[values['-TABLE-SEARCH-RECORD-'][0]]
+
+            try:
+                gui.updateWindow = sg.Window('Update Record Label', ut.updateRecordLabelGUI(), font=("Roboto", 12), size=(1000, 500), finalize=True)
+
+                button, updateValues = gui.updateWindow.read()
+                if button == 'UPDATE':
+                    companyName = updateValues['-COMPANY-NAME-U01-']
+                    labelLocation = updateValues['-LABEL-LOCATION-U01-']
+                    oldCompanyName = gui.updateItem[0]
+
+                    db.updateRecordLabel(companyName, labelLocation, oldCompanyName)
+
+                    updatelibtabs()
+                    updateSearchTabs(values)
+
+                gui.updateWindow.close()
+
+            except:
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
+
+        # UPDATE ARTIST - LIBRARY TAB
         if event == '-UPDATE-BUTTON-L02-':
             try:
                 gui.updateItem = gui.artistTable[values['-TABLE-L02-'][0]]
-                gui.updateWindow = sg.Window('Update Artist', ut.updateArtistGUI(db.allInstName(), db.allAlbumName()), font=( "Roboto", 12), size=(1000, 700), finalize=True)
+                gui.updateWindow = sg.Window('Update Artist', ut.updateArtistGUI(db.allInstName(), db.allAlbumName()), font=("Roboto", 12), size=(1000, 700), finalize=True)
 
                 button, updateValues = gui.updateWindow.read()
                 if button == 'UPDATE':
                     artistName = updateValues['-ARTIST-U02-']
                     age = int(updateValues['-AGE-U02-'])
-                    instrument = updateValues['-INSTRUMENT-U02-']
+                    instrument = updateValues['-INSTRUMENT-U02-'][0]
                     band = updateValues['-BAND-U02-']
                     albumName = updateValues['-TITLE-U02-'][0]
 
@@ -595,11 +793,41 @@ def main():
 
                     db.updateArtist(artistName, age, instrument, band, oldArtistName, albumName)
                     updatelibtabs()
+                    updateSearchTabs(values)
 
                 gui.updateWindow.close()
             except:
-                sg.popup('Please select something to update')
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
 
+        # UPDATE ARTIST - SEARCH TAB
+        if event == '-UPDATE-BUTTON-S02-':
+            try:
+                gui.updateItem = gui.artistTable[values['-TABLE-SEARCH-ARTIST-'][0]]
+                gui.updateWindow = sg.Window('Update Artist', ut.updateArtistGUI(db.allInstName(), db.allAlbumName()), font=("Roboto", 12), size=(1000, 700), finalize=True)
+
+                button, updateValues = gui.updateWindow.read()
+                if button == 'UPDATE':
+                    artistName = updateValues['-ARTIST-U02-']
+                    age = int(updateValues['-AGE-U02-'])
+                    instrument = updateValues['-INSTRUMENT-U02-'][0]
+                    band = updateValues['-BAND-U02-']
+                    albumName = updateValues['-TITLE-U02-'][0]
+
+                    oldArtistName = gui.updateItem[0]
+
+                    db.updateArtist(artistName, age, instrument, band, oldArtistName, albumName)
+                    updatelibtabs()
+                    updateSearchTabs(values)
+
+                gui.updateWindow.close()
+            except:
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
+
+        # UPDATE ALBUM - LIBRARY TAB
         if event == '-UPDATE-BUTTON-L03-':
             try:
                 gui.updateItem = gui.albumsTable[values['-TABLE-L03-'][0]]
@@ -614,12 +842,40 @@ def main():
 
                     db.updateAlbum(title, duration, oldTitle)
                     updatelibtabs()
+                    updateSearchTabs(values)
 
                 gui.updateWindow.close()
 
             except:
-                sg.popup('Please select something to update')
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
 
+        # UPDATE ALBUM - SEARCH TAB
+        if event == '-UPDATE-BUTTON-S03-':
+            try:
+                gui.updateItem = gui.albumsTable[values['-TABLE-SEARCH-ALBUM-'][0]]
+                gui.updateWindow = sg.Window('Update Album', ut.updateAlbumGUI(), font=(
+                    "Roboto", 12), size=(1000, 500), finalize=True, modal=True)
+
+                button, updateValues = gui.updateWindow.read()
+                if button == 'UPDATE':
+                    title = updateValues['-TITLE-U03-']
+                    duration = int(updateValues['-DURATION-U03-'])
+                    oldTitle = gui.updateItem[0]
+
+                    db.updateAlbum(title, duration, oldTitle)
+                    updatelibtabs()
+                    updateSearchTabs(values)
+
+                gui.updateWindow.close()
+
+            except:
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
+
+        # UPDATE SONG - LIBRARY TAB
         if event == '-UPDATE-BUTTON-L04-':
             try:
                 gui.updateItem = gui.songsTable[values['-TABLE-L04-'][0]]
@@ -637,16 +893,52 @@ def main():
 
                         db.updateSong(title, genre, duration, year, oldTitle)
                         updatelibtabs()
-                        
+                        updateSearchTabs(values)
+
                     gui.updateWindow.close()
                 except:
-                    sg.popup('Please fill out all the relevant fields')    
-
+                    popup = popupGUI('Please fill out all the relevant fields')
+                    button, values = popup.read()
+                    popup.close()
 
             except:
-                sg.popup('Please select something to update')
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
+
+        # UPDATE SONG - SEARCH TAB
+        if event == '-UPDATE-BUTTON-S01-':
+            try:
+                gui.updateItem = gui.songsTable[values['-TABLE-SEARCH-SONG-'][0]]
+                gui.updateWindow = sg.Window('Update Song', ut.updateSongGUI(db.allGenre()), font=(
+                    "Roboto", 12), size=(1000, 500), finalize=True)
+
+                button, updateValues = gui.updateWindow.read()
+                try:
+                    if button == 'UPDATE':
+                        title = updateValues['-TITLE-U04-']
+                        genre = updateValues['-GENRE-U04-'][0]
+                        duration = int(updateValues['-DURATION-U04-'])
+                        year = int(updateValues['-YEAR-U04-'])
+                        oldTitle = gui.updateItem[0]
+
+                        db.updateSong(title, genre, duration, year, oldTitle)
+                        updatelibtabs()
+                        updateSearchTabs(values)
+
+                    gui.updateWindow.close()
+                except:
+                    popup = popupGUI('Please fill out all the relevant fields')
+                    button, values = popup.read()
+                    popup.close()
+
+            except:
+                popup = popupGUI('Please select something to update')
+                button, values = popup.read()
+                popup.close()
 
     # updatelibtabs()
+    #it.drawFigure()
 
     while True:
 
@@ -654,17 +946,19 @@ def main():
 
         if window is None:
             window = create_window()
-        
+
         ### THEME CHANGE ###
 
         if event == '-THEME-BUTTON-':
             try:
                 sg.theme(values['-THEME-LIST-'][0])
+                plt.close('all')
                 window.close()
                 window = create_window()
             except:
-                sg.popup('Please select a theme')
-
+                popup = popupGUI('Please select a theme')
+                button, values = popup.read()
+                popup.close()
 
         if event == sg.WINDOW_CLOSED:
             break

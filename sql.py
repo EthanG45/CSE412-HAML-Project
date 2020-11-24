@@ -219,7 +219,20 @@ class Database:
             self.cur.execute("SELECT recordLabelId FROM recordLabel WHERE LOWER(companyName) = '%s' ORDER BY recordLabelId" % (companyName.lower()))
             return self.getItems()
         except:
-            return "RecordLabel ID not found"
+            return "RecordLabel not found"
+
+    # def searchRecordLabelId(self, *companyName):
+    #     nameOne = companyName[0]
+    #     if companyName[1] != None:
+    #         nameTwo = companyName[1]
+    #     else:
+    #         nameTwo = 'qwertyNeverNameSomethingafterThisBs123456709'
+            
+    #     try:
+    #         self.cur.execute("SELECT recordLabelId FROM recordLabel WHERE LOWER(companyName) = '%s' OR LOWER(companyName) = '%s' ORDER BY recordLabelId" % (companyName[0].lower(), companyName[1].lower()))
+    #         return self.getItems()
+    #     except:
+    #         return "RecordLabel ID not found"
 
     # works - works on GUI
     def getAllSongs(self):
