@@ -109,7 +109,7 @@ Add record label allows a user to input a company name, label location, and what
 using a list box. It also asks for the date established, which is entered using a calendar GUI, or you can manually enter the data in the
 format YYYY-MM-DD. 
 
-![Add Record Label](image/Add-Record-label.png?raw=true "Add Record Label")
+![Add Record Label](image/Add-Record-Label.png?raw=true "Add Record Label")
 
 
 ## 1.4. Search
@@ -171,7 +171,7 @@ Display the top 10 albums in the database by overall average rating in one table
 ### 1.5.4. `Top 10 Worst Songs`
 Display the top 10 worst songs in the database by overall average rating in one table and by user rating in another table.
 
-![Insights Worst Song Graph](image/Insights-worst-Song-Graph.png?raw=true "Insights Worst Song Graph")
+![Insights Worst Song Graph](image/Insights-Worst-Song-Graph.png?raw=true "Insights Worst Song Graph")
 ![Insights Worst Song](image/Insights-Worst-Song.png?raw=true "Insights Worst Song")
 
 ### 1.5.5. `Top 10 Worst Albums`
