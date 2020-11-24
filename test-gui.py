@@ -1,10 +1,33 @@
-import PySimpleGUIWeb as sg
+import PySimpleGUI as sg
+
+
+# sg.theme_previewer()
+
+
+# sg.theme('Dark Grey 9')  # set window theme
+
+# guiThemes = [[sg.theme_previewer()]]
+
+# window = sg.Window('H.A.M.L.', guiThemes, font=(
+#         "Roboto", 12), size=(1920, 1080), finalize=True)
+
+# while True:
+#     event, values = window.read()
+
+#     # End progam when window is closed
+#     if event == sg.WINDOW_CLOSED:
+#         break
+
+
+# # close the program
+# window.close()
+
+
 # s = 'smitty\'s house'
 # print(s)
 # s = re.sub('(?<=[a-z])\'(?=[a-z])', '', s)
 # print(s)
 
-# #!/usr/bin/env python
 # import PySimpleGUI as sg
 
 # """
@@ -105,54 +128,122 @@ import PySimpleGUIWeb as sg
 # Main program
 
 
-while True:
-    m_Fld1_txt = ''
-    m_Fld2_txt = ''
-    m_Fld3_txt = ''
+# while True:
+#     m_Fld1_txt = ''
+#     m_Fld2_txt = ''
+#     m_Fld3_txt = ''
 
-    layout = [[sg.Text('Text Field1:'),
-               sg.Input(default_text=m_Fld1_txt,
-                        size=(10, 1),
-                        key='Fld1')],
-              [sg.Text('Text Field2:'),
-               sg.Input(default_text=m_Fld2_txt,
-                        size=(10, 1),
-                        key='Fld2')],
-              [sg.Text('Text Field3:'),
-               sg.Input(default_text=m_Fld3_txt,
-                        size=(10, 1),
-                        key='Fld3')],
-              [sg.Text("Date Established"), sg.Input(key='-dateEstablished-C01-', size=(20, 1)),
-               sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-dateEstablished-C01-', no_titlebar=True, key='Calendar-C01')],
-              [sg.Text('Press F01 to Proceed, Esc to Exit.')],
-              [sg.Button('ESC'),
-               sg.Button('F01')]]
+#     layout = [[sg.Text('Text Field1:'),
+#                sg.Input(default_text=m_Fld1_txt,
+#                         size=(10, 1),
+#                         key='Fld1')],
+#               [sg.Text('Text Field2:'),
+#                sg.Input(default_text=m_Fld2_txt,
+#                         size=(10, 1),
+#                         key='Fld2')],
+#               [sg.Text('Text Field3:'),
+#                sg.Input(default_text=m_Fld3_txt,
+#                         size=(10, 1),
+#                         key='Fld3')],
+#               [sg.Text("Date Established"), sg.Input(key='-dateEstablished-C01-', size=(20, 1)),
+#                sg.CalendarButton('Date Picker', close_when_date_chosen=True, format='%Y-%m-%d', target='-dateEstablished-C01-', no_titlebar=True, key='Calendar-C01')],
+#               [sg.Text('Press F01 to Proceed, Esc to Exit.')],
+#               [sg.Button('ESC'),
+#                sg.Button('F01')]]
 
-    window = sg.Window('Test Form',
-                       layout,
-                       size=(800, 360),
-                       disable_close=True,
-                       font='fixedsys',
-                       finalize=True)
+#     window = sg.Window('Test Form',
+#                        layout,
+#                        size=(800, 360),
+#                        disable_close=True,
+#                        font='fixedsys',
+#                        finalize=True)
 
-    window.TKroot.focus_force()         # Force this window to have focus
+#     window.TKroot.focus_force()         # Force this window to have focus
 
-#   window.Element('Fld1').SetFocus()
-#   window.Element('Fld2').SetFocus()
-    window.Element('Fld3').SetFocus()   # Force this field to have focus
+# #   window.Element('Fld1').SetFocus()
+# #   window.Element('Fld2').SetFocus()
+#     window.Element('Fld3').SetFocus()   # Force this field to have focus
 
-    m_Event, m_Values = window.Read()
-    window.Close()
+#     m_Event, m_Values = window.Read()
+#     window.Close()
 
-    if m_Event == 'ESC':
-        break
-    else:
-        pass
+#     if m_Event == 'ESC':
+#         break
+#     else:
+#         pass
 
-    m_Fld1_txt = m_Values['Fld1']
-    m_Fld2_txt = m_Values['Fld2']
-    m_Fld3_txt = m_Values['Fld3']
+#     m_Fld1_txt = m_Values['Fld1']
+#     m_Fld2_txt = m_Values['Fld2']
+#     m_Fld3_txt = m_Values['Fld3']
 
 #  Code to process m_Fld1_txt, m_Fld2_txt, m_Fld3_txt goes here.
 
 #  Ultimately, go around 'while' loop again, until 'ESC' button clicked.
+
+
+"""
+    A simple "settings" implementation.  Load/Edit/Save settings for your programs
+    Uses json file format which makes it trivial to integrate into a Python program.  If you can
+    put your data into a dictionary, you can save it as a settings file.
+
+    Note that it attempts to use a lookup dictionary to convert from the settings file to keys used in 
+    your settings window.  Some element's "update" methods may not work correctly for some elements.
+
+    Copyright 2020 PySimpleGUI.com
+    Licensed under LGPL-3
+"""
+
+##################### Make a settings window #####################
+
+
+def create_settings_window():
+    # sg.theme(values['-THEME-'][0])
+
+    def TextLabel(text): return sg.Text(text + ':', justification='r', size=(15, 1))
+
+    theme_layout = [[sg.Text('Settings', font='Any 15')],
+              [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
+              [sg.Button('Save'), sg.Button('Exit')]]
+
+    window = sg.Window('Settings', theme_layout, keep_on_top=True, finalize=True)
+
+    return window
+
+##################### Main Program Window & Event Loop #####################
+
+
+def create_main_window():
+    # sg.theme(values['-THEME-'][0])
+
+    layout = [[sg.T('This is my main application')],
+              [sg.T('Add your primary window stuff in here')],
+              [sg.B('Ok'), sg.B('Exit'), sg.B('Change Settings')]]
+
+    return sg.Window('Main Application', layout)
+
+
+def main():
+    window = None
+    sg.theme('Dark Grey 9')
+    while True:             # Event Loop
+        if window is None:
+            window = create_main_window()
+
+        event, values = window.read()
+        if event in (sg.WIN_CLOSED, 'Exit'):
+            break
+        if event == 'Change Settings':
+            event, values = create_settings_window().read(close=True)
+            if event == 'Save':
+                window.close()
+                window = None
+
+        try:
+            print(values['-THEME-'])
+            sg.theme(values['-THEME-'])
+        except:
+            print('err')
+    window.close()
+
+
+main()

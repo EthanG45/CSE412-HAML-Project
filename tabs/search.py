@@ -21,9 +21,15 @@ class SearchTab:
              [sg.Input(key='-INPUT-SEARCH-SONG-')],
              [sg.Button('search', key='-BUTTON-SEARCH-SONG-')],
              #[sg.Text(size=(100, 720), key='-OUTPUT-SEARCH-SONG-')]
-             [sg.Table(values=[['', '', '', '', '', '', '', '', '', '']], headings=[
+             [sg.Table(values=[['                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ']], headings=[
                  'Song', 'Album', 'Artist', 'Genre', 'Duration', 'Link',
-                 'Release Year', 'Average Rating', 'Number of Listeners', 'Rating'], key='-TABLE-SEARCH-SONG-', enable_events=True, size=(1220, 120))]
+                 'Release Year', 'Average Rating', 'Listeners', 'Rating'], key='-TABLE-SEARCH-SONG-', enable_events=True, size=(1220, 35))],
+             [sg.Text("Rating"), sg.Slider(range=(0, 5),
+                                           default_value=0,
+                                           size=(25, 10),
+                                           orientation='horizontal',
+                                           font=('Helvetica', 12), key='-RATING-S01-'),
+              sg.Button('ADD RATING', key='-BUTTON-RATING-S01-'), sg.Button('DELETE', key='-DELETE-BUTTON-S01-')]
 
              ],
             key='search_Song_tab'
@@ -51,8 +57,10 @@ class SearchTab:
              [sg.Input(key='-INPUT-SEARCH-ARTIST-')],
              [sg.Button('search', key='-BUTTON-SEARCH-ARTIST-')],
              # [sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
-             [sg.Table(values=[['', '', '']], headings=[
-                 'Artist Name', 'Age', 'Known For'], key='-TABLE-SEARCH-ARTIST-', enable_events=True, size=(1220, 120))]
+             [sg.Table(values=[['                        ', '                        ', ''                        ]], headings=[
+                 '    Artist Name    ', 'Age', '   Known For   '], key='-TABLE-SEARCH-ARTIST-', enable_events=True, size=(1220, 35))],
+
+             [sg.Button('DELETE', key='-DELETE-BUTTON-S02-')]
              ],
             key='search_Artist_tab'
         )  # end of tab search
@@ -63,21 +71,23 @@ class SearchTab:
              [sg.Input(key='-INPUT-SEARCH-ALBUM-')],
              [sg.Button('search', key='-BUTTON-SEARCH-ALBUM-')],
              # [sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
-             [sg.Table(values=[['', '', '']], headings=['Title', 'Album Duraction',
-                                                        'Cover Art URL'], key='-TABLE-SEARCH-ALBUM-', enable_events=True, size=(1220, 120))]
+             [sg.Table(values=[['                        ', '                        ', '                        ']], headings=['       Title       ', 'Album Duraction',
+                                                        '   Cover Art URL   '], key='-TABLE-SEARCH-ALBUM-', enable_events=True, size=(1220, 35))],
+             [sg.Button('DELETE', key='-DELETE-BUTTON-S03-')]
              ],
             key='search_Album_tab'
         )
 
-        searchMusicianTab = sg.Tab(
-            'Musician',
-            [[sg.Text("Search Musician by Band Name")],
-             [sg.Input(key='-INPUT-SEARCH-MUSICIAN-')],
-             [sg.Button('search', key='-BUTTON-SEARCH-MUSICIAN-')],
-             [sg.Table(values=[['', '', '', '']], headings=['Name', 'Age', 'Instrument',
-                                                            'Band'], key='-TABLE-SEARCH-MUSICIAN-', enable_events=True, size=(1220, 120))]
+        searchBandTab = sg.Tab(
+            'Band',
+            [[sg.Text("Search Bands")],
+             [sg.Input(key='-INPUT-SEARCH-BAND-')],
+             [sg.Button('search', key='-BUTTON-SEARCH-BAND-')],
+             [sg.Table(values=[['                        ', '                        ', '                        ', '                        ']], 
+                        headings=['Name', 'Age', 'Instrument', 'Band'], key='-TABLE-SEARCH-BAND-', enable_events=True, size=(1220, 35))],
+             [sg.Button('DELETE', key='-DELETE-BUTTON-S04-')]
              ],
-            key='search_Musician_tab'
+            key='search_BAND_tab'
         )
 
         searchRecordLabelTab = sg.Tab(
@@ -85,8 +95,9 @@ class SearchTab:
             [[sg.Text("Search Record Label by Name")],
              [sg.Input(key='-INPUT-SEARCH-RECORD-')],
              [sg.Button('search', key='-BUTTON-SEARCH-RECORD-')],
-             [sg.Table(values=[['', '', '']], headings=[
-                 '     Company Name     ', ' Date Established ',   '   Label Location   '], key='-TABLE-SEARCH-RECORD-', enable_events=True, size=(1220, 120))]
+             [sg.Table(values=[['                        ', '                        ', '                        ']], 
+             headings=['     Company Name     ', ' Date Established ', '   Label Location   '], key='-TABLE-SEARCH-RECORD-', enable_events=True, size=(1220, 35))],
+             [sg.Button('DELETE', key='-DELETE-BUTTON-S05-')]
              ],
             key='search_Record_tab'
         )
@@ -97,9 +108,9 @@ class SearchTab:
             [[sg.TabGroup(
                 [[
                     searchSongTab,
-                    searchArtistTab,
                     searchAlbumTab,
-                    searchMusicianTab,
+                    searchArtistTab,
+                    searchBandTab,
                     searchRecordLabelTab
                 ]],
                 key='tabgroupSearch',

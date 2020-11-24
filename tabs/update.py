@@ -1,4 +1,7 @@
 import PySimpleGUI as sg
+from faker import Faker
+fake = Faker()
+Faker.seed(2)
 
 ### #### #### #### #### #### #### #### #### ###
 #           START UPDATE TABLE TABS           #
@@ -9,141 +12,73 @@ class UpdateTab:
     def __init__(self, db):
         self.db = db
 
-    def updateTabGUI(self):
-        updateTableRecord = sg.Tab(
-            'Record Label',
+    def updateRecordLabelGUI(self):
+        locationList = []
+        for x in range(0, 1000):
+            locationList.append(fake.city())
 
-            [[sg.Text("Update A Table Record Label", size=(1270, 1))],
-             [sg.Text("Company Name"), sg.Input(key='-companyName-U01-')],
-             [sg.Text("Date Established"), sg.Input(key='-dateEstablished-U01-')],
-             [sg.Text("Label Location"), sg.Input(key='-labelLocation-U01-')],
-             [sg.Text("Record Label Id"), sg.Input(key='-recordLabelId-U01-')],
-             [sg.Button('DELETE', key='-BUTTON-U01-')],
-             [sg.Text(size=(100, 700), key='-OUTPUT-U01-')]],
-            key='U01'
-        )  # end of tab Record Label
+        layout = [[sg.Text('Company Name'),
+                   sg.Input(size=(10, 1), key='-COMPANY-NAME-U01-')],
+                  [sg.Text("Label Location"), sg.Combo(locationList, key='-LABEL-LOCATION-U01-')],
+                  [sg.Button('UPDATE', bind_return_key=True), sg.Button('CANCEL')]
+                  ]
 
-        updateTableArtist = sg.Tab(
-            'Artist',
-            [[sg.Text("Update an Artist")],
-             #Artist Elements
-             [sg.Text("Artist Name"), sg.Input(key='-ARTIST-NAME-U02-')],
-             [sg.Text("Age"), sg.Input(key='-AGE-U02-')],
-             
-             # Musician elements
-             [sg.Text("Instrument"), sg.Input(key='-INSTRUMENT-U02-')],
-             [sg.Text("band"), sg.Input(key='-BAND-U02-')],
+        return layout
 
-             [sg.Button('DELETE', key='-BUTTON-U02-')],
-             [sg.Text(size=(100, 700), key='-OUTPUT-U02-')]],
+    def updateArtistGUI(self, instrumentList, albumNameList):
+        layout = [
+            [sg.Text("Update an Artist", size=(1270, 1))],
 
-            key='U02'
-        )
+            # Artist elements
+            [sg.Text("Artist Name"), sg.Input(key='-ARTIST-U02-')],
 
-        updateTableAlbum = sg.Tab(
-            'Album',
-            [[sg.Text("Update an Album")],
-             
-             [sg.Text("Album Duration"),sg.Input(key='-ALBUM-DURATION-U04-')],
-             [sg.Text("Title"), sg.Input(key='-TITLE-U04-')],
-             [sg.Text("Cover Art URL"),sg.Input(key='-COVER ART URL-U04-')],
+            [sg.Text("Age"), sg.Slider(range=(1, 155),
+                                       default_value=42,
+                                       size=(40, 15),
+                                       orientation='horizontal',
+                                       font=('Helvetica', 12), key='-AGE-U02-')],
+            # Musician elements
+            [sg.Text("Instrument"), sg.Listbox(values=instrumentList, key='-INSTRUMENT-U02-', size=(10, 5))],
+            [sg.Text("Band Name"), sg.Input(key='-BAND-U02-')],
 
-             [sg.Button('DELETE', key='-BUTTON-U04-')],
-             [sg.Text(size=(100, 700), key='-OUTPUT-U04-')]
+            [sg.Text("Add album to artist?", size=(1270, 1))],
 
-             ],
+            # Album elements
+            [sg.Text("Title"), sg.Listbox(values=albumNameList,
+                                          key='-TITLE-U02-', size=(50, 15))],
+            [sg.Button('UPDATE', bind_return_key=True), sg.Button('CANCEL')]
 
-            key='U04'
-        )
+        ]
 
-        daySize = 5
-        monthSize = 7
-        yearSize = 10
+        return layout
 
-        updateTableSong = sg.Tab(
-            'Song',
+    def updateAlbumGUI(self):
 
-            [[sg.Text("---------")],
-             [sg.Text("Title")],
-             [sg.Input(key='-TITLE-U05-')],
+        layout = [[sg.Text('Title'),
+                   sg.Input(size=(10, 1), key='-TITLE-U03-')],
+                  [sg.Text("Duration"), sg.Slider(range=(30, 1000),
+                                                  default_value=42,
+                                                  size=(40, 15),
+                                                  orientation='horizontal',
+                                                  font=('Helvetica', 12), key='-DURATION-U03-')],
+                  [sg.Button('UPDATE', bind_return_key=True), sg.Button('CANCEL')]
+                  ]
 
-             [sg.Text("Genre")],
-             [sg.Input(key='-GENRE-U05-')],
+        return layout
 
-             [sg.Text("Song Duration")],
-             [sg.Input(key='-SONG-DURATION-U05-')],
+    def updateSongGUI(self, genreList):
+        yearList = list(range(2021, 999, -1))
+        layout = [[sg.Text('Title'),
+                   sg.Input(size=(10, 1), key='-TITLE-U04-')],
+                  [sg.Text("Genre"), sg.Listbox(values=genreList, key='-GENRE-U04-', size=(10, 5))],
+                  [sg.Text("Duration"), sg.Slider(range=(30, 1000),
+                                                  default_value=42,
+                                                  size=(40, 15),
+                                                  orientation='horizontal',
+                                                  font=('Helvetica', 12), key='-DURATION-U04-')],
+                  # Musician elements
+                  [sg.Text("Release Year"), sg.Combo(yearList, key='-YEAR-U04-')],
+                  [sg.Button('UPDATE', bind_return_key=True), sg.Button('CANCEL')]
+                  ]
 
-             [sg.Text("Source Link")],
-             [sg.Input(key='-SOURCE-LINK-U05-')],
-
-             [sg.Text("Release date")],
-
-             [sg.Text("Day", size=(daySize, 1)), sg.Text("Month", size=(
-                 monthSize, 1)), sg.Text("Year", size=(yearSize, 1))],
-             [sg.Input(key='-DAY-U05-', size=(daySize, 1)), sg.Input(key='-MONTH-U05-',
-                                                                     size=(monthSize, 1)), sg.Input(key='-YEAR-U05-', size=(yearSize, 1))],
-
-             [sg.Button('DELETE', key='-BUTTON-U05-')],
-             [sg.Text(size=(100, 700), key='-OUTPUT-U05-')]
-
-             ],
-            key='U05'
-        )
-
-        updateTableMade = sg.Tab(
-            'Made',
-            [[sg.Text("---------")],
-
-             [sg.Text("Known For?")],
-
-             [sg.Button('DELETE', key='-BUTTON-U06-')],
-             [sg.Text(size=(100, 700), key='-OUTPUT-U06-')]
-             ],
-            key='U06'
-        )
-
-        updateTableRating = sg.Tab(
-            'Rating',
-            [[sg.Text("---------")],
-             [sg.Text("Num Of Rating")],
-
-             [sg.Text("Average Rating")],
-
-             [sg.Text("User Rating")],
-
-             [sg.Button('DELETE', key='-BUTTON-U07-')],
-             [sg.Text(size=(100, 700), key='-OUTPUT-U07-')]
-
-             ],
-            key='U0i'
-        )
-
-        ### #### #### #### #### #### #### #### #### ###
-        #           END OF UPDATE TABLE TABS          #
-        ### #### #### #### #### #### #### #### #### ###
-
-        updateTab = sg.Tab(
-            'Edit',
-            [[sg.TabGroup(
-                [[
-                    updateTableRecord,
-                    # updateTablePublishes,  # ?
-                    updateTableArtist,
-                    # updateTableMusician,
-                    # createTablePlayed,
-                    updateTableAlbum,
-                    updateTableSong,
-                    # createTableContains,  # ?
-                    updateTableMade,
-                    updateTableRating
-                ]],
-                key='tabgroupUpdate',
-                enable_events=True
-            )  # end of TabGroup
-            ]],
-
-            key='update_tab'
-
-        )
-
-        return updateTab
+        return layout

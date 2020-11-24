@@ -2,9 +2,7 @@
 
 import PySimpleGUI as sg
 import sql
-# import tabs/create
-from tabs.create import CreateTab
-from tabs.delete import DeleteTab
+from tabs.add import AddTab
 from tabs.update import UpdateTab
 from tabs.library import LibraryTab
 from tabs.search import SearchTab
@@ -12,8 +10,7 @@ from tabs.insights import InsightsTab
 from tabs.feelingLucky import FeelingLuckyTab
 
 db = sql.Database()  # import db
-ct = CreateTab(db)
-dt = DeleteTab(db)
+at = AddTab(db)
 ut = UpdateTab(db)
 lt = LibraryTab(db)
 st = SearchTab(db)
@@ -23,7 +20,7 @@ ft = FeelingLuckyTab(db)
 events = []
 st.addEvents(events)
 
-sg.theme('Dark Grey 9')  # set window theme
+
 
 # Define the window's contents
 
@@ -34,8 +31,26 @@ class GUI:
         self.artistTable = db.getAllArtists()
         self.albumsTable = db.getAllAlbums()
         self.songsTable = db.getAllSongs()
-        self.songToLinkToAlbum = []
-        self.createAlbumSongSearch = []
+        # self.songToLinkToAlbum = []
+        # self.createAlbumSongSearch = []
+        self.searchSongTable = []
+        self.searchSongTableId = []
+
+        self.searchAlbumTable = []
+        self.searchAlbumTableId = []
+
+        self.searchArtistTable = []
+        self.searchArtistTableId = []
+
+        self.searchMusicianTable = []
+        self.searchMusicianTableId = []
+
+        self.searchRecordLabelTable = []
+        self.searchRecordLabelTableId = []
+
+        self.updateWindow = None
+        self.updateItem = ()
+
 
     def updateTables(self):
         self.recordTable = db.getAllRecordLabels()
@@ -43,21 +58,20 @@ class GUI:
         self.albumsTable = db.getAllAlbums()
         self.songsTable = db.getAllSongs()
 
-
-def main():
-    gui = GUI()
-
+# settingsTab = sg.Tab('setting', [[sg.theme_previewer()]], 'theme_tab')
+def create_window():
+        
     # main layout this contains everything
     layout = [[
         sg.TabGroup(
             [[
-                ct.createTabGUI(),
-                ut.updateTabGUI(),
-                dt.deleteTabGUI(),
-                st.searchTabGUI(),
                 lt.libraryTabGUI(),
+                at.addTabGUI(),
+                st.searchTabGUI(),
+                # ut.updateTabGUI(),
                 it.insightsTabGUI(),
-                ft.feelingLuckyTabGUI()
+                ft.feelingLuckyTabGUI(),
+                sg.Tab('Theme', [[sg.Listbox(values = sg.theme_list(), key = '-THEME-LIST-', size = (20, 200), enable_events = True), sg.Button('SAVE NEW THEME', key = '-THEME-BUTTON-')]], key = '-THEME-TAB-'),
             ]],
             key='tabgroup',
             enable_events=True
@@ -66,9 +80,25 @@ def main():
     ]
     ]  # end of layout
 
+
+
     # Create the window
+    # todo window size is still a little too big
+    # todo app icon?
     window = sg.Window('H.A.M.L.', layout, font=(
-        "Roboto", 12), size=(1920, 1080), finalize=True)
+        "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c', 
+        icon = 'image/clyde.ico')
+        
+
+    return window
+
+def main():
+    sg.theme('Dark Grey 9')  # set window theme
+    gui = GUI()
+    
+    window = create_window()
+    
+    #window = create_window()
 
     def isValid(*args):
         for elem in args:
@@ -83,33 +113,178 @@ def main():
         window['-TABLE-L03-'].update(values=gui.albumsTable)
         window['-TABLE-L04-'].update(values=gui.songsTable)
 
+        at.updateLists()
+        window['-TITLE-C01-'].update(values=at.albumNameList)
+        # window['-TITLE-C02-'].update(values=at.albumNameList)
+        window['-GENRE-C02-'].update(values=at.genreList)
+        window['-INSTRUMENT-C02-'].update(values=at.instrumentList)
+        window['-RECORD-TITLE-C02-'].update(values=at.recordLabelList)
+        window['-GENRE-C04-'].update(values=at.genreList)
+        window['-ARTIST-TITLE-C04-'].update(values=at.artistNameList)
+        window['-ALBUM-TITLE-C05-'].update(values=at.albumNameList)
+        window['-GENRE-C05-'].update(values=at.genreList)
+
+        ft.updateLists()
+        window['-INPUT-ARTIST-F02-'].update(values=ft.artistNameList)
+        window['-INPUT-ALBUM-F03-'].update(values=ft.albumNameList)
+        window['-INPUT-SONG-F04-'].update(values=ft.songNameList)
+        window['-INPUT-BAND-F05-'].update(values=ft.bandNameList)
+        window['-INPUT-INSTRUMENT-F06-'].update(values=ft.instrumentList)
+
+        it.updateLists()
+        window['-AVG-TABLE-I01-'].update(values=it.top10SongByAverage)
+        window['-USER-TABLE-I01-'].update(values=it.top10SongByUser)
+        window['-AVG-TABLE-I02-'].update(values=it.top10AlbumByAverage)
+        window['-USER-TABLE-I02-'].update(values=it.top10AlbumByUser)
+        window['-AVG-TABLE-I03-'].update(values=it.top10WorstSongByAverage)
+        window['-USER-TABLE-I03-'].update(values=it.top10WorstSongByUser)
+        window['-AVG-TABLE-I04-'].update(values=it.top10WorstAlbumByAverage)
+        window['-USER-TABLE-I04-'].update(values=it.top10WorstAlbumByUser)
+
+    #def create_window():
+    #   window = sg.Window('H.A.M.L.', layout, font=(
+    #       "Roboto", 12), size=(1920, 1080), finalize=True)
+    #
+    #
+    #
     def checkButtonPress(event, values):
+
 
         ### SEARCH EVENTS ###
 
         if event == '-BUTTON-SEARCH-ARTIST-':
-            temp = db.searchArtist(values['-INPUT-SEARCH-ARTIST-'])
-            window['-TABLE-SEARCH-ARTIST-'].update(values=temp)
+            gui.searchArtistTable = db.searchArtist(values['-INPUT-SEARCH-ARTIST-'])
+            gui.searchArtistTableId = db.searchArtistId(values['-INPUT-SEARCH-ARTIST-'])
+            window['-TABLE-SEARCH-ARTIST-'].update(values=gui.searchArtistTable)
 
         if event == '-BUTTON-SEARCH-SONG-':
-            temp = db.searchSong(values['-INPUT-SEARCH-SONG-'])
-            window['-TABLE-SEARCH-SONG-'].update(values=temp)
+            gui.searchSongTable = db.searchSong(values['-INPUT-SEARCH-SONG-'])
+            gui.searchSongTableId = db.searchSongId(values['-INPUT-SEARCH-SONG-'])
+            window['-TABLE-SEARCH-SONG-'].update(values=gui.searchSongTable)
 
         if event == '-BUTTON-SEARCH-ALBUM-':
-            temp = db.searchAlbum(values['-INPUT-SEARCH-ALBUM-'])
-            window['-TABLE-SEARCH-ALBUM-'].update(values=temp)
+            gui.searchAlbumTable = db.searchAlbum(values['-INPUT-SEARCH-ALBUM-'])
+            gui.searchAlbumTableId = db.searchAlbumId(values['-INPUT-SEARCH-ALBUM-'])
+            window['-TABLE-SEARCH-ALBUM-'].update(values=gui.searchAlbumTable)
 
-        if event == '-BUTTON-SEARCH-MUSICIAN-':
-            temp = db.searchMusician(values['-INPUT-SEARCH-MUSICIAN-'])
-            window['-TABLE-SEARCH-MUSICIAN-'].update(values=temp)
+        if event == '-BUTTON-SEARCH-BAND-':
+            gui.searchMusicianTable = db.searchMusician(values['-INPUT-SEARCH-BAND-'])
+            gui.searchMusicianTableId = db.searchMusicianId(values['-INPUT-SEARCH-BAND-'])
+            window['-TABLE-SEARCH-BAND-'].update(values=gui.searchMusicianTable)
 
         if event == '-BUTTON-SEARCH-RECORD-':
-            temp = db.searchRecordLabel(values['-INPUT-SEARCH-RECORD-'])
-            window['-TABLE-SEARCH-RECORD-'].update(values=temp)
+            gui.searchRecordLabelTable = db.searchRecordLabel(values['-INPUT-SEARCH-RECORD-'])
+            gui.searchRecordLabelTableId = db.searchRecordLabelId(values['-INPUT-SEARCH-RECORD-'])
+            window['-TABLE-SEARCH-RECORD-'].update(values=gui.searchRecordLabelTable)
 
-        ### CREATE EVENTS ###
 
-        # CREATE RECORD LABEL
+        ### DELETE SELECTED SEARCH ###
+
+        if event == '-BUTTON-RATING-S01-':
+
+            try:
+                songIndex = values['-TABLE-SEARCH-SONG-'][0]
+                newRating = values['-RATING-S01-']
+                # songTitle = gui.searchSongTable[songIndex][0]
+                songId = gui.searchSongTableId[songIndex][0]
+
+                # db.changeWholeRating( songTitle, newRating)
+                db.changeWholeRatingId(songId, newRating)
+
+                tempSongName = gui.searchSongTable
+                gui.searchSongTable = db.searchSong(gui.searchSongTable[songIndex][0])
+                gui.searchSongTableId = db.searchSongId(tempSongName[songIndex][0])
+
+                window['-TABLE-SEARCH-SONG-'].update(values=gui.searchSongTable)
+                updatelibtabs()
+
+            except:
+                sg.popup('Please select a song')
+
+        # delete searched song
+        if event == '-DELETE-BUTTON-S01-':
+
+            try:
+                songIndex = values['-TABLE-SEARCH-SONG-'][0]
+                songTitle = gui.searchSongTable[songIndex][0]
+
+                db.deleteSongId(gui.searchSongTableId[songIndex][0])
+
+                gui.searchSongTable = db.searchSong(songTitle)
+                gui.searchSongTableId = db.searchSongId(songTitle)
+                window['-TABLE-SEARCH-SONG-'].update(values=gui.searchSongTable)
+                updatelibtabs()
+            except:
+                sg.popup('Please select a song')
+
+        # delete searched artist
+        if event == '-DELETE-BUTTON-S02-':
+            try:
+                index = values['-TABLE-SEARCH-ARTIST-'][0]
+                artistName = gui.searchArtistTable[index][0]
+                artistID = gui.searchArtistTableId[index][0]
+
+                db.deleteArtistId(artistID)
+
+                gui.searchArtistTable = db.searchArtist(artistName)
+                gui.searchArtistTableId = db.searchArtistId(artistName)
+                window['-TABLE-SEARCH-ARTIST-'].update(values=gui.searchArtistTable)
+                updatelibtabs()
+            except:
+                sg.popup('Please select a Artist')
+
+        # delete searched album
+        if event == '-DELETE-BUTTON-S03-':
+            try:
+                index = values['-TABLE-SEARCH-ALBUM-'][0]
+                albumName = gui.searchAlbumTable[index][0]
+                albumID = gui.searchAlbumTableId[index][0]
+
+                db.deleteAlbumByID(albumID)
+
+                gui.searchAlbumTable = db.searchAlbum(albumName)
+                gui.searchAlbumTableId = db.searchAlbumId(albumName)
+                window['-TABLE-SEARCH-ALBUM-'].update(values=gui.searchAlbumTable)
+                updatelibtabs()
+            except:
+                sg.popup('Please select a Album')
+
+        # delete searched musician
+        if event == '-DELETE-BUTTON-S04-':
+            try:
+                index = values['-TABLE-SEARCH-BAND-'][0]
+                artistName = gui.searchMusicianTable[index][0]
+                bandName = gui.searchMusicianTable[index][3]
+                artistID = gui.searchMusicianTableId[index][0]
+
+                db.deleteArtistId(artistID)
+
+                gui.searchMusicianTable = db.searchMusician(bandName)
+                gui.searchMusicianTableId = db.searchMusicianId(bandName)
+                window['-TABLE-SEARCH-BAND-'].update(values=gui.searchMusicianTable)
+                updatelibtabs()
+            except:
+                sg.popup('Please select a Band')
+
+        # delete searched RecordLabel
+        if event == '-DELETE-BUTTON-S05-':
+            try:
+                index = values['-TABLE-SEARCH-RECORD-'][0]
+                someCompanyName = gui.searchRecordLabelTable[index][0]
+                someRecordID = gui.searchRecordLabelTableId[index][0]
+
+                db.deleteRecordLabelID(someRecordID)
+
+                gui.searchRecordLabelTable = db.searchRecordLabel(someCompanyName)
+                gui.searchRecordLabelTableId = db.searchRecordLabelId(someCompanyName)
+                window['-TABLE-SEARCH-RECORD-'].update(values=gui.searchRecordLabelTable)
+                updatelibtabs()
+            except:
+                sg.popup('Please select a Record Label')
+
+        ### ADD EVENTS ###
+
+        # ADD RECORD LABEL
         if event == '-BUTTON-C01-':
             try:
                 companyName = values['-companyName-C01-']
@@ -124,10 +299,10 @@ def main():
                     window.FindElement('-companyName-C01-').update('')
                     window.FindElement('-labelLocation-C01-').update('')
                     window.FindElement('-dateEstablished-C01-').update('')
-                    window['-OUTPUT-C01-'].update("Record Label created")
+                    window['-OUTPUT-C01-'].update("Record Label added")
                 else:
                     window['-OUTPUT-C01-'].update(
-                        "Failed to create Record Label!")
+                        "Failed to add Record Label!")
             except:
                 sg.popup('Select an album please')
 
@@ -135,37 +310,37 @@ def main():
             window.TKroot.focus_force()
             updatelibtabs()
 
-        # CREATE ARTIST
+        # ADD ARTIST
         if event == '-BUTTON-C02-':
             try:
+                # TODO def createArtistAndSongAndAlbum(self, companyName, artistName, age, instrument, band, albumName, title, genre, releaseYear)
                 artistName = values['-ARTIST-C02-']
                 artistAge = int(values['-AGE-C02-'])
-                artistInstrument = values['-INSTRUMENT-C02-']
+                artistInstrument = values['-INSTRUMENT-C02-'][0]
                 artistBand = values['-BAND-C02-']
-                titleName = values['-TITLE-C02-'][0]
-                # recordLabelName = values['-RECORD-LABEL-NAME-C02-'][0]
-                # recordLabelCity = values['-RECORD-LABEL-CITY-C02-'][1]
+                albumTitle = values['-ALBUM-TITLE-C02-']
+                songTitle = values['-SONG-TITLE-C02-']
+                songGenre = values['-GENRE-C02-'][0]
+                songReleaseYear = values['-RELEASE-YEAR-C02-']
+                recordLabel = values['-RECORD-TITLE-C02-'][0]
 
-                '''recordLabelName, recordLabelCity'''
-
-                if isValid(artistName, artistAge, artistInstrument, artistBand, titleName):
-                    db.insertArtist(artistName, artistAge,
-                                    artistInstrument, artistBand, titleName)
+                if isValid(artistName, artistAge, artistInstrument, artistBand, albumTitle, songTitle, songGenre, songReleaseYear, recordLabel):
+                    db.createArtistAndSongAndAlbum(recordLabel, artistName, artistAge, artistInstrument, artistBand, albumTitle, songTitle, songGenre, int(songReleaseYear))
                     window.FindElement('-ARTIST-C02-').update('')
-                    window.FindElement('-AGE-C02-').update('')
-                    window.FindElement('-INSTRUMENT-C02-').update('')
                     window.FindElement('-BAND-C02-').update('')
-                    window['-OUTPUT-C02-'].update("Artist created")
+                    window.FindElement('-ALBUM-TITLE-C02-').update('')
+                    window.FindElement('-SONG-TITLE-C02-').update('')
+                    window['-OUTPUT-C02-'].update("Artist added")
                 else:
-                    window['-OUTPUT-C02-'].update("Failed to create Artist!")
+                    window['-OUTPUT-C02-'].update("Failed to add Artist!")
             except:
-                sg.popup('Select an album please')
+                sg.popup('Select instrument, genre, and record label please')
 
             updatelibtabs()
 
         ##########################
 
-        # # CREATE ALBUM OG
+        # # ADD ALBUM OG
         # if event == '-BUTTON-SEARCH-SONG-C04-':
         #     gui.createAlbumSongSearch = db.searchSong(values['-INPUT-SEARCH-SONG-C04-'])
         #     window['-TABLE-SEARCH-SONG-C04-'].update(values=  gui.createAlbumSongSearch)
@@ -188,7 +363,7 @@ def main():
         #     '''
         #     #db.insertSongWhileKnowingAlbumName( albumName, title, genre, releaseYear):
 
-        # CREATE Album
+        # ADD Album
         if event == '-BUTTON-C04-':
             try:
                 albumTitle = values['-ALBUM-TITLE-C04-']
@@ -203,10 +378,10 @@ def main():
                     window.FindElement('-ALBUM-TITLE-C04-').update('')
                     window.FindElement('-SONG-TITLE-C04-').update('')
                     window.FindElement('-RELEASE-YEAR-C04-').update('')
-                    window['-OUTPUT-C04-'].update("Song and album created")
+                    window['-OUTPUT-C04-'].update("Song and album added")
                 else:
                     window['-OUTPUT-C04-'].update(
-                        "Failed to create Album and Song!")
+                        "Failed to add Album and Song!")
             except:
                 window['-OUTPUT-C04-'].update('')
                 sg.popup('Please select a genre and fill out other fields')
@@ -225,7 +400,7 @@ def main():
 
         #####################
 
-        # CREATE SONG
+        # ADD SONG
         if event == '-BUTTON-C05-':
             try:
                 titleSong = values['-TITLE-C05-']
@@ -241,9 +416,9 @@ def main():
                                   genreSong, releaseYearsong)
                     window.FindElement('-TITLE-C05-').update('')
                     window.FindElement('-releaseYear-C05-').update('')
-                    window['-OUTPUT-C05-'].update("Song created")
+                    window['-OUTPUT-C05-'].update("Song added")
                 else:
-                    window['-OUTPUT-C05-'].update("Failed to create Song!")
+                    window['-OUTPUT-C05-'].update("Failed to add Song!")
             except:
                 sg.popup('Please select a genre, album and fill out other fields')
 
@@ -344,7 +519,7 @@ def main():
 
         if event == '-BUTTON-SONG-F02-':
             try:
-                year = values['-INPUT-YEAR-F02-']
+                year = int(values['-INPUT-YEAR-F02-'])
                 artist = values['-INPUT-ARTIST-F02-'][0]
 
                 temp = db.findSongNameByYearAndArtist(artist, int(year))
@@ -352,20 +527,153 @@ def main():
             except:
                 sg.popup('Please select a artist')
 
+        if event == '-BUTTON-RECORD-LABEL-F03-':
+            try:
+                album = values['-INPUT-ALBUM-F03-'][0]
+
+                name = db.findcompanyNameByAlbumName(album)[0][0]
+                date = db.findRecLebDateByAlbumName(album)[0][0]
+                location = db.findLocationByAlbumName(album)[0][0]
+                # [('able seat', 'carry station team', 'Joshua Duran', 'EDM', 536, 'phillips-nelson.net', 2019, Decimal('2.500000'), 29419, 0)]
+                temp = [(name, date, location)]
+                window['-TABLE-RECORD-LABEL-F03-'].update(values=temp)
+            except:
+                sg.popup('Please select an album')
+
+        if event == '-BUTTON-SONG-F04-':
+            try:
+                window['-TABLE-RECORD-LABEL-F04-'].update(values=db.findcompanyNameBySongName(values['-INPUT-SONG-F04-'][0]))
+            except:
+                sg.popup('Please select a song name')
+
+        if event == '-BUTTON-RECORD-LABEL-F05-':
+            try:
+                window['-TABLE-RECORD-LABEL-F05-'].update(values=db.findcompanyNameByBandName(values['-INPUT-BAND-F05-'][0]))
+            except:
+                sg.popup('Please select a band name')
+
+        if event == '-BUTTON-RECORD-LABEL-F06-':
+            try:
+                window['-TABLE-RECORD-LABEL-F06-'].update(values=db.findListOfCompanyNameByInstrument(values['-INPUT-INSTRUMENT-F06-'][0]))
+            except:
+                sg.popup('Please select an instrument')
+
+        #### UPDATE EVENTS ####
+        if event == '-UPDATE-BUTTON-L01-':
+            try:
+                gui.updateItem = gui.recordTable[values['-TABLE-L01-'][0]]
+                gui.updateWindow = sg.Window('Update Record Label', ut.updateRecordLabelGUI(), font=("Roboto", 12), size=(1000, 500), finalize=True)
+
+                button, updateValues = gui.updateWindow.read()
+                if button == 'UPDATE':
+                    companyName = updateValues['-COMPANY-NAME-U01-']
+                    labelLocation = updateValues['-LABEL-LOCATION-U01-']
+                    oldCompanyName = gui.updateItem[0]
+
+                    db.updateRecordLabel(companyName, labelLocation, oldCompanyName)
+                    updatelibtabs()
+
+                gui.updateWindow.close()
+
+            except:
+                sg.popup('Please select something to update')
+
+        if event == '-UPDATE-BUTTON-L02-':
+            try:
+                gui.updateItem = gui.artistTable[values['-TABLE-L02-'][0]]
+                gui.updateWindow = sg.Window('Update Artist', ut.updateArtistGUI(db.allInstName(), db.allAlbumName()), font=( "Roboto", 12), size=(1000, 700), finalize=True)
+
+                button, updateValues = gui.updateWindow.read()
+                if button == 'UPDATE':
+                    artistName = updateValues['-ARTIST-U02-']
+                    age = int(updateValues['-AGE-U02-'])
+                    instrument = updateValues['-INSTRUMENT-U02-']
+                    band = updateValues['-BAND-U02-']
+                    albumName = updateValues['-TITLE-U02-'][0]
+
+                    oldArtistName = gui.updateItem[0]
+
+                    db.updateArtist(artistName, age, instrument, band, oldArtistName, albumName)
+                    updatelibtabs()
+
+                gui.updateWindow.close()
+            except:
+                sg.popup('Please select something to update')
+
+        if event == '-UPDATE-BUTTON-L03-':
+            try:
+                gui.updateItem = gui.albumsTable[values['-TABLE-L03-'][0]]
+                gui.updateWindow = sg.Window('Update Album', ut.updateAlbumGUI(), font=(
+                    "Roboto", 12), size=(1000, 500), finalize=True, modal=True)
+
+                button, updateValues = gui.updateWindow.read()
+                if button == 'UPDATE':
+                    title = updateValues['-TITLE-U03-']
+                    duration = int(updateValues['-DURATION-U03-'])
+                    oldTitle = gui.updateItem[0]
+
+                    db.updateAlbum(title, duration, oldTitle)
+                    updatelibtabs()
+
+                gui.updateWindow.close()
+
+            except:
+                sg.popup('Please select something to update')
+
+        if event == '-UPDATE-BUTTON-L04-':
+            try:
+                gui.updateItem = gui.songsTable[values['-TABLE-L04-'][0]]
+                gui.updateWindow = sg.Window('Update Song', ut.updateSongGUI(db.allGenre()), font=(
+                    "Roboto", 12), size=(1000, 500), finalize=True)
+
+                button, updateValues = gui.updateWindow.read()
+                try:
+                    if button == 'UPDATE':
+                        title = updateValues['-TITLE-U04-']
+                        genre = updateValues['-GENRE-U04-'][0]
+                        duration = int(updateValues['-DURATION-U04-'])
+                        year = int(updateValues['-YEAR-U04-'])
+                        oldTitle = gui.updateItem[0]
+
+                        db.updateSong(title, genre, duration, year, oldTitle)
+                        updatelibtabs()
+                        
+                    gui.updateWindow.close()
+                except:
+                    sg.popup('Please fill out all the relevant fields')    
+
+
+            except:
+                sg.popup('Please select something to update')
+
     # updatelibtabs()
+
     while True:
 
         event, values = window.read()
 
-        # End progam when window is closed
+        if window is None:
+            window = create_window()
+        
+        ### THEME CHANGE ###
+
+        if event == '-THEME-BUTTON-':
+            try:
+                sg.theme(values['-THEME-LIST-'][0])
+                window.close()
+                window = create_window()
+            except:
+                sg.popup('Please select a theme')
+
+
         if event == sg.WINDOW_CLOSED:
             break
 
         checkButtonPress(event, values)
-        # SearchTab.searchEvents(event, window)
 
     # close the program
     window.close()
+    db.closeConnection()
 
 
 if __name__ == '__main__':
