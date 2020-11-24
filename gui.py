@@ -116,10 +116,13 @@ def main():
         at.updateLists()
         window['-TITLE-C01-'].update(values=at.albumNameList)
         # window['-TITLE-C02-'].update(values=at.albumNameList)
+        window['-GENRE-C02-'].update(values=at.genreList)
         window['-INSTRUMENT-C02-'].update(values=at.instrumentList)
         window['-RECORD-TITLE-C02-'].update(values=at.recordLabelList)
+        window['-GENRE-C04-'].update(values=at.genreList)
         window['-ARTIST-TITLE-C04-'].update(values=at.artistNameList)
         window['-ALBUM-TITLE-C05-'].update(values=at.albumNameList)
+        window['-GENRE-C05-'].update(values=at.genreList)
 
         ft.updateLists()
         window['-INPUT-ARTIST-F02-'].update(values=ft.artistNameList)
@@ -173,6 +176,9 @@ def main():
             gui.searchRecordLabelTable = db.searchRecordLabel(values['-INPUT-SEARCH-RECORD-'])
             gui.searchRecordLabelTableId = db.searchRecordLabelId(values['-INPUT-SEARCH-RECORD-'])
             window['-TABLE-SEARCH-RECORD-'].update(values=gui.searchRecordLabelTable)
+
+
+        ### DELETE SELECTED SEARCH ###
 
         if event == '-BUTTON-RATING-S01-':
 
@@ -513,11 +519,10 @@ def main():
 
         if event == '-BUTTON-SONG-F02-':
             try:
-                year = values['-INPUT-YEAR-F02-']
+                year = int(values['-INPUT-YEAR-F02-'])
                 artist = values['-INPUT-ARTIST-F02-'][0]
 
                 temp = db.findSongNameByYearAndArtist(artist, int(year))
-                print(temp)
                 window['-TABLE-SONG-F02-'].update(values=temp)
             except:
                 sg.popup('Please select a artist')
@@ -576,7 +581,7 @@ def main():
         if event == '-UPDATE-BUTTON-L02-':
             try:
                 gui.updateItem = gui.artistTable[values['-TABLE-L02-'][0]]
-                gui.updateWindow = sg.Window('Update Artist', ut.updateArtistGUI(db.allAlbumName()), font=( "Roboto", 12), size=(1000, 700), finalize=True)
+                gui.updateWindow = sg.Window('Update Artist', ut.updateArtistGUI(db.allInstName(), db.allAlbumName()), font=( "Roboto", 12), size=(1000, 700), finalize=True)
 
                 button, updateValues = gui.updateWindow.read()
                 if button == 'UPDATE':
@@ -618,21 +623,26 @@ def main():
         if event == '-UPDATE-BUTTON-L04-':
             try:
                 gui.updateItem = gui.songsTable[values['-TABLE-L04-'][0]]
-                gui.updateWindow = sg.Window('Update Song', ut.updateSongGUI(), font=(
+                gui.updateWindow = sg.Window('Update Song', ut.updateSongGUI(db.allGenre()), font=(
                     "Roboto", 12), size=(1000, 500), finalize=True)
 
                 button, updateValues = gui.updateWindow.read()
-                if button == 'UPDATE':
-                    title = updateValues['-TITLE-U04-']
-                    genre = updateValues['-GENRE-U04-']
-                    duration = int(updateValues['-DURATION-U04-'])
-                    year = int(updateValues['-YEAR-U04-'])
-                    oldTitle = gui.updateItem[0]
+                try:
+                    if button == 'UPDATE':
+                        title = updateValues['-TITLE-U04-']
+                        genre = updateValues['-GENRE-U04-'][0]
+                        duration = int(updateValues['-DURATION-U04-'])
+                        year = int(updateValues['-YEAR-U04-'])
+                        oldTitle = gui.updateItem[0]
 
-                    db.updateSong(title, genre, duration, year, oldTitle)
-                    updatelibtabs()
+                        db.updateSong(title, genre, duration, year, oldTitle)
+                        updatelibtabs()
+                        
+                    gui.updateWindow.close()
+                except:
+                    sg.popup('Please fill out all the relevant fields')    
 
-                gui.updateWindow.close()
+
             except:
                 sg.popup('Please select something to update')
 
@@ -649,8 +659,6 @@ def main():
 
         if event == '-THEME-BUTTON-':
             try:
-                print(values['-THEME-LIST-'][0])
-                # ['DarkBlack']
                 sg.theme(values['-THEME-LIST-'][0])
                 window.close()
                 window = create_window()
@@ -665,6 +673,7 @@ def main():
 
     # close the program
     window.close()
+    db.closeConnection()
 
 
 if __name__ == '__main__':

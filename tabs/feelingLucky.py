@@ -34,10 +34,12 @@ class FeelingLuckyTab:
             key='F01'
         )
 
+        yearList = list(range(2021, 999, -1))
         flSongByYearAndArtist = sg.Tab(
             'Songs',
             [[sg.Text("Search Song by Year and Artist")],
-             [sg.Text("Year"), sg.Input(key='-INPUT-YEAR-F02-')],
+             
+             [sg.Text("Release Year"), sg.Combo(yearList, key='-INPUT-YEAR-F02-')],
 
              [sg.Text("Artist"), sg.Listbox(values=self.artistNameList,
                                             key='-INPUT-ARTIST-F02-', size=(50, 20))],

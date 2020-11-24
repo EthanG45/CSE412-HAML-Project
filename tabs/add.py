@@ -12,6 +12,7 @@ class AddTab:
         self.artistNameList = self.db.allArtistName()
         self.recordLabelList = self.db.allCompanyName()
         self.instrumentList = self.db.allInstName()
+        self.genreList = self.db.allGenre()
         # print(self.albumNameList[0][0])
         # self.albumNameList = list(map(str, self.albumNameList))
 
@@ -21,6 +22,7 @@ class AddTab:
         self.artistNameList = self.db.allArtistName()
         self.recordLabelList = self.db.allCompanyName()
         self.instrumentList = self.db.allInstName()
+        self.genreList = self.db.allGenre()
         # self.recordLabelList = self.db.allRecordLabel()
         # self.albumNameList = list(map(str, self.albumNameList))
 
@@ -30,14 +32,7 @@ class AddTab:
         for x in range(155):
             ageList.append(x)
 
-        releaseYear = []
-
         yearList = list(range(2021, 999, -1))
-
-        for x in range(1000, 2021):
-            releaseYear.insert(0, x)
-
-        genre = ["Rap", "Rock", "Country", "Hip Hop", "Soundtrack", "EDM", "Metal", "Heavy Metal", "Pop"]
 
         addTableRecord = sg.Tab(
             'Record Label',
@@ -83,7 +78,7 @@ class AddTab:
 
              [sg.Text("Add the Album's first song")],
              [sg.Text("Title"), sg.Input(key='-SONG-TITLE-C02-')],
-             [sg.Text("Genre"), sg.Listbox(values=genre, key='-GENRE-C02-', size=(10, 5))],
+             [sg.Text("Genre"), sg.Listbox(values=self.genreList, key='-GENRE-C02-', size=(10, 5))],
 
              [sg.Text("Release Year"), sg.Combo(yearList, key='-RELEASE-YEAR-C02-')],
 
@@ -122,7 +117,7 @@ class AddTab:
 
              [sg.Text("Add the Album's first song")],
              [sg.Text("Title"), sg.Input(key='-SONG-TITLE-C04-')],
-             [sg.Text("Genre"), sg.Listbox(values=genre,
+             [sg.Text("Genre"), sg.Listbox(values=self.genreList,
                                            key='-GENRE-C04-', size=(10, 5))],
              #  layout = [[sg.Listbox(values=['Listbox 1', 'Listbox 2', 'Listbox 3'], size=(30, 6))]]
              # [sg.Text("Source Link"), sg.Input(key='-SOURCE-C05-')],
@@ -158,7 +153,7 @@ class AddTab:
             'Song',
             [[sg.Text("Add a song")],
              [sg.Text("Title"), sg.Input(key='-TITLE-C05-')],
-             [sg.Text("Genre"), sg.Listbox(values=genre,
+             [sg.Text("Genre"), sg.Listbox(values=self.genreList,
                                            key='-GENRE-C05-', size=(10, 10))],
              [sg.Text("Album Title"), sg.Listbox(values=self.albumNameList,
                                                  key='-ALBUM-TITLE-C05-', size=(50, 20))],
