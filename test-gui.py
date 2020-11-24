@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 
-
+# db = sql.Database()
 # sg.theme_previewer()
 
 
@@ -196,54 +196,182 @@ import PySimpleGUI as sg
 ##################### Make a settings window #####################
 
 
-def create_settings_window():
-    # sg.theme(values['-THEME-'][0])
+# def create_settings_window():
+#     # sg.theme(values['-THEME-'][0])
 
-    def TextLabel(text): return sg.Text(text + ':', justification='r', size=(15, 1))
+#     def TextLabel(text): return sg.Text(text + ':', justification='r', size=(15, 1))
 
-    theme_layout = [[sg.Text('Settings', font='Any 15')],
-              [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
-              [sg.Button('Save'), sg.Button('Exit')]]
+#     theme_layout = [[sg.Text('Settings', font='Any 15')],
+#               [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
+#               [sg.Button('Save'), sg.Button('Exit')]]
 
-    window = sg.Window('Settings', theme_layout, keep_on_top=True, finalize=True)
+#     window = sg.Window('Settings', theme_layout, keep_on_top=True, finalize=True)
 
-    return window
+#     return window
 
-##################### Main Program Window & Event Loop #####################
-
-
-def create_main_window():
-    # sg.theme(values['-THEME-'][0])
-
-    layout = [[sg.T('This is my main application')],
-              [sg.T('Add your primary window stuff in here')],
-              [sg.B('Ok'), sg.B('Exit'), sg.B('Change Settings')]]
-
-    return sg.Window('Main Application', layout)
+# ##################### Main Program Window & Event Loop #####################
 
 
-def main():
-    window = None
-    sg.theme('Dark Grey 9')
-    while True:             # Event Loop
-        if window is None:
-            window = create_main_window()
+# def create_main_window():
+#     # sg.theme(values['-THEME-'][0])
 
-        event, values = window.read()
-        if event in (sg.WIN_CLOSED, 'Exit'):
-            break
-        if event == 'Change Settings':
-            event, values = create_settings_window().read(close=True)
-            if event == 'Save':
-                window.close()
-                window = None
+#     layout = [[sg.T('This is my main application')],
+#               [sg.T('Add your primary window stuff in here')],
+#               [sg.B('Ok'), sg.B('Exit'), sg.B('Change Settings')]]
 
-        try:
-            print(values['-THEME-'])
-            sg.theme(values['-THEME-'])
-        except:
-            print('err')
-    window.close()
+#     return sg.Window('Main Application', layout)
 
 
-main()
+# def main():
+#     window = None
+#     sg.theme('Dark Grey 9')
+#     while True:             # Event Loop
+#         if window is None:
+#             window = create_main_window()
+
+#         event, values = window.read()
+#         if event in (sg.WIN_CLOSED, 'Exit'):
+#             break
+#         if event == 'Change Settings':
+#             event, values = create_settings_window().read(close=True)
+#             if event == 'Save':
+#                 window.close()
+#                 window = None
+
+#         try:
+#             print(values['-THEME-'])
+#             sg.theme(values['-THEME-'])
+#         except:
+#             print('err')
+#     window.close()
+
+
+# main()
+
+
+#!/usr/bin/env python
+from matplotlib.ticker import NullFormatter  # useful for `logit` scale
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import PySimpleGUI as sg
+import matplotlib
+import sql
+matplotlib.use('TkAgg')
+
+db = sql.Database()
+"""
+Demonstrates one way of embedding Matplotlib figures into a PySimpleGUI window.
+
+Basic steps are:
+ * Create a Canvas Element
+ * Layout form
+ * Display form (NON BLOCKING)
+ * Draw plots onto convas
+ * Display form (BLOCKING)
+ 
+ Based on information from: https://matplotlib.org/3.1.0/gallery/user_interfaces/embedding_in_tk_sgskip.html
+ (Thank you Em-Bo & dirck)
+"""
+
+
+# ------------------------------- PASTE YOUR MATPLOTLIB CODE HERE -------------------------------
+#
+# # Goal is to have your plot contained in the variable  "fig"
+#
+# # Fixing random state for reproducibility
+# np.random.seed(19680801)
+#
+# # make up some data in the interval ]0, 1[
+# y = np.random.normal(loc=0.5, scale=0.4, size=1000)
+# y = y[(y > 0) & (y < 1)]
+# y.sort()
+# x = np.arange(len(y))
+#
+# # plot with various axes scales
+# plt.figure(1)
+#
+# # linear
+# plt.subplot(221)
+# plt.plot(x, y)
+# plt.yscale('linear')
+# plt.title('linear')
+# plt.grid(True)
+#
+# # log
+# plt.subplot(222)
+# plt.plot(x, y)
+# plt.yscale('log')
+# plt.title('log')
+# plt.grid(True)
+#
+# # symmetric log
+# plt.subplot(223)
+# plt.plot(x, y - y.mean())
+# plt.yscale('symlog', linthreshy=0.01)
+# plt.title('symlog')
+# plt.grid(True)
+#
+# # logit
+# plt.subplot(224)
+# plt.plot(x, y)
+# plt.yscale('logit')
+# plt.title('logit')
+# plt.grid(True)
+# plt.gca().yaxis.set_minor_formatter(NullFormatter())
+# plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25,
+#                     wspace=0.35)
+# fig = plt.gcf()
+#
+
+
+# fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
+# t = np.arange(0, 3, .01)
+# fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
+# fig1, ax1 = plt.subplots()
+# [hm, pop, soundtrack, soundtrack]
+# [(hm, 1), (pop, 1), (soundtrack, 2)]
+# label = ['Country', 'EDM', 'Heavy Metal', 'Hip Hop', 'Metal', 'Pop', 'Rap', 'Rock', 'Soundtrack']
+# data = {'Country': 0, 'EDM': 0, 'Heavy Metal': 0,'Hip Hop': 0, 'Metal': 0, 'Pop': 0, 'Rap': 0, 'Rock': 0,'Soundtrack': 0}
+# listData = []
+# listLabel = []
+
+# for i in range(10):
+#     res = db.topTenSongsByUser()[i][3]
+#     data[res] = data[res] + 1
+
+# for i in label:
+#     for elem in data:
+#         if i == elem and data[elem] != 0:
+#             listData.append(data[elem])
+#             listLabel.append(elem)
+
+# plt.pie(listData,labels=listLabel, autopct='%1i%%',shadow=True)
+# plt.show()
+
+# ------------------------------- END OF YOUR MATPLOTLIB CODE -------------------------------
+
+# ------------------------------- Beginning of Matplotlib helper code -----------------------
+
+# def draw_figure(canvas, figure):
+#     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+#     figure_canvas_agg.draw()
+#     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+#     return figure_canvas_agg
+
+# # ------------------------------- Beginning of GUI CODE -------------------------------
+
+# # define the window layout
+# layout = [[sg.Text('Plot test')],
+#           [sg.Canvas(key='-CANVAS-')],
+#           [sg.Button('Ok')]]
+
+# # create the form and show it without the plot
+# window = sg.Window('Demo Application - Embedding Matplotlib In PySimpleGUI', layout, finalize=True, element_justification='center', font='Helvetica 18')
+
+# # add the plot to the window
+# fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
+# event, values = window.read()
+
+# window.close()

@@ -16,7 +16,7 @@ class LibraryTab:
             [[sg.Text("Records")],
              #  [sg.Table(testlistbox, key = '-RECORD-L01-', size=(1270, 1))]
              [sg.Table(values=self.db.getAllRecordLabels(), headings=['CompanyName', 'Recent Album', 'Date Established',
-                                                                      'Label Location'], key='-TABLE-L01-', enable_events=True, size=(1220, 35))],
+                                                                      'Label Location'], key='-TABLE-L01-', enable_events=True, size=(1220, 35), justification="left")],
              #[sg.Table(values = [['','','']], headings=[' CompanyName ', ' Date Established ', ' Label Location '], key = '-TABLE-L01-', enable_events=True, size = (1220, 220))]
              [sg.Button('DELETE', key='-DELETE-BUTTON-L01-'),
                 sg.Button('UPDATE', key='-UPDATE-BUTTON-L01-')]
@@ -29,7 +29,7 @@ class LibraryTab:
             [[sg.Text("Artists")],
                 #[sg.Listbox(testlistbox, key = '-ARTIST-L02-', size = libSize)]
                 [sg.Table(values=self.db.getAllArtists(), headings=[' Artist Name ', ' Age ', ' knownfor ',
-                                                                    '  Instrument  ', '      Band      '], key='-TABLE-L02-', enable_events=True, size=(1220, 35))],
+                                                                    '  Instrument  ', '      Band      '], key='-TABLE-L02-', enable_events=True, size=(1220, 35), justification="left")],
                 #[sg.Table(values =[['','','','','']], headings=[' Artist Name ', ' Age ', ' knownfor ', '  Instrument  ', '      Band      ' ], key = '-TABLE-L02-', enable_events=True, size = (1220, 220))]
                 # [sg.Text("Rating"), sg.Slider(range=(0, 5),
                 #                               default_value=0,
@@ -49,7 +49,7 @@ class LibraryTab:
             [[sg.Text("Albums")],
                 #[sg.Listbox(testlistbox, key = '-ALBUM-L03-', size = libSize)]
                 [sg.Table(values=self.db.getAllAlbums(), headings=['Title', 'Album Duration',
-                                                                   'Cover Art URL', 'Averaqe Rating', 'Listeners', 'User Rating'], key='-TABLE-L03-', enable_events=True, size=(1220, 35))],
+                                                                   'Cover Art URL', 'Averaqe Rating', 'Listeners', 'User Rating'], key='-TABLE-L03-', enable_events=True, size=(1220, 35), justification="left")],
                 #[sg.Table(values = [['','','']], headings=[ ' Title ', ' Album Duration ', '        Cover Art URL        ' ], key = '-TABLE-L03-', enable_events=True, size = (1220, 220))]
                 [
                     # sg.Text("Rating"), sg.Slider(range=(0, 5),
@@ -70,7 +70,7 @@ class LibraryTab:
             [[sg.Text("Songs")],
 
              [sg.Table(values=self.db.getAllSongs(), headings=['Song', 'Album', 'Artist', 'Genre', 'Duration', 'Link',
-                                                               'Release Year', 'Average Rating', 'Listeners', 'Rating'], key='-TABLE-L04-', enable_events=True, size=(1220, 35))],
+                                                               'Release Year', 'Average Rating', 'Listeners', 'Rating'], key='-TABLE-L04-', enable_events=True, size=(1220, 35), justification="left")],
              #[sg.Table(values = [['','','','','','']], headings= ['Title', 'Genre', 'Duration', 'Link', 'Release Year', ' Rating '], key = '-TABLE-L04-', enable_events=True, size = (1220, 220))]
              [sg.Text("Rating"), sg.Slider(range=(0, 5),
                                            default_value=0,

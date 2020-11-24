@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import matplotlib.pyplot as plt
 import re
 import sql
 import time
@@ -60,3 +61,10 @@ db = sql.Database()
 #print(db.getAllArtists())
 #db.updateArtist('zzarvin', 60, 'Guitar', 'ASU', 'Zachary Perez')
 # print(db.sqlReadAny("SELECT DISTINCT genre FROM song GROUP BY genre"))
+# print(db.topTenSongsByUser()[0][3])
+# print(db.allGenre())
+# fig, ax = plt.subplots()
+# for i in range(10):
+#     ax.barh(db.topTenSongsByUser()[i][3], db.topTenSongsByUser()[i][7], 0.5)
+#     # plt.bar(db.topTenSongsByUser()[i][3], db.topTenSongsByUser()[0][8])
+# plt.show()
