@@ -10,16 +10,19 @@ class LibraryTab:
         self.db = db
 
     def libraryTabGUI(self):
+
+        libTableSize = (1220, 30)
+
         libTableRecord = sg.Tab(
             'Record Label',
 
             [[sg.Text("Records")],
              #  [sg.Table(testlistbox, key = '-RECORD-L01-', size=(1270, 1))]
              [sg.Table(values=self.db.getAllRecordLabels(), headings=['CompanyName', 'Recent Album', 'Date Established',
-                                                                      'Label Location'], key='-TABLE-L01-', enable_events=True, size=(1220, 35), justification="left")],
+                                                                      'Label Location'], key='-TABLE-L01-', enable_events=True, size=libTableSize, justification="left")],
              #[sg.Table(values = [['','','']], headings=[' CompanyName ', ' Date Established ', ' Label Location '], key = '-TABLE-L01-', enable_events=True, size = (1220, 220))]
-             [sg.Button('DELETE', key='-DELETE-BUTTON-L01-'),
-                sg.Button('UPDATE', key='-UPDATE-BUTTON-L01-')]
+            [sg.Button('UPDATE', key='-UPDATE-BUTTON-L01-'),
+             sg.Button('DELETE', key='-DELETE-BUTTON-L01-')]
              ],
             key='L01'
         )  # end of tab Record Label
@@ -29,7 +32,7 @@ class LibraryTab:
             [[sg.Text("Artists")],
                 #[sg.Listbox(testlistbox, key = '-ARTIST-L02-', size = libSize)]
                 [sg.Table(values=self.db.getAllArtists(), headings=[' Artist Name ', ' Age ', ' knownfor ',
-                                                                    '  Instrument  ', '      Band      '], key='-TABLE-L02-', enable_events=True, size=(1220, 35), justification="left")],
+                                                                    '  Instrument  ', '      Band      '], key='-TABLE-L02-', enable_events=True, size=libTableSize, justification="left")],
                 #[sg.Table(values =[['','','','','']], headings=[' Artist Name ', ' Age ', ' knownfor ', '  Instrument  ', '      Band      ' ], key = '-TABLE-L02-', enable_events=True, size = (1220, 220))]
                 # [sg.Text("Rating"), sg.Slider(range=(0, 5),
                 #                               default_value=0,
@@ -37,8 +40,8 @@ class LibraryTab:
                 #                               orientation='horizontal',
                 #                               font=('Helvetica', 12), key='-RATING-L03-'),
                 #  sg.Button('ADD RATING', key='-BUTTON-L03-'), sg.Button('DELETE', key='-DELETE-BUTTON-L03-')]
-                [sg.Button('DELETE', key='-DELETE-BUTTON-L02-'),
-                 sg.Button('UPDATE', key='-UPDATE-BUTTON-L02-')]
+                [ sg.Button('UPDATE', key='-UPDATE-BUTTON-L02-'),
+                sg.Button('DELETE', key='-DELETE-BUTTON-L02-')]
              ],
             key='L02'
         )
@@ -49,19 +52,20 @@ class LibraryTab:
             [[sg.Text("Albums")],
                 #[sg.Listbox(testlistbox, key = '-ALBUM-L03-', size = libSize)]
                 [sg.Table(values=self.db.getAllAlbums(), headings=['Title', 'Album Duration',
-                                                                   'Cover Art URL', 'Averaqe Rating', 'Listeners', 'User Rating'], key='-TABLE-L03-', enable_events=True, size=(1220, 35), justification="left")],
+                                                                   'Cover Art URL', 'Averaqe Rating', 'Listeners', 'User Rating'], key='-TABLE-L03-', enable_events=True, size=libTableSize, justification="left")],
                 #[sg.Table(values = [['','','']], headings=[ ' Title ', ' Album Duration ', '        Cover Art URL        ' ], key = '-TABLE-L03-', enable_events=True, size = (1220, 220))]
-                [
+                
                     # sg.Text("Rating"), sg.Slider(range=(0, 5),
                 #                               default_value=0,
                 #                               size=(25, 10),
                 #                               orientation='horizontal',
                 #                               font=('Helvetica', 12), key='-RATING-L03-'),
                 #  sg.Button('ADD RATING', key='-BUTTON-L03-'),
-                sg.Button('DELETE', key='-DELETE-BUTTON-L03-'),
-                sg.Button('UPDATE', key='-UPDATE-BUTTON-L03-')]
-
-             ],
+                
+                [sg.Button('UPDATE', key='-UPDATE-BUTTON-L03-'),
+                sg.Button('DELETE', key='-DELETE-BUTTON-L03-')]
+              
+            ],
             key='L03'
         )
 
@@ -70,15 +74,16 @@ class LibraryTab:
             [[sg.Text("Songs")],
 
              [sg.Table(values=self.db.getAllSongs(), headings=['Song', 'Album', 'Artist', 'Genre', 'Duration', 'Link',
-                                                               'Release Year', 'Average Rating', 'Listeners', 'Rating'], key='-TABLE-L04-', enable_events=True, size=(1220, 35), justification="left")],
+                                                               'Release Year', 'Average Rating', 'Listeners', 'Rating'], key='-TABLE-L04-', enable_events=True, size=libTableSize, justification="left")],
              #[sg.Table(values = [['','','','','','']], headings= ['Title', 'Genre', 'Duration', 'Link', 'Release Year', ' Rating '], key = '-TABLE-L04-', enable_events=True, size = (1220, 220))]
              [sg.Text("Rating"), sg.Slider(range=(0, 5),
                                            default_value=0,
                                            size=(25, 10),
                                            orientation='horizontal',
                                            font=('Helvetica', 12), key='-RATING-L04-'),
-              sg.Button('ADD RATING', key='-BUTTON-L04-'), sg.Button('DELETE', key='-DELETE-BUTTON-L04-'),
-                sg.Button('UPDATE', key='-UPDATE-BUTTON-L04-')]
+              sg.Button('ADD RATING', key='-BUTTON-L04-'), 
+                sg.Button('UPDATE', key='-UPDATE-BUTTON-L04-'), 
+                sg.Button('DELETE', key='-DELETE-BUTTON-L04-')]
              ],
             key='L04'
         )

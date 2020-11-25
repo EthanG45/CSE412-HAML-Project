@@ -61,8 +61,8 @@ class InsightsTab:
             'Top 10 Songs Graph',
             [
                 [sg.Text("Genres for Top 10 Songs")],
-                [sg.Canvas(key='-USR-SONG-CANVAS-IO1-G-')],
-                [sg.Canvas(key='-AVG-SONG-CANVAS-IO1-G-')],
+                [sg.Canvas(key='-USR-SONG-CANVAS-IO1-G-'),
+                sg.Canvas(key='-AVG-SONG-CANVAS-IO1-G-')],
             ],
             key='I01-G'
         )  # end of tab Record Label
@@ -84,8 +84,8 @@ class InsightsTab:
             'Top 10 Albums Graph',
             [
                 [sg.Text("Listeners for Top 10 Albums")],
-                [sg.Canvas(key='-USR-ALBUM-CANVAS-IO2-G-')],
-                [sg.Canvas(key='-AVG-ALBUM-CANVAS-IO2-G-')],
+                [sg.Canvas(key='-USR-ALBUM-CANVAS-IO2-G-'),
+                sg.Canvas(key='-AVG-ALBUM-CANVAS-IO2-G-')],
 
             ],
             key='I02-G'
@@ -109,8 +109,8 @@ class InsightsTab:
             'Top 10 Worst Songs Graph',
             [
                 [sg.Text("Genres for Top 10 Worst Songs")],
-                [sg.Canvas(key='-USR-SONG-CANVAS-IO3-G-')],
-                [sg.Canvas(key='-AVG-SONG-CANVAS-IO3-G-')],
+                [sg.Canvas(key='-USR-SONG-CANVAS-IO3-G-'),
+                sg.Canvas(key='-AVG-SONG-CANVAS-IO3-G-')],
             ],
             key='I03-G'
         )  # end of tab Record Label
@@ -132,8 +132,8 @@ class InsightsTab:
             'Top 10 Worst Albums Graph',
             [
                 [sg.Text("Listeners for Top 10 Worst Albums")],
-                [sg.Canvas(key='-USR-ALBUM-CANVAS-IO4-G-')],
-                [sg.Canvas(key='-AVG-ALBUM-CANVAS-IO4-G-')],
+                [sg.Canvas(key='-USR-ALBUM-CANVAS-IO4-G-'),
+                sg.Canvas(key='-AVG-ALBUM-CANVAS-IO4-G-')],
             ],
             key='I04-G'
         )  # end of tab Record Label
@@ -173,9 +173,12 @@ class InsightsTab:
         listData = []
         listLabel = []
 
-        for elem in db.topTenAlbumsByUser():
-            listData.append(elem[4])
-            listLabel.append(elem[0])
+        # for elem in db.topTenAlbumsByUser():
+        #     listData.append(elem[4])
+        #     listLabel.append(elem[0])
+        for elem in range(7):
+                listData.append(db.topTenAlbumsByUser()[elem][4])
+                listLabel.append(db.topTenAlbumsByUser()[elem][0])
 
         ax.pie(listData,labels=listLabel, autopct='%1i%%',shadow=True)
         ax.set_title("Number of Listeners per Album Title By User Rating")
@@ -234,19 +237,20 @@ class InsightsTab:
         figure_canvas_agg.draw()
         figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
 
-
-
     def topTenAlbumsByAveragePieFigure(self, canvas, db):
         plt.close('all')
         figure, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
         listData = []
         listLabel = []
 
-        for elem in db.topTenAlbumsByAverage():
-            listData.append(elem[4])
-            listLabel.append(elem[0])
+        # for elem in db.topTenAlbumsByAverage():
+        #     listData.append(elem[4])
+        #     listLabel.append(elem[0])
+        for elem in range(7):
+                listData.append(db.topTenAlbumsByAverage()[elem][4])
+                listLabel.append(db.topTenAlbumsByAverage()[elem][0])
 
-        ax.pie(listData,labels=listLabel, autopct='%1i%%',shadow=True)
+        ax.pie(listData, labels=listLabel, autopct='%1i%%',shadow=True)
         ax.set_title("Number of Listeners per Album Title By Average Rating")
 
         figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
@@ -259,9 +263,12 @@ class InsightsTab:
         listData = []
         listLabel = []
 
-        for elem in db.topTenAlbumsByAverageWorst():
-            listData.append(elem[4])
-            listLabel.append(elem[0])
+        # for elem in db.topTenAlbumsByAverageWorst():
+        #     listData.append(elem[4])
+        #     listLabel.append(elem[0])
+        for elem in range(7):
+                listData.append(db.topTenAlbumsByAverageWorst()[elem][4])
+                listLabel.append(db.topTenAlbumsByAverageWorst()[elem][0])
 
         ax.pie(listData,labels=listLabel, autopct='%1i%%',shadow=True)
         ax.set_title("Number of Listeners per Album Title By Worst Average Rating")
@@ -277,9 +284,12 @@ class InsightsTab:
         listData = []
         listLabel = []
 
-        for elem in db.topTenAlbumsByUserWorst():
-            listData.append(elem[4])
-            listLabel.append(elem[0])
+        # for elem in db.topTenAlbumsByUserWorst():
+        #     listData.append(elem[4])
+        #     listLabel.append(elem[0])
+        for elem in range(7):
+            listData.append(db.topTenAlbumsByUserWorst()[elem][4])
+            listLabel.append(db.topTenAlbumsByUserWorst()[elem][0])
 
         ax.pie(listData,labels=listLabel, autopct='%1i%%',shadow=True)
         ax.set_title("Number of Listeners per Album Title By Worst User Rating")

@@ -1,5 +1,7 @@
 import PySimpleGUI as sg
-
+from faker import Faker
+fake = Faker()
+Faker.seed(2)
 ### #### #### #### #### #### #### #### #### ###
 #            ADD TABLE TABS                #
 ### #### #### #### #### #### #### #### #### ###
@@ -28,9 +30,13 @@ class AddTab:
 
     def addTabGUI(self):
         ageList = []
+        locationList = []
 
         for x in range(155):
             ageList.append(x)
+
+        for x in range(0, 1000):
+            locationList.append(fake.city())
 
         yearList = list(range(2021, 999, -1))
 
@@ -39,7 +45,11 @@ class AddTab:
 
             [[sg.Text("Add a Record Label", size=(1270, 1))],
              [sg.Text("Company Name"), sg.Input(key='-companyName-C01-')],
-             [sg.Text("Label Location"), sg.Input(key='-labelLocation-C01-')],
+
+
+             #[sg.Text("Label Location"), sg.Input(key='-labelLocation-C01-')],
+            [sg.Text("Label Location"), sg.Combo(locationList, key='-labelLocation-C01-')],
+
              [sg.Text("What album did this record label publish?", size=(1270, 1))],
              # Album elements
              #  [sg.Text("Title"), sg.Input(key='-TITLE-C02-')],
@@ -82,7 +92,7 @@ class AddTab:
 
              [sg.Text("Release Year"), sg.Combo(yearList, key='-RELEASE-YEAR-C02-')],
 
-             [sg.Text("Record Label"), sg.Listbox(values=self.recordLabelList, key='-RECORD-TITLE-C02-', size=(50, 20))],
+             [sg.Text("Record Label"), sg.Listbox(values=self.recordLabelList, key='-RECORD-TITLE-C02-', size=(40, 8))],
 
              [sg.Button('ADD', key='-BUTTON-C02-')],
 

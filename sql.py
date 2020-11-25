@@ -237,7 +237,7 @@ class Database:
     # works - works on GUI
     def getAllSongs(self):
         try:
-            self.cur.execute("SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId ORDER BY LOWER(S.title)")
+            self.cur.execute("SELECT S.title, A.title, A1.artistName, S.genre, S.songDuration, S.sourceLink, S.releaseYear, R.averageRating, R.numOfRating, R.userRating FROM song S, rating R, album A, contains C, artist A1, made M WHERE S.songID = R.songID AND C.songID = S.songID AND C.albumID = A.albumID AND M.albumId = A.albumID AND M.artistId = A1.artistId ORDER BY LOWER(S.title), LOWER(A.title)")
             return self.getItems()
         except:
             return "Failed to fetch library"
@@ -271,7 +271,7 @@ class Database:
 
     def allBandName(self):
         result = []
-        self.cur.execute("SELECT band FROM musician ORDER BY LOWER(band)")
+        self.cur.execute("WITH T AS (SELECT DISTINCT band FROM musician GROUP BY band) SELECT T.band FROM T ORDER BY LOWER(band)")
         return self.getSubscriptedItems()
 
     def allGenre(self):
@@ -721,9 +721,9 @@ class Database:
                 self.cur.execute("INSERT INTO artist(artistId, artistName, age) VALUES(%i, '%s', %i)" % (artistId, artistName, age))
                 self.cur.execute("INSERT INTO publishes(albumId, recordLabelId) VALUES (%i, %i)" % (albumId, labelId))
                 self.cur.execute("INSERT INTO musician(artistId, musicianId, instrument, band) VALUES(%i, %i, '%s', '%s')" % (artistId, musicianId, instrument, band))
-                self.cur.execute("INSERT INTO made(knownFor, albumId, artistId) VALUES( '%s', %i, %i)" % (knownFor, albumId, artistId))
                 self.cur.execute("INSERT INTO played(albumId, musicianId) VALUES( %i, %i)" % (albumId, musicianId))
                 self.cur.execute("INSERT INTO album(albumDuration, albumId, title, coverArtURL) VALUES(%i, %i,'%s','%s')" % (albumDuration, albumId, albumName, coverArtURL))
+                self.cur.execute("INSERT INTO made(knownFor, albumId, artistId) VALUES( '%s', %i, %i)" % (knownFor, albumId, artistId))
                 self.cur.execute("INSERT INTO song(title, genre, songDuration, songId, sourceLink, releaseYear) VALUES('%s', '%s', %i, %i,'%s', %i)" % (title, genre, songDuration, songId, sourceLink, releaseYear))
                 self.cur.execute("INSERT INTO contains(albumId, songId) VALUES( %i, %i)" % (albumId, songId))
                 self.cur.execute("INSERT INTO rating(numOfRating, averageRating, userRating, albumId, songId ) VALUES( %i, %f, %i, %i, %i)" % (numOfRating, averageRating, userRating, albumId, songId))

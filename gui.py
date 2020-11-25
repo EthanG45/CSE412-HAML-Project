@@ -31,7 +31,7 @@ ft = FeelingLuckyTab(db)
 
 events = []
 st.addEvents(events)
-
+mainWindowSize = (1470, 710)
 
 # Define the window's contents
 
@@ -119,9 +119,8 @@ def create_window():
     # todo window size is still a little too big
     # todo app icon?
     window = sg.Window('H.A.M.L.', layout, font=(
-        "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c',
-        icon='image/HAML.png')
-    
+        "Roboto", 12), size=mainWindowSize, finalize=True, element_justification='c')
+
     it.topTenSongsByUserPieFigure(window['-USR-SONG-CANVAS-IO1-G-'].TKCanvas, db)
     it.topTenSongsByAveragePieFigure(window['-AVG-SONG-CANVAS-IO1-G-'].TKCanvas, db)
     
@@ -162,7 +161,7 @@ def create_window_no_graph_update():
     # todo window size is still a little too big
     # todo app icon?
     window = sg.Window('H.A.M.L.', layout, font=(
-        "Roboto", 12), size=(1920, 1080), finalize=True, element_justification='c',
+        "Roboto", 12), size=mainWindowSize, finalize=True, element_justification='c',
         icon='image/HAML.png')
     
     return window
