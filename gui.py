@@ -8,10 +8,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.pyplot import figure
-
-
-
-
 import PySimpleGUI as sg
 import sql
 from tabs.add import AddTab
@@ -47,8 +43,6 @@ class GUI:
         self.artistTable = db.getAllArtists()
         self.albumsTable = db.getAllAlbums()
         self.songsTable = db.getAllSongs()
-        # self.songToLinkToAlbum = []
-        # self.createAlbumSongSearch = []
         self.searchSongTable = []
         self.searchSongTableId = []
 
@@ -77,23 +71,6 @@ class GUI:
         self.songsTable = db.getAllSongs()
 
 
-# ------------------------------- PASTE YOUR MATPLOTLIB CODE HERE -------------------------------
-fig = plt.figure() # Basic steps are: 1. Create a Canvas Element, 2. Layout form, 3. Display form (NON BLOCKING), 4. Draw plots onto convas, 5. Display form (BLOCKING)
-ax = fig.add_subplot(1, 2, 2) # rows, columns, index
-fig.set_size_inches(3, 3) # w, h
-for i in range(10):
-     ax.barh(db.topTenSongsByUser()[i][3], db.topTenSongsByUser()[i][7])
-# ------------------------------- END OF YOUR MATPLOTLIB CODE -------------------------------
-
-# ------------------------------- Beginning of Matplotlib helper code -----------------------
-def draw_figure(canvas, figure):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
-    return figure_canvas_agg
-# ------------------------------- Beginning of GUI CODE -------------------------------
-
-
 def create_window():
     plt.close('all')
     # main layout this contains everything
@@ -103,7 +80,6 @@ def create_window():
                 lt.libraryTabGUI(),
                 at.addTabGUI(),
                 st.searchTabGUI(),
-                # ut.updateTabGUI(),
                 it.insightsTabGUI(),
                 ft.feelingLuckyTabGUI(),
                 sg.Tab('Theme', [[sg.Listbox(values=sg.theme_list(), key='-THEME-LIST-', size=(20, 200), enable_events=True), sg.Button('SAVE NEW THEME', key='-THEME-BUTTON-')]], key='-THEME-TAB-'),
@@ -116,8 +92,6 @@ def create_window():
     ]  # end of layout
 
     # Create the window
-    # todo window size is still a little too big
-    # todo app icon?
     window = sg.Window('H.A.M.L.', layout, font=(
         "Roboto", 12), size=mainWindowSize, finalize=True, element_justification='c')
 
@@ -132,7 +106,6 @@ def create_window():
     
     it.topTenAlbumsByUserWorstPieFigure(window['-USR-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
     it.topTenAlbumsByAverageWorstPieFigure(window['-AVG-ALBUM-CANVAS-IO4-G-'].TKCanvas, db)
-    #fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     return window
 
@@ -145,7 +118,6 @@ def create_window_no_graph_update():
                 lt.libraryTabGUI(),
                 at.addTabGUI(),
                 st.searchTabGUI(),
-                # ut.updateTabGUI(),
                 it.insightsTabGUI(),
                 ft.feelingLuckyTabGUI(),
                 sg.Tab('Theme', [[sg.Listbox(values=sg.theme_list(), key='-THEME-LIST-', size=(20, 200), enable_events=True), sg.Button('SAVE NEW THEME', key='-THEME-BUTTON-')]], key='-THEME-TAB-'),
@@ -158,8 +130,6 @@ def create_window_no_graph_update():
     ]  # end of layout
 
     # Create the window
-    # todo window size is still a little too big
-    # todo app icon?
     window = sg.Window('H.A.M.L.', layout, font=(
         "Roboto", 12), size=mainWindowSize, finalize=True, element_justification='c',
         icon='image/HAML.png')
@@ -173,8 +143,6 @@ def main():
     gui = GUI()
 
     window = create_window()
-    
-    #window = create_window()
 
     def isValid(*args):
         for elem in args:
@@ -251,23 +219,8 @@ def main():
         gui.searchRecordLabelTableId = db.searchRecordLabelId(inputValues['-INPUT-SEARCH-RECORD-'])
         window['-TABLE-SEARCH-RECORD-'].update(values=gui.searchRecordLabelTable)
 
-    # def create_window():
-    #   window = sg.Window('H.A.M.L.', layout, font=(
-    #       "Roboto", 12), size=(1920, 1080), finalize=True)
-    #
-    #
-    #
     def checkButtonPress(event, values):
         
-        ### CLEAR SEARCH INPUTS ###
-        # if event in gui.TabKeys:
-        #     try:
-        #         print(event)
-        #         for x in gui.textInputs:
-        #             window[x].update('')
-        #     except:
-        #         print('break')
-        #print(event)
         ### SEARCH EVENTS ###
     
         if event == '-BUTTON-SEARCH-ARTIST-':
@@ -302,10 +255,8 @@ def main():
             try:
                 songIndex = values['-TABLE-SEARCH-SONG-'][0]
                 newRating = values['-RATING-S01-']
-                # songTitle = gui.searchSongTable[songIndex][0]
                 songId = gui.searchSongTableId[songIndex][0]
 
-                # db.changeWholeRating( songTitle, newRating)
                 db.changeWholeRatingId(songId, newRating)
 
                 tempSongName = gui.searchSongTable
@@ -424,7 +375,6 @@ def main():
                 if isValid(companyName, dateEstablished, labelLocation, titleName):
                     db.insertRecordLabel(
                         titleName, companyName, dateEstablished, labelLocation)
-                    #window['-TABLE-L01-'].update(values = db.getAllRecordLabels())
                     window.FindElement('-companyName-C01-').update('')
                     window.FindElement('-labelLocation-C01-').update('')
                     window.FindElement('-dateEstablished-C01-').update('')
@@ -444,7 +394,6 @@ def main():
         # ADD ARTIST
         if event == '-BUTTON-C02-':
             try:
-                # TODO def createArtistAndSongAndAlbum(self, companyName, artistName, age, instrument, band, albumName, title, genre, releaseYear)
                 artistName = values['-ARTIST-C02-']
                 artistAge = int(values['-AGE-C02-'])
                 artistInstrument = values['-INSTRUMENT-C02-'][0]
@@ -470,31 +419,6 @@ def main():
                 popup.close()
 
             updatelibtabs()
-
-        ##########################
-
-        # # ADD ALBUM OG
-        # if event == '-BUTTON-SEARCH-SONG-C04-':
-        #     gui.createAlbumSongSearch = db.searchSong(values['-INPUT-SEARCH-SONG-C04-'])
-        #     window['-TABLE-SEARCH-SONG-C04-'].update(values=  gui.createAlbumSongSearch)
-
-        # if event == '-ADD-SONG-C04-':
-        #     #songName = values['-TABLE-SEARCH-SONG-C04-'][0]
-        #     ## SOLUTION:
-        #     try:
-        #         songIndex = values['-TABLE-SEARCH-SONG-C04-'][0]
-        #         print('song Index: ' + songIndex)
-        #     except:
-        #         print('select something')
-        #         # break
-        #     '''
-        #     songTitle =  gui.createAlbumSongSearch[songIndex][0]
-        #     songGenre =  gui.createAlbumSongSearch[songIndex][1]
-        #     songReleaseYear =  gui.createAlbumSongSearch[songIndex][3]
-
-        #     gui.songToLinkToAlbum.append([songTitle, songGenre, songReleaseYear])
-        #     '''
-        #     #db.insertSongWhileKnowingAlbumName( albumName, title, genre, releaseYear):
 
         # ADD Album
         if event == '-BUTTON-C04-':
@@ -525,26 +449,13 @@ def main():
             window.TKroot.focus_force()
             updatelibtabs()
 
-            # print(gui.songToLinkToAlbum)
-
-            # if isValid(albumTitle):
-            #     db.insertAlbum(0, albumTitle)
-            #     window.FindElement('-TITLE-C04-').update('')
-
-            #     gui.createAlbumSongSearch = []
-
-        #####################
-
         # ADD SONG
         if event == '-BUTTON-C05-':
             try:
                 titleSong = values['-TITLE-C05-']
                 genreSong = values['-GENRE-C05-'][0]
-                #sourceLinksong = values['-SOURCE-C05-']
                 releaseYearsong = values['-releaseYear-C05-']
                 albumTitleName = values['-ALBUM-TITLE-C05-'][0]
-
-                # print(genreSong)
 
                 if isValid(titleSong, genreSong, releaseYearsong, albumTitleName):
                     db.insertSong(albumTitleName, titleSong,
@@ -569,7 +480,6 @@ def main():
             albumIndex = values['-TABLE-L03-'][0]
             albumToRating = gui.albumsTable[albumIndex][0]
 
-            #db.changeWholeRating(albumToRating, values['-RATING-L03-'])
             updatelibtabs()
 
         # LIST SONGS - UPDATE RATING
@@ -577,8 +487,6 @@ def main():
 
             try:
                 ratingIndex = values['-TABLE-L04-'][0]
-                # if isValid(ratingIndex):
-                # print(songsTable)
                 songToRate = gui.songsTable[ratingIndex][0]
                 db.changeWholeRating(songToRate, values['-RATING-L04-'])
                 updatelibtabs()
@@ -594,11 +502,9 @@ def main():
 
             try:
                 recordIndex = values['-TABLE-L01-'][0]
-                # print(recordIndex)
                 recordToDelete = gui.recordTable[recordIndex][0]
                 recordDateToDelete = gui.recordTable[recordIndex][2]
                 recordLocationToDelete = gui.recordTable[recordIndex][3]
-                # print(recordToDelete)
                 db.deleteRecordLabel(
                     recordToDelete, recordDateToDelete, recordLocationToDelete)
 
@@ -618,10 +524,6 @@ def main():
 
                 artistToDelete = gui.artistTable[artistIndex][0]
                 artistAge = gui.artistTable[artistIndex][1]
-                #artistInstrument =  gui.artistTable[artistIndex][3]
-                #artistBand =  gui.artistTable[artistIndex][4]
-
-                # , artistAge, artistInstrumentm, artistBand)
                 db.deleteArtist(artistToDelete, artistAge)
                 updateSearchTabs(values)
                 
@@ -636,12 +538,8 @@ def main():
         if event == '-DELETE-BUTTON-L03-':
             try:
                 albumIndex = values['-TABLE-L03-'][0]
-                print(albumIndex)
                 albumToDelete = gui.albumsTable[albumIndex][0]
                 albumDuration = gui.albumsTable[albumIndex][1]
-                print(albumToDelete)
-                # TODO: ADD albumDuration to this so shit
-                # with the same name does noe fuck shit up
                 db.deleteAlbum(albumToDelete)
                 updateSearchTabs(values)
             except:
@@ -656,7 +554,6 @@ def main():
             try:
                 songIndex = values['-TABLE-L04-'][0]
                 songToDelete = gui.songsTable[songIndex][0]
-                print(songToDelete)
                 db.deleteSong(songToDelete)
                 updatelibtabs()
                 updateSearchTabs(values)
@@ -690,7 +587,6 @@ def main():
                 name = db.findcompanyNameByAlbumName(album)[0][0]
                 date = db.findRecLebDateByAlbumName(album)[0][0]
                 location = db.findLocationByAlbumName(album)[0][0]
-                # [('able seat', 'carry station team', 'Joshua Duran', 'EDM', 536, 'phillips-nelson.net', 2019, Decimal('2.500000'), 29419, 0)]
                 temp = [(name, date, location)]
                 window['-TABLE-RECORD-LABEL-F03-'].update(values=temp)
             except:
@@ -936,9 +832,6 @@ def main():
                 button, values = popup.read()
                 popup.close()
 
-    # updatelibtabs()
-    #it.drawFigure()
-
     while True:
 
         event, values = window.read()
@@ -967,7 +860,6 @@ def main():
     # close the program
     window.close()
     db.closeConnection()
-
 
 if __name__ == '__main__':
     main()

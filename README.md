@@ -1,5 +1,30 @@
 # 1. H.A.M.L. User Manual (CSE 412 Group Project)
 
+# copy pasta installs, Path additions, 
+pip3 install PyPI
+pip3 install pysimplegui
+pip3 install matplotlib
+pip3 install faker
+
+sudo apt-get install postgresql
+sudo apt-get install postgresql-client
+sudo apt-get install python3-psycopg2
+sudo apt install postgresql postgresql-contrib
+
+export PATH ="/Library/PostgreSQL/12/bin:${PATH}" # mac
+export PATH ="/usr/lib/postgresql/12/bin:${PATH}" # linux
+
+export PGPORT=8888
+export PGHOST=/tmp
+
+# stuff U might need
+pip3 install tk 
+pip3 install Qt 
+pip3 install Web 
+pip3 install WxPython 
+sudo apt-get install python3-tk
+pip3 install pyinstaller 
+
 
 <p align="center">
 <img src="./image/HAML.png" alt="drawing" width="200"/>
@@ -7,6 +32,8 @@
 
 
 - [1. H.A.M.L. User Manual (CSE 412 Group Project)](#1-haml-user-manual-cse-412-group-project)
+- [copy pasta installs, Path additions,](#copy-pasta-installs-path-additions)
+- [stuff U might need](#stuff-u-might-need)
   - [1.1. Main Screen](#11-main-screen)
   - [1.2. 1.2 Library](#12-12-library)
     - [1.2.1. `Song Library`](#121-song-library)
@@ -40,6 +67,7 @@
   - [1.7. Theme](#17-theme)
     - [1.7.1. `Theme`](#171-theme)
   - [1.8. Contribution](#18-contribution)
+  - [Known Bugs](#known-bugs)
 
 ## 1.1. Main Screen
 HAML has 5 main tabs. They are:
@@ -244,7 +272,7 @@ Note on	 the commit history: the app was mostly programmed using VSCode LiveShar
   * Edit the SQL functions for the implementation in the GUI
 * Ethan Gilchrist
   * Worked on the GUI and a lot of the different tabs. Did most the work on the feeling lucky and insights tab. Helped on all other tabs.
-  * Helped with some of the SQL functions.
+  * Helped with some of the SQL functions. Made and edited the video.
 * Jonathan Monk
   * Wrote and helped on a lot of SQL functions.
   * Made edits to the GUI.
@@ -254,3 +282,5 @@ Note on	 the commit history: the app was mostly programmed using VSCode LiveShar
   * Debugged main issues revolving around the GUI
 
 
+## Known Bugs
+1. Insights Graphs don't auto update. This is an issue inherent to the way PySimpleGUI and MatPlotLib are integrated with one another. It's very difficult 

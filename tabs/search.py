@@ -4,13 +4,6 @@ import PySimpleGUI as sg
 class SearchTab:
     def __init__(self, db):
         self.db = db
-    '''
-    def searchEvents(self, events, window, values):
-
-        if events == '-BUTTON-SEARCH-SONG-':
-            value1 = searchTabGUI.values['-INPUT-SEARCH-SONG-']
-        window['-TABLE-SEARCH-SONG-'].Update(value1)
-    '''
 
     def searchTabGUI(self):
 
@@ -22,7 +15,6 @@ class SearchTab:
             [[sg.Text("Search Song", size=(1270, 1))],
              [sg.Input(key='-INPUT-SEARCH-SONG-')],
              [sg.Button('search', key='-BUTTON-SEARCH-SONG-')],
-             #[sg.Text(size=(100, 720), key='-OUTPUT-SEARCH-SONG-')]
              [sg.Table(values=[['                     ', '                       ', '                    ', '               ', ' ', '                           ', ' ', '  ', '     ', '   ']], headings=[
                  'Song', 'Album', 'Artist', 'Genre', 'Duration', 'Link',
                  'Release Year', 'Average Rating', 'Listeners', 'Rating'], key='-TABLE-SEARCH-SONG-', enable_events=True, size=tableSize, justification="left")],
@@ -58,7 +50,6 @@ class SearchTab:
             [[sg.Text("Search Artist by Name")],
              [sg.Input(key='-INPUT-SEARCH-ARTIST-')],
              [sg.Button('search', key='-BUTTON-SEARCH-ARTIST-')],
-             # [sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
              [sg.Table(values=[['                        ', '                        ', ''                        ]], headings=[
                  '    Artist Name    ', 'Age', '   Known For   '], key='-TABLE-SEARCH-ARTIST-', enable_events=True, size=tableSize, justification="left")],
 
@@ -73,7 +64,6 @@ class SearchTab:
             [[sg.Text("Search Album by Title")],
              [sg.Input(key='-INPUT-SEARCH-ALBUM-')],
              [sg.Button('search', key='-BUTTON-SEARCH-ALBUM-')],
-             # [sg.Text(size=(100, 700), key='-OUTPUT-SEARCH-ARTIST-')]],
              [sg.Table(values=[['                        ', '                        ', '                        ']], headings=['       Title       ', 'Album Duraction',
                                                         '   Cover Art URL   '], key='-TABLE-SEARCH-ALBUM-', enable_events=True, size=tableSize, justification="left")],
              [sg.Button('UPDATE', key='-UPDATE-BUTTON-S03-'), 
