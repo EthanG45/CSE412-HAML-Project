@@ -112,5 +112,4 @@ with open('data/Made.csv', 'w') as f10:
                   (value['knownFor'], value['albumId'], value['artistId']))
 f10.close()
 
-
 print("File Generation Completed!")

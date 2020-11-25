@@ -4,7 +4,6 @@ import PySimpleGUI as sg
 #            FEELING LUCKY TABLE TABS         #
 ### #### #### #### #### #### #### #### #### ###
 
-
 class FeelingLuckyTab:
     def __init__(self, db):
         self.db = db
@@ -43,8 +42,6 @@ class FeelingLuckyTab:
 
              [sg.Text("Artist"), sg.Listbox(values=self.artistNameList,
                                             key='-INPUT-ARTIST-F02-', size=(50, 20))],
-
-             #  [sg.Text("Artist"), sg.Input(key='-INPUT-ARTIST-F02-')],
              [sg.Button('search', key='-BUTTON-SONG-F02-')],
              [sg.Table(values=[['                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ', '                        ']], headings=[
                  'Song', 'Album', 'Artist', 'Genre', 'Duration', 'Link',
@@ -97,7 +94,6 @@ class FeelingLuckyTab:
         #          END OF FEELING LUCKY TABLE TABS    #
         ### #### #### #### #### #### #### #### #### ###
 
-        # to be replaced by a nested tab group
         feelingLuckyTab = sg.Tab(
             'Feeling Lucky',
             [[sg.TabGroup(
