@@ -60,7 +60,8 @@
     - [1.12.9. `./scripts/stop_db.sh`](#1129-scriptsstop_dbsh)
   - [1.13. Postgres Setup](#113-postgres-setup)
     - [1.13.1. `python postgres-setup/csv_generator.py`](#1131-python-postgres-setupcsv_generatorpy)
-  - [1.14. How does the database work?](#114-how-does-the-database-work)
+  - [1.14. How does the database work / where is the raw database?](#114-how-does-the-database-work--where-is-the-raw-database)
+  - [1.15. Video Demo of App](#115-video-demo-of-app)
 
 ## 1.1. Setup
 **H.A.M.L. is supported on Linux and macOS, it does not support windows.**
@@ -419,5 +420,8 @@ Lazy script that stops the PostgreSQL database on your machine.
 ### 1.13.1. `python postgres-setup/csv_generator.py`
 This regenerates the database if you want to do that for some reason. The raw database is stored in the data folder.
 
-## 1.14. How does the database work?
-The database is stored raw in the csv files under the data folder.
+## 1.14. How does the database work / where is the raw database?
+The database is stored raw in the csv files under the [data folder](https://github.com/EthanG45/CSE412-HAML-Project/tree/main/data).
+
+## 1.15. Video Demo of App
+See a demo of the app [here](https://youtu.be/rwT69BiaMFo)
