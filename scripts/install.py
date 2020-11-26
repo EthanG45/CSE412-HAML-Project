@@ -1,6 +1,7 @@
 import sys
 import subprocess
 
+#todo figure out pip versus pip3 for this
 print('Downloading Necessary Packages...')
 listOfPackages = ['PySimpleGUI', 'matplotlib', 'faker', 'psycopg2', 'psycopg2-binary']
 for i in listOfPackages:

@@ -96,7 +96,7 @@ The following exports are expected in your terminal for the duration of using H.
 
 ```zsh
 export PATH="/Library/PostgreSQL/12/bin:${PATH}" # mac
-export PATH ="/usr/lib/postgresql/12/bin:${PATH}" # linux
+export PATH="/usr/lib/postgresql/12/bin:${PATH}" # linux
 ```
 
 ```zsh
