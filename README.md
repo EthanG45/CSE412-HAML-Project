@@ -94,6 +94,8 @@ If you are on macOS, you need to install the following package with homebrew (al
 brew install tcl-tk
 ```
 
+Note we are assuming you are using [pyenv](https://github.com/pyenv/pyenv) for recompiling Python.
+
 ```zsh
 latestTclTk='8.6'
 
