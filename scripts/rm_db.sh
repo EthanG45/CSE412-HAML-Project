@@ -15,7 +15,7 @@ if [ ! -d "./database" ]; then
 fi
 
 printf "\n1. Removing table...\n"
-if psql -d $USER -q -f drop_tables.sql; then
+if psql -d $USER -q -f ./postgres-setup/drop_tables.sql; then
     printf "\n2. Removing database...\n"
     rm -rf ./database
 fi

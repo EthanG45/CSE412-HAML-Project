@@ -1,14 +1,30 @@
 #!/bin/bash
 
 DB="database"
+DBF="./database"
 CWD=$(pwd) # get current path for use in the sql COPY command. SQL COPY occurs in a different location than this shellscript ¯\_(ツ)_/¯
 
-# todo check if the port 8888 has a running process
-# todo finish fleshing out the rest of the shell scripts to be safe!
-# todo kill port 8888
+pwd | grep 'CSE412-HAML-Project/' &>/dev/null
+if [ $? == 0 ]; then
+    echo "Error execute the scripts from the root directory!"
+    exit 1
+fi
+
+if [ -d "./database" ]; then
+    printf "Error database already exists!"
+    exit 1
+fi
+
+printf -- "1. Creating database...\n"
+mkdir $DBF
+initdb $DB # initializes a database structure in the folder ./database
+
+printf "\n2. Starting database...\n"
+pg_ctl -D $DB -o '-k /./tmp' start # starts the server on the port YYYYY, using ./database as data folder
+createdb $USER                     # creates a database, with your current username on your machine as its name
 
 printf "\n3. Creating tables...\n"
-psql -d $USER -q -f create_tables.sql
+psql -d $USER -q -f ./postgres-setup/create_tables.sql
 
 printf "\n4. Importing data...\n"
 psql -d $USER -q -c "COPY album FROM '$CWD/data/Album.csv' DELIMITER ',' CSV;"
@@ -59,7 +75,7 @@ if [ $num -eq 11 ]; then
 else
     printf "\n6. Tables were not generated properly!"
     printf "\n Removing database! Please run init_db.sh again!"
-    ./rm_db.sh
+    ./scripts/rm_db.sh
     printf "\ndone\n"
     exit 1
 fi
