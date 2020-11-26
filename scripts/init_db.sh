@@ -11,7 +11,7 @@ if [ $? == 0 ]; then
 fi
 
 if [ -d "./database" ]; then
-    printf "Error database already exists!"
+    printf "Error database already exists! \n"
     printf "Run ./script/rm_db.sh to remove it"
     exit 1
 fi
