@@ -89,6 +89,11 @@ To download all the dependencies, simply run `scripts/install.py` using the comm
 python scripts/install.py
 ```
 
+If you are on Linux, you need to install the following package:
+```zsh
+sudo apt-get install python3-tk
+```
+
 ### 1.1.2. Step 2 - PostgreSQL setup
 H.A.M.L. relies on your machine having [PostgreSQL](https://www.postgresql.org). Follow their [setup process](https://www.postgresql.org/download/) to get it.
 
