@@ -94,6 +94,21 @@ If you are on Linux, you need to install the following package:
 sudo apt-get install python3-tk
 ```
 
+If you are on macOS, you need to install the following package with homebrew (also get [homebrew](https://brew.sh) if you don't have it). You also have to recompile Python with tcl-tk headers:
+```zsh
+brew install tcl-tk
+```
+
+```zsh
+latestTclTk='8.6'
+
+latestPython=`pyenv install --list | sed -e 's/^[[:space:]]*//' | grep --regexp '^[0-9]\.[0-9][\.0-9]*$' | (gsort --version-sort 2>/dev/null || sort --version-sort) | tail -n 1`
+
+PYTHON_CONFIGURE_OPTS="--with-tcltk-includes='-I/usr/local/opt/tcl-tk/include' --with-tcltk-libs='-L/usr/local/opt/tcl-tk/lib -ltcl${latestTclTk} -ltk${latestTclTk}'" pyenv install ${latestPython}
+
+pyenv ${latestPython}
+```
+
 ### 1.1.2. Step 2 - PostgreSQL setup
 H.A.M.L. relies on your machine having [PostgreSQL](https://www.postgresql.org). Follow their [setup process](https://www.postgresql.org/download/) to get it.
 
