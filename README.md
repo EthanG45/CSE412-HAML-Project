@@ -76,6 +76,7 @@ git clone https://github.com/EthanG45/CSE412-HAML-Project.git
 
 ### 1.1.1. Step 1 - Python Dependencies
 **H.A.M.L. requires python3 and pip**
+
 **H.A.M.L. requires the following Python dependencies:**
 1. PySimpleGUI
 2. matplotlib
