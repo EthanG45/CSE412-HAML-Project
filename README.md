@@ -59,7 +59,7 @@
     - [1.12.8. `./scripts/start_db.sh`](#1128-scriptsstart_dbsh)
     - [1.12.9. `./scripts/stop_db.sh`](#1129-scriptsstop_dbsh)
   - [1.13. Postgres Setup](#113-postgres-setup)
-    - [1.13.1. `python postgres-setup/csv_generator.py`](#1131-python-postgres-setupcsv_generatorpy)
+    - [1.13.1. `python3 postgres-setup/csv_generator.py`](#1131-python3-postgres-setupcsv_generatorpy)
   - [1.14. How does the database work / where is the raw database?](#114-how-does-the-database-work--where-is-the-raw-database)
   - [1.15. Video Demo of App](#115-video-demo-of-app)
 
@@ -86,7 +86,7 @@ git clone https://github.com/EthanG45/CSE412-HAML-Project.git
 
 To download all the dependencies, simply run `scripts/install.py` using the command:
 ```zsh
-python scripts/install.py
+python3 scripts/install.py
 ```
 
 If you are on Linux, you need to install the following package:
@@ -123,7 +123,7 @@ Run the `./scripts/init_db.sh` command. This will setup the H.A.M.L. database on
 Run the app using the following `gui.py` file:
 
 ```zsh
-python src/gui.py
+python3 src/gui.py
 ```
 
 ### 1.1.5. Already have the app setup?
@@ -393,7 +393,7 @@ Creates the H.A.M.L. database on your machine.
 Downloads the necessary packages to your machine.
 
 ```zsh
-python scripts/install.py
+python3 scripts/install.py
 ```
 
 ### 1.12.6. `./scripts/refresh_db.sh`
@@ -424,7 +424,7 @@ Lazy script that stops the PostgreSQL database on your machine.
 ```
 
 ## 1.13. Postgres Setup
-### 1.13.1. `python postgres-setup/csv_generator.py`
+### 1.13.1. `python3 postgres-setup/csv_generator.py`
 This regenerates the database if you want to do that for some reason. The raw database is stored in the data folder.
 
 ## 1.14. How does the database work / where is the raw database?
