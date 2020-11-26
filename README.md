@@ -84,11 +84,6 @@ git clone https://github.com/EthanG45/CSE412-HAML-Project.git
 4. psycopg2
 5. psycopg2-binary
 
-To download all the dependencies, simply run `scripts/install.py` using the command:
-```zsh
-python3 scripts/install.py
-```
-
 If you are on Linux, you need to install the following package:
 ```zsh
 sudo apt-get install python3-tk
@@ -104,9 +99,16 @@ latestTclTk='8.6'
 
 latestPython=`pyenv install --list | sed -e 's/^[[:space:]]*//' | grep --regexp '^[0-9]\.[0-9][\.0-9]*$' | (gsort --version-sort 2>/dev/null || sort --version-sort) | tail -n 1`
 
-PYTHON_CONFIGURE_OPTS="--with-tcltk-includes='-I/usr/local/opt/tcl-tk/include' --with-tcltk-libs='-L/usr/local/opt/tcl-tk/lib -ltcl${latestTclTk} -ltk${latestTclTk}'" pyenv install ${latestPython}
+PYTHON_CONFIGURE_OPTS="--with-tcltk-includes='-I/usr/local/opt/tcl-tk/include' --with-tcltk-libs='-L/usr/local/opt/tcl-tk/lib -ltcl${latestTclTk} -ltk${latestTclTk}'"
 
-pyenv ${latestPython}
+pyenv install ${latestPython}
+
+pyenv global ${latestPython}
+```
+
+To download all the dependencies, simply run `scripts/install.py` using the command:
+```zsh
+python3 scripts/install.py
 ```
 
 ### 1.1.2. Step 2 - PostgreSQL setup
