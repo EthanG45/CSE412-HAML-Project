@@ -133,7 +133,6 @@ class Database:
             song_id = self.getItems()[0][0]
             self.cur.execute(
                 "UPDATE Rating SET averageRating= %i WHERE songID = %i" % (rating, song_id))
-            print('Updated Average Rating with ', rating)
         except Exception as e:
             print(e)
 
@@ -156,7 +155,6 @@ class Database:
             song_id = self.getItems()[0][0]
             self.cur.execute(
                 "UPDATE Rating SET numOfRating = %i WHERE songID = %i" % (numOfRating, song_id))
-            print('Updated User Rating with ', numOfRating)
         except Exception as e:
             print(e)
     
@@ -173,7 +171,6 @@ class Database:
                 "UPDATE Rating SET averageRating = %f WHERE songID = %i" % (averageRating, song_id))
             self.cur.execute(
                 "UPDATE Rating SET numOfRating = numOfRating + 1 WHERE songID = %i" % (song_id))
-            print('Updated User Rating with ', rating)
         except Exception as e:
             print(e)
     
@@ -187,7 +184,6 @@ class Database:
                 "UPDATE Rating SET averageRating = %f WHERE songID = %i" % (averageRating, songId))
             self.cur.execute(
                 "UPDATE Rating SET numOfRating = numOfRating + 1 WHERE songID = %i" % (songId))
-            print('Updated User Rating with ', rating, 'for', songId)
         except Exception as e:
             print(e)
 

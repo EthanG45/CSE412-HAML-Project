@@ -27,7 +27,7 @@ ft = FeelingLuckyTab(db)
 
 events = []
 st.addEvents(events)
-mainWindowSize = (1470, 710)
+mainWindowSize = (1600, 900)
 
 # Define the window's contents
 
