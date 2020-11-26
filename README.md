@@ -106,6 +106,8 @@ pyenv install ${latestPython}
 pyenv global ${latestPython}
 ```
 
+Reference for this [tcl-tk issue on macOS](https://thad.getterman.org/articles/pysimplegui-and-tkinter-in-pyenv-with-homebrew/).
+
 To download all the dependencies, simply run `scripts/install.py` using the command:
 ```zsh
 python3 scripts/install.py
