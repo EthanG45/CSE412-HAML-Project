@@ -75,6 +75,7 @@ git clone https://github.com/EthanG45/CSE412-HAML-Project.git
 ```
 
 ### 1.1.1. Step 1 - Python Dependencies
+**H.A.M.L. requires python3 and pip**
 **H.A.M.L. requires the following Python dependencies:**
 1. PySimpleGUI
 2. matplotlib
@@ -82,9 +83,9 @@ git clone https://github.com/EthanG45/CSE412-HAML-Project.git
 4. psycopg2
 5. psycopg2-binary
 
-To download all the dependencies, simply run install.py using the command:
+To download all the dependencies, simply run `scripts/install.py` using the command:
 ```zsh
-python install.py
+python scripts/install.py
 ```
 
 ### 1.1.2. Step 2 - PostgreSQL setup
@@ -425,3 +426,5 @@ The database is stored raw in the csv files under the [data folder](https://gith
 
 ## 1.15. Video Demo of App
 See a demo of the app [here](https://youtu.be/rwT69BiaMFo)
+
+[![HAML Video](http://img.youtube.com/vi/rwT69BiaMFo/0.jpg)](http://www.youtube.com/watch?v=rwT69BiaMFo "HAML Video")
